@@ -3,7 +3,7 @@ import sys
 sys.path.insert(0, "Src/Model")
 from TaskModel import TaskModel
 
-class TestTaskModel(unittest.TestCase):
+class TestTaskDb(unittest.TestCase):
     def __init__(self, methodName: str = ...) -> None:
         super().__init__(methodName)
         self.model = TaskModel('./DB/to_do_calendar_test.db')
@@ -51,6 +51,20 @@ class TestTaskModel(unittest.TestCase):
 
         self.assertEqual(self.model.get_by_priority(90), [])
 
+    def test_get_by_status(self):
+        self.assertEqual(self.model.get_by_status(0), [
+            {'name': 'task1', 'status': 0, 'tag': 1, 'date': '01/01/2022', 'color': 'red', 'priority': 1}, 
+            {'name': 'task2', 'status': 0, 'tag': 2, 'date': '01/02/2022', 'color': 'blue', 'priority': 2}
+            ])
+
+        self.assertEqual(self.model.get_by_status(-3), [])
+
+    def test_get_custom(self):
+        self.assertEqual(self.model.get_custom('task1', '0', '1', '01/01/2022', 'red', '1'), [
+            {'name': 'task1', 'status': 0, 'tag': 1, 'date': '01/01/2022', 'color': 'red', 'priority': 1}
+        ])
+
+        self.assertEqual(self.model.get_custom('s9d8we', '05', '1652', '0/01/2022', '', '75'), [])
     
 if __name__ == '__main__':
     unittest.main()

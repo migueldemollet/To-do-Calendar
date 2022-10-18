@@ -11,7 +11,10 @@ class TagModel:
         SELECT * FROM tag;
         """)
         
-        return convert_to_dict(cursor.fetchall())
+        dic = convert_to_dict(cursor.fetchall())
+        conn.close()
+        
+        return dic
 
     def get_by_name(self, name):
         conn = sqlite3.connect(self.db_name)
@@ -20,7 +23,10 @@ class TagModel:
         SELECT * FROM tag WHERE name = ?;
         """, (name,))
         
-        return convert_to_dict(cursor.fetchall())
+        dic = convert_to_dict(cursor.fetchall())
+        conn.close()
+        
+        return dic
 
     def get_by_color(self, color):
         conn = sqlite3.connect(self.db_name)
@@ -28,9 +34,11 @@ class TagModel:
         cursor.execute("""
         SELECT * FROM tag WHERE color = ?;
         """, (color,))
-        conn.close()
 
-        return convert_to_dict(cursor.fetchall())
+        dic = convert_to_dict(cursor.fetchall())
+        conn.close()
+        
+        return dic
 
     def get_custom(self, name, color):
         conn = sqlite3.connect(self.db_name)
@@ -38,9 +46,11 @@ class TagModel:
         cursor.execute("""
         SELECT * FROM tag WHERE name = ? AND color = ?;
         """, (name, color))
-        conn.close()
 
-        return convert_to_dict(cursor.fetchall())
+        dic = convert_to_dict(cursor.fetchall())
+        conn.close()
+        
+        return dic
 
 def convert_to_dict(rows):
     result = []
