@@ -46,8 +46,8 @@ def convert_to_dict(rows):
     result = []
     for row in rows:
         d = {
-            'name': row[0],
-            'color': row[1]
+            'name': row[1],
+            'color': row[2]
         }
         result.append(d)
     return result
