@@ -1,7 +1,7 @@
 import unittest
 import sys
 sys.path.insert(1, 'Src/')
-from Tag import Tag
+from tag import Tag
 
 class TestTag(unittest.TestCase):
     

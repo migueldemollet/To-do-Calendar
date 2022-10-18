@@ -1,7 +1,7 @@
 import unittest
 import sys
 sys.path.insert(1, 'Src/')
-from Task import Task
+from task import Task
 
 class TestTask(unittest.TestCase):
 
