@@ -119,6 +119,105 @@ class TaskModel:
         conn.close()
         return True
     
+    def changue_name(self, name, new_name):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        UPDATE task SET name = ? WHERE name = ?;
+        """, (new_name, name))
+        conn.commit()
+        conn.close()
+
+    def changue_status(self, name, new_status):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        UPDATE task SET status = ? WHERE name = ?;
+        """, (new_status, name))
+        conn.commit()
+        conn.close()
+
+    def changue_task(self, name, new_task):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        UPDATE task SET task = ? WHERE name = ?;
+        """, (new_task, name))
+        conn.commit()
+        conn.close()
+
+    def changue_date(self, name, new_date):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        UPDATE task SET date = ? WHERE name = ?;
+        """, (new_date, name))
+        conn.commit()
+        conn.close()
+
+    def changue_color(self, name, new_color):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        UPDATE task SET color = ? WHERE name = ?;
+        """, (new_color, name))
+        conn.commit()
+        conn.close()
+
+    def changue_priority(self, name, new_priority):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        UPDATE task SET priority = ? WHERE name = ?;
+        """, (new_priority, name))
+        conn.commit()
+        conn.close()
+
+
+    def delete_all_tasks(self):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM task;
+        """)
+        conn.commit()
+        conn.close()
+
+    def delete_task(self, name):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM task WHERE name = ?;
+        """, (name,))
+        conn.commit()
+        conn.close()
+
+    def delete_by_status(self, status):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM task WHERE status = ?;
+        """, (status,))
+        conn.commit()
+        conn.close()
+
+    def delete_by_tag(self, tag):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM task WHERE tag = ?;
+        """, (tag,))
+        conn.commit()
+        conn.close()
+
+    def delete_by_date(self, date):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM task WHERE date = ?;
+        """, (date,))
+        conn.commit()
+        conn.close()
 
 
 def convert_to_dict(rows):
