@@ -3,14 +3,13 @@ sys.path.insert(1, 'Src/')
 from task import Task
 from utils import *
 sys.path.insert(2, 'Src/Model/')
-#from task_model import TaskModel
-#from tag_model import TagModel
+from task_model import TaskModel
+from tag_model import TagModel
 
 class TaskController:
     def __init__(self):
-        pass
-        #self.task_model = TaskModel()
-        #self.tag_model = TagModel()
+        self.task_model = TaskModel("./DB/to_do_calendar_test.db")
+        self.tag_model = TagModel("./DB/to_do_calendar_test.db")
 
     def add_task(self, task):
         if(self.task_model.get_by_name(task.name) == []):
@@ -102,7 +101,7 @@ class TaskController:
 
     def delete_by_name(self, name):
         if(self.task_model.get_by_name(name) != []):
-            return self.task_model.delete_task(name)
+            return self.task_model.delete_by_name(name)
         else:
             print("Task "+name+" does not exist")
             return 0

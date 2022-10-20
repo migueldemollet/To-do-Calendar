@@ -1,7 +1,7 @@
 import unittest
 import sys
 sys.path.insert(0, "Src/Model")
-from TagModel import TagModel
+from tag_model import TagModel
 
 class TestTagDb(unittest.TestCase):
     def __init__(self, methodName: str = ...) -> None:

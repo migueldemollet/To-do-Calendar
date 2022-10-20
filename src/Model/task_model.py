@@ -4,6 +4,15 @@ class TaskModel:
     def __init__(self, db_name):
         self.db_name = db_name
 
+    def add_task(self, task):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        INSERT INTO task (name, status, tag, date, color, priority) VALUES (?, ?, ?, ?, ?, ?);
+        """, (task.name, task.status, task.tag, task.date, task.color, task.priority))
+        conn.commit()
+        conn.close()
+
     def get_all(self):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
@@ -99,6 +108,16 @@ class TaskModel:
         conn.close()
         
         return dic
+
+    def delete_by_name(self, name):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM task WHERE name = ?;
+        """, (name,))
+        conn.commit()
+        conn.close()
+        return True
     
 
 
