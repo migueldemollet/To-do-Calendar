@@ -1,7 +1,7 @@
 import unittest
 import sys
 sys.path.insert(0, "Src/Model")
-from TaskModel import TaskModel
+from task_model import TaskModel
 
 class TestTaskDb(unittest.TestCase):
     def __init__(self, methodName: str = ...) -> None:
