@@ -16,6 +16,18 @@ class TagModel:
         
         return dic
 
+    def get_by_id(self, id):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT * FROM tag WHERE id = ?;
+        """, (id,))
+
+        dic = convert_to_dict(cursor.fetchall())
+        conn.close()
+        
+        return dic
+
     def get_by_name(self, name):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()

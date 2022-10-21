@@ -18,7 +18,7 @@ c.execute("INSERT INTO tag VALUES (1, 'tag1', 'red')")
 c.execute("INSERT INTO tag VALUES (2, 'tag2', 'blue')")
 #insert data into table task
 c.execute("INSERT INTO task VALUES (1, 'task1', 0, 1, '01/01/2022', 'red', 1)")
-c.execute("INSERT INTO task VALUES (2, 'task2', 0, 2, '01/02/2022', 'blue', 2)")
+c.execute("INSERT INTO task VALUES (2, 'task2', 1, 2, '01/02/2022', 'blue', 2)")
 
 conn.commit()
 conn.close()

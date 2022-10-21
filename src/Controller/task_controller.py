@@ -29,22 +29,22 @@ class TaskController:
             return 1
 
         if(self.task_model.get_by_name(name) != []):
-            self.task_model.change_name(name, new_name)
-            return True
+            return self.task_model.change_name(name, new_name)
         else:
             print("Task "+name+" does not exist")
             return 0
 
-    def change_status(self, task):
-        if (not check_status(self.task.status)):
+    def change_status(self, task, status):
+        if (not check_status(status)):
             print("Invalid status must be 0 or 1")
+            return 1
+
+        if (task.status == status):
+            print("Task already has this status")
             return 1
         
         if(self.task_model.get_by_name(task.name) != []):
-            if task.status == 0:
-                return self.task_model.change_status(task.name, 1)
-            else:
-                return self.task_model.change_status(task.name, 0)
+            return self.task_model.change_status(task.name, status)
         else:
             print("Task "+task.name+" does not exist")
             return 0
@@ -53,16 +53,24 @@ class TaskController:
         if (not self.tag_model.get_by_id(new_tag)):
             print("Tag "+new_tag+" does not exist")
             return 0
+        
+        if (task.tag == new_tag):
+            print("Task already has this tag")
+            return 1
 
         if(self.task_model.get_by_name(task.name) != []):
             return self.task_model.change_tag(task.name, new_tag)
         else:
-            print("Task "+self.task.name+" does not exist")
+            print("Task "+task.name+" does not exist")
             return 0
 
     def change_date(self, task, new_date):
         if (not check_date(new_date)):
             print("Invalid date format (dd/mm/yyyy)")
+            return 1
+        
+        if (task.date == new_date):
+            print("Task already has this date")
             return 1
 
         if(self.task_model.get_by_name(task.name) != []):
@@ -72,6 +80,10 @@ class TaskController:
             return 0
 
     def change_color(self, task, new_color):
+        if (not check_color(new_color)):
+            print("Invalid color must be 0, 1 or 2")
+            return 1
+
         if(task.color == new_color):
             print("Task already has this color")
             return 1
@@ -89,15 +101,16 @@ class TaskController:
 
         if (task.priority == new_priority):
             print("Task already has this priority")
+            return 1
+
+        if(self.task_model.get_by_name(task.name) != []):
+            return self.task_model.change_priority(task.name, new_priority)
+        else:
+            print("Task "+task.name+" does not exist")
             return 0
 
-        if(self.task_model.get_by_name(self.task.name) != []):
-            self.task_model.change_priority(self.task.name, new_priority)
-        else:
-            print("Task "+self.task.name+" does not exist")
-
     def delete_all_tasks(self):
-        self.task_model.delete_all_tasks()
+        return self.task_model.delete_all_tasks()
 
     def delete_by_name(self, name):
         if(self.task_model.get_by_name(name) != []):
@@ -106,21 +119,34 @@ class TaskController:
             print("Task "+name+" does not exist")
             return 0
 
-    def delete_by_status(self, task, status):
+    def delete_by_status(self, status):
         if (not check_status(status)):
             print("Invalid status must be 0 or 1")
             return 1
-        if(self.task_model.get_by_status(task.status) != []):
+        
+        if(self.task_model.get_by_status(status) != []):
             return self.task_model.delete_by_status(status)
         else:
-            print("Tasks with status "+task.status+" does not exist")
+            print("Tasks with status "+str(status)+" does not exist")
             return 0
 
-    def delete_by_tag(self, task):
-        if(self.task_model.get_by_tag(task.tag) != []):
-            return self.task_model.delete_by_tag(task.tag)
+    def delete_by_tag(self, tag):
+        if (not check_is_int(tag)):
+            print("Invalid tag must be a number")
+            return 1
+        
+        if (tag <= 0):
+            print("Invalid tag must be a positive number")
+            return 1
+            
+        if (not self.tag_model.get_by_id(tag)):
+            print("Tag "+str(tag)+" does not exist")
+            return 0
+        
+        if(self.task_model.get_by_tag(tag) != []):
+            return self.task_model.delete_by_tag(tag)
         else:
-            print("Task with this tag does not exist")
+            print("Task with tag "+str(tag)+" does not exist")
             return 0
 
     def delete_by_date(self, date):

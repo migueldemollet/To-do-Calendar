@@ -119,7 +119,7 @@ class TaskModel:
         conn.close()
         return True
     
-    def changue_name(self, name, new_name):
+    def change_name(self, name, new_name):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
@@ -127,8 +127,9 @@ class TaskModel:
         """, (new_name, name))
         conn.commit()
         conn.close()
+        return True
 
-    def changue_status(self, name, new_status):
+    def change_status(self, name, new_status):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
@@ -136,17 +137,19 @@ class TaskModel:
         """, (new_status, name))
         conn.commit()
         conn.close()
+        return True
 
-    def changue_task(self, name, new_task):
+    def change_tag(self, name, new_tag):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        UPDATE task SET task = ? WHERE name = ?;
-        """, (new_task, name))
+        UPDATE task SET tag = ? WHERE name = ?;
+        """, (new_tag, name))
         conn.commit()
         conn.close()
+        return True
 
-    def changue_date(self, name, new_date):
+    def change_date(self, name, new_date):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
@@ -154,8 +157,9 @@ class TaskModel:
         """, (new_date, name))
         conn.commit()
         conn.close()
+        return True
 
-    def changue_color(self, name, new_color):
+    def change_color(self, name, new_color):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
@@ -163,8 +167,9 @@ class TaskModel:
         """, (new_color, name))
         conn.commit()
         conn.close()
+        return True
 
-    def changue_priority(self, name, new_priority):
+    def change_priority(self, name, new_priority):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
@@ -172,6 +177,7 @@ class TaskModel:
         """, (new_priority, name))
         conn.commit()
         conn.close()
+        return True
 
 
     def delete_all_tasks(self):
@@ -182,6 +188,7 @@ class TaskModel:
         """)
         conn.commit()
         conn.close()
+        return True
 
     def delete_task(self, name):
         conn = sqlite3.connect(self.db_name)
@@ -191,6 +198,7 @@ class TaskModel:
         """, (name,))
         conn.commit()
         conn.close()
+        return True
 
     def delete_by_status(self, status):
         conn = sqlite3.connect(self.db_name)
@@ -200,6 +208,7 @@ class TaskModel:
         """, (status,))
         conn.commit()
         conn.close()
+        return True
 
     def delete_by_tag(self, tag):
         conn = sqlite3.connect(self.db_name)
@@ -209,6 +218,7 @@ class TaskModel:
         """, (tag,))
         conn.commit()
         conn.close()
+        return True
 
     def delete_by_date(self, date):
         conn = sqlite3.connect(self.db_name)
@@ -218,6 +228,7 @@ class TaskModel:
         """, (date,))
         conn.commit()
         conn.close()
+        return True
 
 
 def convert_to_dict(rows):
