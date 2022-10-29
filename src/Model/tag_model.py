@@ -63,6 +63,37 @@ class TagModel:
         conn.close()
         
         return dic
+    
+    def delete_by_id(self, id):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM tag WHERE id = ?;
+        """, (id,))
+        conn.commit()
+        conn.close()
+        return True
+
+    def delete_by_name(self, name):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM tag WHERE name = ?;
+        """, (name,))
+        conn.commit()
+        conn.close()
+        return True
+
+    def delete_by_color(self, color):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM tag WHERE color = ?;
+        """, (color,))
+        conn.commit()
+        conn.close()
+        return True
+
 
 def convert_to_dict(rows):
     result = []
