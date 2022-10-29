@@ -4,6 +4,16 @@ class TagModel:
     def __init__(self, db_name):
         self.db_name = db_name
     
+    def add(self, tag):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        INSERT INTO tag (name, color) VALUES (?, ?);
+        """, (tag.name, tag.color))
+        conn.commit()
+        conn.close()
+        return True
+
     def get_all(self):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
@@ -15,6 +25,18 @@ class TagModel:
         conn.close()
         
         return dic
+
+    def delete_all(self):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM tag;
+        """)
+        conn.commit()
+        conn.close()
+        return True
+
+    #-------------------------Id-------------------------------
 
     def get_by_id(self, id):
         conn = sqlite3.connect(self.db_name)
@@ -28,6 +50,18 @@ class TagModel:
         
         return dic
 
+    def delete_by_id(self, id):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM tag WHERE id = ?;
+        """, (id,))
+        conn.commit()
+        conn.close()
+        return True
+
+    #-------------------------Name-------------------------------
+
     def get_by_name(self, name):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
@@ -39,6 +73,28 @@ class TagModel:
         conn.close()
         
         return dic
+
+    def change_name(self, name, new_name):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        UPDATE tag SET name = ? WHERE name = ?;
+        """, (new_name, name))
+        conn.commit()
+        conn.close()
+        return True
+    
+    def delete_by_name(self, name):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM tag WHERE name = ?;
+        """, (name,))
+        conn.commit()
+        conn.close()
+        return True
+
+    #-------------------------Color-------------------------------
 
     def get_by_color(self, color):
         conn = sqlite3.connect(self.db_name)
@@ -52,34 +108,12 @@ class TagModel:
         
         return dic
 
-    def get_custom(self, name, color):
+    def change_color(self, name, new_color):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        SELECT * FROM tag WHERE name = ? AND color = ?;
-        """, (name, color))
-
-        dic = convert_to_dict(cursor.fetchall())
-        conn.close()
-        
-        return dic
-    
-    def delete_by_id(self, id):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        DELETE FROM tag WHERE id = ?;
-        """, (id,))
-        conn.commit()
-        conn.close()
-        return True
-
-    def delete_by_name(self, name):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        DELETE FROM tag WHERE name = ?;
-        """, (name,))
+        UPDATE tag SET color = ? WHERE name = ?;
+        """, (new_color, name))
         conn.commit()
         conn.close()
         return True
