@@ -21,8 +21,8 @@ class TestTaskController(unittest.TestCase):
 
     def test_add_task(self):
         task = Task('task3', 1, '01/01/2022', 'red', 1)
-        self.assertEqual(self.controller.add_task(task), True)
-        self.assertEqual(self.controller.add_task(task), 0)
+        self.assertEqual(self.controller.add(task), True)
+        self.assertEqual(self.controller.add(task), 0)
 
     #-------------------------Name-------------------------------
 
@@ -130,7 +130,7 @@ class TestTaskController(unittest.TestCase):
         self.assertEqual(self.controller.delete_by_color('red'), 0)
         self.assertEqual(self.controller.delete_by_color('blue'), True)
         self.assertEqual(self.controller.delete_by_color('blue'), 0)
-        self.assertEqual(self.controller.delete_by_color('green'), 1)
+        self.assertEqual(self.controller.delete_by_color('dfdfd'), 1)
 
     #-------------------------Priority-------------------------------
 

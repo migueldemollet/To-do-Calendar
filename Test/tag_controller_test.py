@@ -19,8 +19,8 @@ class TestTagController(unittest.TestCase):
     
     def test_add_tag(self):
         tag = Tag('tag3', 'orange')
-        self.assertEqual(self.controller.add_tag(tag), True)
-        self.assertEqual(self.controller.add_tag(tag), 0)
+        self.assertEqual(self.controller.add(tag), True)
+        self.assertEqual(self.controller.add(tag), 0)
 
     #-------------------------Name-------------------------------
 
@@ -56,7 +56,7 @@ class TestTagController(unittest.TestCase):
     def test_delete_by_color(self):
         self.assertEqual(self.controller.delete_by_color('red'), True)
         self.assertEqual(self.controller.delete_by_color('red'), 0)
-        self.assertEqual(self.controller.delete_by_color('redxx'), 0)
+        self.assertEqual(self.controller.delete_by_color('redxx'), 1)
 
 
 def restore():

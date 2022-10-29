@@ -11,20 +11,20 @@ class TaskController:
         self.task_model = TaskModel("./DB/to_do_calendar_test.db")
         self.tag_model = TagModel("./DB/to_do_calendar_test.db")
 
-    def add_task(self, task):
+    def add(self, task):
         if(self.task_model.get_by_name(task.name) == []):
-            self.task_model.add_task(task)
+            self.task_model.add(task)
             return True
         else:
             print("Task already exists")
             return 0
 
-    def get_all_tasks(self):
-        self.task_model.get_all_tasks()
+    def get_all(self):
+        self.task_model.get_all()
         return True
 
-    def delete_all_tasks(self):
-        return self.task_model.delete_all_tasks()
+    def delete_all(self):
+        return self.task_model.delete_all()
 
     #-------------------------Name-------------------------------
 
@@ -187,7 +187,7 @@ class TaskController:
 
     def delete_by_color(self, color):
         if (not check_color(color)):
-            print("Invalid color must be 0, 1 or 2")
+            print("Invalid color must be"+str(color_list))
             return 1
         if(self.task_model.get_by_color(color) != []):
             return self.task_model.delete_by_color(color)

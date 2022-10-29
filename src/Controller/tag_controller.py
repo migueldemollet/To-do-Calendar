@@ -9,20 +9,20 @@ class TagController:
     def __init__(self):
         self.tag_model = TagModel("./DB/to_do_calendar_test.db")
 
-    def add_tag(self, tag):
+    def add(self, tag):
         if(self.tag_model.get_by_name(tag.name) == []):
-            self.tag_model.add_tag(tag)
+            self.tag_model.add(tag)
             return True
         else:
             print("Tag already exists")
             return 0
 
-    def get_all_tags(self):
+    def get_all(self):
         tags = self.tag_model.get_all()
         return tags
     
-    def delete_all_tags(self):
-        return self.tag_model.delete_all_tags()
+    def delete_all(self):
+        return self.tag_model.delete_all()
 
     #-------------------------Name-------------------------------
 
@@ -40,9 +40,9 @@ class TagController:
             print("Tag "+name+" does not exist")
             return 0
     
-    def delete_tag_by_name(self, name):
+    def delete_by_name(self, name):
         if(self.tag_model.get_by_name(name) != []):
-            return self.tag_model.delete_tag_by_name(name)
+            return self.tag_model.delete_by_name(name)
         else:
             print("Tag "+name+" does not exist")
             return 0
@@ -71,13 +71,13 @@ class TagController:
             print("Tag "+tag.name+" does not exist")
             return 0
     
-    def delete_tag_by_color(self, color):
+    def delete_by_color(self, color):
         if (not check_color(color)):
             print("Invalid color")
             return 1
 
         if(self.tag_model.get_by_color(color) != []):
-            return self.tag_model.delete_tag_by_color(color)
+            return self.tag_model.delete_by_color(color)
         else:
             print("Tag with color "+color+" does not exist")
             return 0
