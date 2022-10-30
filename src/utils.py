@@ -1,4 +1,6 @@
 import datetime
+import re
+import hashlib
 
 color_list = ["red", "green", "blue", "yellow", "pink", "purple", "orange", "white", "black"]
 
@@ -20,3 +22,19 @@ def check_color(color):
 
 def check_is_int(num):
     return type(num) == int
+
+def check_username(username):
+    return (len(username) > 0 and len(username) <= 16)
+
+def check_email(email):
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    return re.match(regex, email)
+
+def check_password(password):
+    #password must be min 8 characters long, must contain at least 1 letter, 1 number and 1 special character
+    regex = r'^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$'
+    return re.match(regex, password)
+
+def has_password(password):
+    return hashlib.md5(password.encode()).hexdigest()
+    
