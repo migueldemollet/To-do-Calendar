@@ -27,25 +27,30 @@ class TestUserController(unittest.TestCase):
     
     def test_get_by_username(self):
         self.assertEqual(self.controller.get_by_username('user1'), [{'username': 'user1', 'email': 'user1@tdcalendar.com', 'password': 'be3a7f14702be45fd3157db6144ca5bc'}])
-        self.assertEqual(self.controller.get_by_username('user2323'), 0)
+        self.assertEqual(self.controller.get_by_username('user2323'), [])
         self.assertEqual(self.controller.get_by_username(''), 1)
+        self.assertEqual(self.controller.get_by_username('user1sdfdcalendar'), 1)
 
     def test_change_username(self):
         self.assertEqual(self.controller.change_username('user1', 'user4'), True)
-        self.assertEqual(self.controller.change_username('user4', 'user4'), 1)
+        self.assertEqual(self.controller.change_username('user4', 'user4'), 0)
         self.assertEqual(self.controller.change_username('user1', 'user7'), 0)
+        self.assertEqual(self.controller.change_username('usesdfsdfsfsfsfsdfr1', 'user7'), 1)
+        self.assertEqual(self.controller.change_username('user7', 'fghfghfhfhhtrthdfdfd'), 1)
+        self.assertEqual(self.controller.change_username('', ''), 1)
 
     def test_delete_by_username(self):
         self.assertEqual(self.controller.delete_by_username('user1'), True)
         self.assertEqual(self.controller.delete_by_username('user1'), 0)
         self.assertEqual(self.controller.delete_by_username('user1xx'), 0)
+        self.assertEqual(self.controller.delete_by_username('fghfghfhfhhtrthdfdfd'), 1)
         self.assertEqual(self.controller.delete_by_username(''), 1)
 
     #-------------------------Email-------------------------------
 
     def test_get_by_email(self):
         self.assertEqual(self.controller.get_by_email('user1@tdcalendar.com'), [{'username': 'user1', 'email': 'user1@tdcalendar.com', 'password': 'be3a7f14702be45fd3157db6144ca5bc'}])
-        self.assertEqual(self.controller.get_by_email('user1wer@tdcalendar.com'), 0)
+        self.assertEqual(self.controller.get_by_email('user1wer@tdcalendar.com'), [])
         self.assertEqual(self.controller.get_by_email(''), 1)
         self.assertEqual(self.controller.get_by_email('usdad'), 1)
 
@@ -70,4 +75,5 @@ class TestUserController(unittest.TestCase):
         self.assertEqual(self.controller.change_password('user1', 'a2345678.'), True)
         self.assertEqual(self.controller.change_password('user1', '12345678.'), 1)
         self.assertEqual(self.controller.change_password('user1', 'a2345678'), 1)
+        self.assertEqual(self.controller.change_password('user1', 'adsdadsdds.'), 1)
 
