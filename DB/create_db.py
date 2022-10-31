@@ -3,30 +3,84 @@ import sqlite3
 conn = sqlite3.connect('./DB/to_do_calendar_test.db')
 c = conn.cursor()
 
-#remove tables
-c.execute("DROP TABLE IF EXISTS task")
-c.execute("DROP TABLE IF EXISTS tag")
-c.execute("DROP TABLE IF EXISTS user")
-c.execute("DROP TABLE IF EXISTS friend")
+#execute the following SQL to create the table user
+c.execute('''DROP TABLE IF EXISTS user''')
+c.execute(
+'''
+CREATE TABLE `user` (
+  `id` integer PRIMARY KEY AUTOINCREMENT,
+  `username` varchar(50) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `password` varchar(50) NOT NULL
+) 
+'''
+)
 
-c.execute('''CREATE TABLE task (id integer primary key, name text unique, status integer, tag integer, date text, color text, priority integer)''')
+#execute the following SQL to create the table tags 
+c.execute('''DROP TABLE IF EXISTS tag''')
 
+c.execute(
+'''
+CREATE TABLE `tag` (
+  `id` integer PRIMARY KEY AUTOINCREMENT,
+  `name` varchar(250) NOT NULL,
+  `color` varchar(250) NOT NULL DEFAULT 'white',
+  `id_user` int(10) NOT NULL,
+  FOREIGN KEY (`id_user`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) 
+'''
+)
 
-#create table tag with columns id, name unique, color
-c.execute('''CREATE TABLE tag (id integer primary key, name text unique, color text)''')
+#execute the following SQL to create the table friends
+c.execute('''DROP TABLE IF EXISTS friends''')
 
-#create table user with columns id, username unique, email unique, password
-c.execute('''CREATE TABLE user (id integer primary key, username text unique, email text unique, password text)''')
+c.execute(
+'''
+CREATE TABLE `friends` (
+  `id` integer PRIMARY KEY AUTOINCREMENT,
+  `id_user_1` int(10) NOT NULL,
+  `id_user_2` int(10) NOT NULL,
+  `state` int(2) NOT NULL DEFAULT 0,
+  FOREIGN KEY (`id_user_1`) REFERENCES `user` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_user_2`) REFERENCES `user` (`id`) ON DELETE CASCADE
+)
+'''
+)
 
-#create table friend with columns id, id_user1, id_user2, confirmed
-c.execute('''CREATE TABLE friend (id integer primary key, id_user1 integer, id_user2 integer, confirmed integer)''')
+#execute the following SQL to create the table task
+c.execute('''DROP TABLE IF EXISTS task''')
+c.execute(
+'''
+CREATE TABLE `task` (
+  `id` integer PRIMARY KEY AUTOINCREMENT,
+  `name` varchar(250) NOT NULL,
+  `description` text NOT NULL DEFAULT '',
+  `state` int(2) NOT NULL DEFAULT 0,
+  `date` varchar(150) NOT NULL,
+  `priority` int(2) NOT NULL DEFAULT 0,
+  `color` varchar(150) NOT NULL DEFAULT 'white',
+  `id_tag` int(10) NOT NULL,
+  `id_user` int(10) NOT NULL,
+  FOREIGN KEY (`id_tag`) REFERENCES `tag` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`id_user`) REFERENCES `user` (`id`) ON DELETE CASCADE
+)
+'''
+)
 
-#insert data into table tag
-c.execute("INSERT INTO tag VALUES (1, 'tag1', 'red')")
-c.execute("INSERT INTO tag VALUES (2, 'tag2', 'blue')")
-#insert data into table task
-c.execute("INSERT INTO task VALUES (1, 'task1', 0, 1, '01/01/2022', 'red', 1)")
-c.execute("INSERT INTO task VALUES (2, 'task2', 1, 2, '01/02/2022', 'blue', 2)")
+#execute the following SQL to create the table user_task
+c.execute('''DROP TABLE IF EXISTS user_task''')
+c.execute(
+'''
+CREATE TABLE `user_task` (
+  `id` integer PRIMARY KEY AUTOINCREMENT,
+  `user_id` int(10) NOT NULL,
+  `task_id` int(10) NOT NULL,
+  `role` int(2) NOT NULL,
+  FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`task_id`) REFERENCES `task` (`id`) ON DELETE CASCADE
+) 
+'''
+)
 
 #insert data into table user
 c.execute("INSERT INTO user VALUES (1, 'user1', 'user1@tdcalendar.com', 'be3a7f14702be45fd3157db6144ca5bc')")
