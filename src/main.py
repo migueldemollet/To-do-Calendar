@@ -3,8 +3,8 @@ from View.calendar_view import *
 if __name__ == '__main__':
     import tkinter as tk
     root = tk.Tk()
-    root.geometry("800x500")
-    new_frame = tk.Frame(root)
+    root.geometry("1200x500")
+    
     agenda = Agenda(root, selectmode='day')
     date = agenda.datetime.today()# + agenda.timedelta(days=2)
     agenda.calevent_create(date, 'Hello World', 'message')
