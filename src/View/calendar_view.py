@@ -10,7 +10,6 @@ class Agenda(Calendar):
                 self._cal_frame.rowconfigure(i + 1, uniform=1)
                 self._cal_frame.columnconfigure(j + 1, uniform=1)
                 label.configure(justify="center", anchor="n", padding=(1, 4))
-                self._properties['showweeknumbers'] = False
                 borra = 1
 
   
@@ -28,9 +27,21 @@ class Agenda(Calendar):
             i = len(ev_ids) - 1
             while i >= 0 and not self.calevents[ev_ids[i]]['tags']:
                 i -= 1
+                
+
             if i >= 0:
                 tag = self.calevents[ev_ids[i]]['tags'][-1]
                 label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))
+                
+
+            taglist_show=[]
+            for item in ev_ids:
+                if(self.calevents[item]['tags'] not in taglist_show):
+                        taglist_show.append(self.calevents[item]['tags'])
+
+            if len(taglist_show) > 1:
+                label.configure(style='tag_%s.%s.TLabel' % ('mix', self._style_prefixe))
+
             # modified lines:
             text = '%s\n' % date.day + '\n'.join([self.calevents[ev]['text'] for ev in ev_ids])
             label.configure(text=text)
