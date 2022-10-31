@@ -128,6 +128,40 @@ class TagModel:
         conn.close()
         return True
 
+    #-------------------------id_user-------------------------------
+
+    def get_by_id_user(self, id_user):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT * FROM tag WHERE id_user = ?;
+        """, (id_user,))
+
+        dic = convert_to_dict(cursor.fetchall())
+        conn.close()
+        
+        return dic
+
+    def change_id_user(self, name, new_id_user):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        UPDATE tag SET id_user = ? WHERE name = ?;
+        """, (new_id_user, name))
+        conn.commit()
+        conn.close()
+        return True
+
+    def delete_by_id_user(self, id_user):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM tag WHERE id_user = ?;
+        """, (id_user,))
+        conn.commit()
+        conn.close()
+        return True
+
 
 def convert_to_dict(rows):
     result = []
