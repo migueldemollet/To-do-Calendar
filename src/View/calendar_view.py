@@ -10,6 +10,8 @@ class Agenda(Calendar):
                 self._cal_frame.rowconfigure(i + 1, uniform=1)
                 self._cal_frame.columnconfigure(j + 1, uniform=1)
                 label.configure(justify="center", anchor="n", padding=(1, 4))
+                self._properties['showweeknumbers'] = False
+                borra = 1
 
   
     
@@ -130,13 +132,20 @@ class Agenda(Calendar):
         if self._properties['state'] == 'normal':
             label = event.widget
             if "disabled" not in label.state():
-                day = label.cget("text")
+                day = int(label.cget("text").split("\n")[0])
                 style = label.cget("style")
-                if style in ['normal_om.%s.TLabel' % self._style_prefixe, 'we_om.%s.TLabel' % self._style_prefixe]:
-                    if label in self._calendar[0]:
-                        self._prev_month()
-                    else:
-                        self._next_month()
+                #test =  ['normal_om.%s.TLabel' % self._style_prefixe, 'we_om.%s.TLabel' % self._style_prefixe]
+                #if style in ['normal_om.%s.TLabel' % self._style_prefixe, 'we_om.%s.TLabel' % self._style_prefixe, 'tag_message.%s.TLabel' % self._style_prefixe]:
+                #    if label in self._calendar[0]:
+                #        self._prev_month()
+                #    else:
+                #        self._next_month()
+
+                if day > 20 and label in self._calendar[0]:
+                    self._prev_month()
+                elif day < 10 and (label in self._calendar[4] or label in self._calendar[5]):
+                    self._next_month()
+                
                 if day:
                     
                     if isinstance(day,str):
