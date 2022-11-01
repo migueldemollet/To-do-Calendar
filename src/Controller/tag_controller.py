@@ -13,6 +13,9 @@ class TagController:
         if (not check_is_int(tag.user.id)):
             print("Invalid user id")
             return 1
+        if (tag.name == ""):
+            print("Tag name cannot be empty")
+            return 1
         if (not check_color(tag.color)):
             print("Invalid color")
             return 1
@@ -41,6 +44,9 @@ class TagController:
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
+        if (name == ""):
+            print("Tag name cannot be empty")
+            return 1
         return self.tag_model.get_by_name(name, user_id)
 
     def change_name(self, name, new_name, user_id):
@@ -49,6 +55,10 @@ class TagController:
             return 1
         if(name == new_name):
             print("Tag already has this name")
+            return 1
+
+        if (name == "" or new_name == ""):
+            print("Tag name cannot be empty")
             return 1
 
         if(self.tag_model.get_by_name(name, user_id) != []):

@@ -1,10 +1,9 @@
 class User():
-    def __init__(self, username: str, email: str, password: str, tasks: list = [], friends: list = []):
+    def __init__(self, id: int, username: str, email: str, password: str):
+        self.id = id
         self.username = username
         self.email = email
         self.password = password
-        self.tasks = tasks
-        self.friends = friends
 
     def __str__(self) -> str:
         return "Username: " + self.username + "\nEmail: " + self.email + "\nPassword: " + self.password + "\nTasks: " + str(self.tasks)
@@ -20,16 +19,4 @@ class User():
 
     def change_password(self, new_password):
         self.password = new_password
-    
-    def add_task(self, task):
-        self.tasks.append(task)
-    
-    def remove_task(self, task):
-        self.tasks.remove(task)
-    
-    def add_friend(self, friend):
-        self.friends.append(friend)
-    
-    def remove_friend(self, friend):
-        self.friends.remove(friend)
 

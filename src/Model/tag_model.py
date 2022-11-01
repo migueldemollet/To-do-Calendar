@@ -8,30 +8,30 @@ class TagModel:
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        INSERT INTO tag (name, color) VALUES (?, ?);
-        """, (tag.name, tag.color))
+        INSERT INTO tag (name, color, id_user) VALUES (?, ?, ?);
+        """, (tag.name, tag.color, tag.user.id))
         conn.commit()
         conn.close()
         return True
 
-    def get_all(self):
+    def get_all(self, id_user):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        SELECT * FROM tag;
-        """)
+        SELECT * FROM tag WHERE id_user = ?;
+        """, (id_user,))
         
         dic = convert_to_dict(cursor.fetchall())
         conn.close()
         
         return dic
 
-    def delete_all(self):
+    def delete_all(self, id_user):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        DELETE FROM tag;
-        """)
+        DELETE FROM tag WHERE id_user = ?;
+        """, (id_user,))
         conn.commit()
         conn.close()
         return True
@@ -62,68 +62,68 @@ class TagModel:
 
     #-------------------------Name-------------------------------
 
-    def get_by_name(self, name):
+    def get_by_name(self, name, user_id):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        SELECT * FROM tag WHERE name = ?;
-        """, (name,))
+        SELECT * FROM tag WHERE name = ? AND id_user = ?;
+        """, (name, user_id))
         
         dic = convert_to_dict(cursor.fetchall())
         conn.close()
         
         return dic
 
-    def change_name(self, name, new_name):
+    def change_name(self, name, new_name, user_id):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        UPDATE tag SET name = ? WHERE name = ?;
-        """, (new_name, name))
+        UPDATE tag SET name = ? WHERE name = ? AND id_user = ?;
+        """, (new_name, name, user_id))
         conn.commit()
         conn.close()
         return True
     
-    def delete_by_name(self, name):
+    def delete_by_name(self, name, user_id):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        DELETE FROM tag WHERE name = ?;
-        """, (name,))
+        DELETE FROM tag WHERE name = ? AND id_user = ?;
+        """, (name, user_id))
         conn.commit()
         conn.close()
         return True
 
     #-------------------------Color-------------------------------
 
-    def get_by_color(self, color):
+    def get_by_color(self, color, user_id):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        SELECT * FROM tag WHERE color = ?;
-        """, (color,))
+        SELECT * FROM tag WHERE color = ? AND id_user = ?;
+        """, (color, user_id))
 
         dic = convert_to_dict(cursor.fetchall())
         conn.close()
         
         return dic
 
-    def change_color(self, name, new_color):
+    def change_color(self, id, new_color):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        UPDATE tag SET color = ? WHERE name = ?;
-        """, (new_color, name))
+        UPDATE tag SET color = ? WHERE id = ?;
+        """, (new_color, id))
         conn.commit()
         conn.close()
         return True
 
-    def delete_by_color(self, color):
+    def delete_by_color(self, color, user_id):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        DELETE FROM tag WHERE color = ?;
-        """, (color,))
+        DELETE FROM tag WHERE color = ? AND id_user = ?;
+        """, (color, user_id))
         conn.commit()
         conn.close()
         return True
@@ -142,16 +142,6 @@ class TagModel:
         
         return dic
 
-    def change_id_user(self, name, new_id_user):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        UPDATE tag SET id_user = ? WHERE name = ?;
-        """, (new_id_user, name))
-        conn.commit()
-        conn.close()
-        return True
-
     def delete_by_id_user(self, id_user):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
@@ -167,8 +157,10 @@ def convert_to_dict(rows):
     result = []
     for row in rows:
         d = {
+            'id': row[0],
             'name': row[1],
-            'color': row[2]
+            'color': row[2],
+            'id_user': row[3]
         }
         result.append(d)
     return result
