@@ -1,9 +1,30 @@
 from tkcalendar import Calendar
+from tkinter import *
 
 class Agenda(Calendar):
 
     def __init__(self, master=None, **kw):
         Calendar.__init__(self, master, **kw)
+
+        self.left_frame = Frame(master, background="red",
+        borderwidth=5,  relief=RIDGE,
+        height=500, 
+        width=250, 
+        )
+        self.left_frame.pack(side=LEFT,
+        fill=BOTH, 
+        expand=YES,
+        )
+
+        self.right_frame = Frame(master, background="tan",
+            borderwidth=5,  relief=RIDGE,
+            width=250,
+        )
+        self.right_frame.pack(side=RIGHT,
+            fill=BOTH, 
+            expand=YES,
+        ) 
+
         # change a bit the options of the labels to improve display
         for i, row in enumerate(self._calendar):
             for j, label in enumerate(row):
@@ -82,6 +103,14 @@ class Agenda(Calendar):
                         if i >= 0:
                             tag = self.calevents[ev_ids[i]]['tags'][-1]
                             label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))
+
+                        taglist_show=[]
+                        for item in ev_ids:
+                            if(self.calevents[item]['tags'] not in taglist_show):
+                                    taglist_show.append(self.calevents[item]['tags'])
+
+                        if len(taglist_show) > 1:
+                            label.configure(style='tag_%s.%s.TLabel' % ('mix', self._style_prefixe))
                         # modified lines:
                         text = '%s\n' % day_number + '\n'.join([self.calevents[ev]['text'] for ev in ev_ids])
                         label.configure(text=text)
@@ -134,6 +163,15 @@ class Agenda(Calendar):
                     if i >= 0:
                         tag = self.calevents[ev_ids[i]]['tags'][-1]
                         label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))
+
+                    taglist_show=[]
+                    for item in ev_ids:
+                        if(self.calevents[item]['tags'] not in taglist_show):
+                                taglist_show.append(self.calevents[item]['tags'])
+
+                    if len(taglist_show) > 1:
+                        label.configure(style='tag_%s.%s.TLabel' % ('mix', self._style_prefixe))
+
                     # modified lines:
                     text = '%s\n' % date.day + '\n'.join([self.calevents[ev]['text'] for ev in ev_ids])
                     label.configure(text=text)
