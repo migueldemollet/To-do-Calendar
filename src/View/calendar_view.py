@@ -27,6 +27,8 @@ class Agenda(Calendar):
             pady=30
         ) 
 
+        
+
         # change a bit the options of the labels to improve display
         for i, row in enumerate(self._calendar):
             for j, label in enumerate(row):
@@ -232,7 +234,7 @@ class Agenda(Calendar):
         #Mostramos las tareas del dia seleccionado
         for event_id,ev in self.calevents.items():
             if (self._sel_date == ev['date']):
-                button_ch = Checkbutton(self.right_frame, text=ev['tags'][0]+": "+ev['text']  ,  font="Segoe", bg = (self._tags[ev['tags'][0]]['background']))
+                button_ch = Checkbutton(self.right_frame, text=ev['tags'][0]+": "+ev['text']  ,  font="Segoe", bg = (self._tags[ev['tags'][0]]['background']), foreground='black')
                 holi = self._tags[ev['tags'][0]]
                 print(self._tags[ev['tags'][0]]['background'])
                 button_ch.pack()

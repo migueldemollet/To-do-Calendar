@@ -14,9 +14,9 @@ if __name__ == '__main__':
     agenda.calevent_create(date + agenda.timedelta(days=3), 'Llamar al delegado!!', 'UNIVERSITAT')
     #agenda.calevent_remove(date + agenda.timedelta(days=3))
 
-    agenda.tag_config('UNIVERSITAT', background='red', foreground='white')
-    agenda.tag_config('TRABAJO', background='blue', foreground='white')
-    agenda.tag_config('mix',background='grey',foreground='white')
+    agenda.tag_config('UNIVERSITAT', background='DarkOliveGreen1', foreground='black')
+    agenda.tag_config('TRABAJO', background='bisque', foreground='black')
+    agenda.tag_config('mix',background='grey',foreground='black')
 
     agenda.pack(fill="both", expand=True)
     
