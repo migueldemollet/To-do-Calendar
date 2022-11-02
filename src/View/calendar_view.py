@@ -6,23 +6,25 @@ class Agenda(Calendar):
     def __init__(self, master=None, **kw):
         Calendar.__init__(self, master, **kw)
 
-        self.left_frame = Frame(master, background="red",
+        """ self.left_frame = Frame(master, background="red",
         borderwidth=5,  relief=RIDGE,
         height=500, 
-        width=250, 
+        width=50, 
         )
         self.left_frame.pack(side=LEFT,
         fill=BOTH, 
-        expand=YES,
-        )
+        expand=True,
+        )"""
 
-        self.right_frame = Frame(master, background="tan",
+        self.right_frame = Frame(master, background="AliceBlue",
             borderwidth=5,  relief=RIDGE,
-            width=250,
+            width=100,
         )
         self.right_frame.pack(side=RIGHT,
             fill=BOTH, 
-            expand=YES,
+            expand=True,
+            padx=20,
+            pady=30
         ) 
 
         # change a bit the options of the labels to improve display
@@ -41,6 +43,7 @@ class Agenda(Calendar):
         w, d = self._get_day_coords(date)
         if w is not None:
             label = self._calendar[w][d]
+            label.configure(width=15)
             if not label.cget('text'):
                 # this is an other month's day and showothermonth is False
                 return
@@ -54,6 +57,7 @@ class Agenda(Calendar):
                 tag = self.calevents[ev_ids[i]]['tags'][-1]
                 label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))
                 
+                
 
             taglist_show=[]
             for item in ev_ids:
@@ -64,7 +68,11 @@ class Agenda(Calendar):
                 label.configure(style='tag_%s.%s.TLabel' % ('mix', self._style_prefixe))
 
             # modified lines:
-            text = '%s\n' % date.day + '\n'.join([self.calevents[ev]['text'] for ev in ev_ids])
+            
+            text = '%s\n' % date.day + '\n'.join([self.calevents[ev]['text'][0:17] for ev in ev_ids])
+
+
+
             label.configure(text=text)
             
     def _display_days_without_othermonthdays(self):
@@ -112,7 +120,7 @@ class Agenda(Calendar):
                         if len(taglist_show) > 1:
                             label.configure(style='tag_%s.%s.TLabel' % ('mix', self._style_prefixe))
                         # modified lines:
-                        text = '%s\n' % day_number + '\n'.join([self.calevents[ev]['text'] for ev in ev_ids])
+                        text = '%s\n' % day_number + '\n'.join([self.calevents[ev]['text'][0:17] for ev in ev_ids])
                         label.configure(text=text)
                 else:
                     label.configure(text='', style=style)
@@ -173,11 +181,20 @@ class Agenda(Calendar):
                         label.configure(style='tag_%s.%s.TLabel' % ('mix', self._style_prefixe))
 
                     # modified lines:
-                    text = '%s\n' % date.day + '\n'.join([self.calevents[ev]['text'] for ev in ev_ids])
+                    text = '%s\n' % date.day + '\n'.join([self.calevents[ev]['text'][0:17] for ev in ev_ids])
                     label.configure(text=text)
             
     def _on_click(self, event):
         """Select the day on which the user clicked."""
+        
+            
+        """averaaa=self.left_frame.cget('borderwidth')
+        self.left_frame.configure(borderwidth=self.left_frame.cget('borderwidth')+1)"""
+        """ = Frame(master, background="red",
+        borderwidth=5,  relief=RIDGE,
+        height=500, 
+        width=50, 
+        )"""
         if self._properties['state'] == 'normal':
             label = event.widget
             if "disabled" not in label.state():
@@ -208,3 +225,20 @@ class Agenda(Calendar):
                         self._textvariable.set(self.format_date(self._sel_date))
                     self.event_generate("<<CalendarSelected>>")
 
+        #limpiamos el frame de tareas del dia seleccionado
+        for widget_i in self.right_frame.winfo_children():
+            widget_i.destroy()
+
+        #Mostramos las tareas del dia seleccionado
+        for event_id,ev in self.calevents.items():
+            if (self._sel_date == ev['date']):
+                button_ch = Checkbutton(self.right_frame, text=ev['tags'][0]+": "+ev['text']  ,  font="Segoe", bg = (self._tags[ev['tags'][0]]['background']))
+                holi = self._tags[ev['tags'][0]]
+                print(self._tags[ev['tags'][0]]['background'])
+                button_ch.pack()
+                
+
+            
+
+"""averaaa=self.left_frame.cget('borderwidth')
+        self.left_frame.configure(borderwidth=self.left_frame.cget('borderwidth')+1)"""
