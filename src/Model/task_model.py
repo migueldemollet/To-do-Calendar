@@ -35,6 +35,19 @@ class TaskModel:
         conn.close()
         return True
 
+    #--------------------------id-------------------------------
+    def get_by_id(self, id):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT * FROM task WHERE id = ?;
+        """, (id,))
+
+        dic = convert_to_dict(cursor.fetchall())
+        conn.close()
+        
+        return dic
+
     #-------------------------Name-------------------------------
 
     def get_by_name(self, name):
@@ -68,6 +81,52 @@ class TaskModel:
         conn.commit()
         conn.close()
         return True
+
+    #-------------------------description-------------------------------
+
+    def show_description_by_name(self, name):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT description FROM task WHERE name = ?;
+        """, (name,))
+
+        dic = convert_to_dict(cursor.fetchall())
+        conn.close()
+        
+        return dic
+
+    def show_description_by_id(self, id):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT description FROM task WHERE id = ?;
+        """, (id,))
+
+        dic = convert_to_dict(cursor.fetchall())
+        conn.close()
+        return dic
+
+    def change_description_by_id(self, id, new_description):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        UPDATE task SET description = ? WHERE id = ?;
+        """, (new_description, id))
+        conn.commit()
+        conn.close()
+        return True
+
+    def change_description_by_name(self, name, new_description):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        UPDATE task SET description = ? WHERE name = ?;
+        """, (new_description, name))
+        conn.commit()
+        conn.close()
+        return True
+
 
     #-------------------------Status-------------------------------
 
@@ -235,6 +294,74 @@ class TaskModel:
         cursor.execute("""
         DELETE FROM task WHERE priority = ?;
         """, (priority,))
+        conn.commit()
+        conn.close()
+        return True
+    
+    #-------------------------id_tag-------------------------------
+
+    def get_by_id_tag(self, id_tag):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT * FROM task WHERE id_tag = ?;
+        """, (id_tag,))
+
+        dic = convert_to_dict(cursor.fetchall())
+        conn.close()
+        
+        return dic
+
+    def change_id_tag(self, name, new_id_tag):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        UPDATE task SET id_tag = ? WHERE name = ?;
+        """, (new_id_tag, name))
+        conn.commit()
+        conn.close()
+        return True
+
+    def delete_by_id_tag(self, id_tag):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM task WHERE id_tag = ?;
+        """, (id_tag,))
+        conn.commit()
+        conn.close()
+        return True
+
+    #-------------------------id_user-------------------------------
+
+    def get_by_id_user(self, id_user):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT * FROM task WHERE id_user = ?;
+        """, (id_user,))
+
+        dic = convert_to_dict(cursor.fetchall())
+        conn.close()
+        
+        return dic
+
+    def change_id_user(self, name, new_id_user):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        UPDATE task SET id_user = ? WHERE name = ?;
+        """, (new_id_user, name))
+        conn.commit()
+        conn.close()
+        return True
+
+    def delete_by_id_user(self, id_user):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM task WHERE id_user = ?;
+        """, (id_user,))
         conn.commit()
         conn.close()
         return True
