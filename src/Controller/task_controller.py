@@ -56,8 +56,7 @@ class TaskController:
             print("Task with id "+str(id)+" does not exist")
             return 0
         self.user = self.user_controller.get_by_id(self.tasks[0]['id_user'])
-        for task in self.tasks:
-            self.tags.append(self.tag_controller.get_by_id(task['id_tag']))
+        self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
         
         return list_to_tasks(self.tasks, self.tags, self.user)[0]
 
@@ -83,8 +82,7 @@ class TaskController:
         
         self.tasks = self.task_model.get_by_name(name, user_id)
         self.user = self.user_controller.get_by_id(user_id)
-        for task in self.tasks:
-            self.tags.append(self.tag_controller.get_by_id(task['id_tag']))
+        self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
 
         return list_to_tasks(self.tasks, self.tags, self.user)
 
@@ -142,8 +140,7 @@ class TaskController:
         
         self.tasks = self.task_model.get_by_state(status, user_id)
         self.user = self.user_controller.get_by_id(user_id)
-        for task in self.tasks:
-            self.tags.append(self.tag_controller.get_by_id(task['id_tag']))
+        self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
         
         return list_to_tasks(self.tasks, self.tags, self.user)
 
@@ -190,8 +187,7 @@ class TaskController:
             return 1
         self.tasks = self.task_model.get_by_date(date, user_id)
         self.user = self.user_controller.get_by_id(user_id)
-        for task in self.tasks:
-            self.tags.append(self.tag_controller.get_by_id(task['id_tag']))
+        self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
         
         return list_to_tasks(self.tasks, self.tags, self.user)
 
@@ -234,8 +230,7 @@ class TaskController:
             return 1
         self.tasks = self.task_model.get_by_priority(priority, user_id)
         self.user = self.user_controller.get_by_id(user_id)
-        for task in self.tasks:
-            self.tags.append(self.tag_controller.get_by_id(task['id_tag']))
+        self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
         
         return list_to_tasks(self.tasks, self.tags, self.user)
 
@@ -283,8 +278,7 @@ class TaskController:
 
         self.tasks = self.task_model.get_by_color(color, user_id)
         self.user = self.user_controller.get_by_id(user_id)
-        for task in self.tasks:
-            self.tags.append(self.tag_controller.get_by_id(task['id_tag']))
+        self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
         
         return list_to_tasks(self.tasks, self.tags, self.user)
 
@@ -333,8 +327,7 @@ class TaskController:
             return 0
         self.tasks = self.task_model.get_by_tag(tag_id, user_id)
         self.user = self.user_controller.get_by_id(user_id)
-        for task in self.tasks:
-            self.tags.append(self.tag_controller.get_by_id(task['id_tag']))
+        self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
 
         return list_to_tasks(self.tasks, self.tags, self.user)
 
@@ -392,9 +385,7 @@ class TaskController:
             print("User with id "+str(user_id)+" does not exist")
             return 0
         self.tasks = self.task_model.get_by_user(user_id)
-        
-        for task in self.tasks:
-            self.tags.append(self.tag_controller.get_by_id(task['id_tag']))
+        self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
 
         return list_to_tasks(self.tasks, self.tags, self.user)
 
