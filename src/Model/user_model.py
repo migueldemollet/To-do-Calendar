@@ -14,26 +14,6 @@ class UserModel:
         conn.close()
         return True
 
-    def get_all(self):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        SELECT * FROM user;
-        """)
-        dic = convert_to_dict(cursor.fetchall())
-        conn.close()
-        return dic
-
-    def delete_all(self):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        DELETE FROM user;
-        """)
-        conn.commit()
-        conn.close()
-        return True
-
     #-------------------------Id-------------------------------
 
     def get_by_id(self, id):
@@ -42,16 +22,6 @@ class UserModel:
         cursor.execute("""
         SELECT * FROM user WHERE id = ?;
         """, (id,))
-        dic = convert_to_dict(cursor.fetchall())
-        conn.close()
-        return dic
-
-    def get_id_by_password(self, password):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        SELECT id FROM user WHERE password = ?;
-        """, (password,))
         dic = convert_to_dict(cursor.fetchall())
         conn.close()
         return dic
@@ -66,44 +36,34 @@ class UserModel:
         conn.close()
         return True
 
-    #-------------------------Name-------------------------------
+    #-------------------------Username-------------------------------
 
-    def get_by_name(self, name):
+    def get_by_username(self, username):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        SELECT * FROM user WHERE name = ?;
-        """, (name,))
+        SELECT * FROM user WHERE username = ?;
+        """, (username,))
         dic = convert_to_dict(cursor.fetchall())
         conn.close()
         return dic
 
-    def update_by_name(self, name, new_name):
+    def change_username(self, id, new_username):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        UPDATE user SET name = ? WHERE name = ?;
-        """, (new_name, name))
+        UPDATE user SET username = ? WHERE id = ?;
+        """, (new_username, id))
         conn.commit()
         conn.close()
         return True
 
-    def update_name_by_id(self, id, new_name):
+    def delete_by_username(self, username):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        UPDATE user SET name = ? WHERE id = ?;
-        """, (new_name, id))
-        conn.commit()
-        conn.close()
-        return True
-
-    def delete_by_name(self, name):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        DELETE FROM user WHERE name = ?;
-        """, (name,))
+        DELETE FROM user WHERE username = ?;
+        """, (username,))
         conn.commit()
         conn.close()
         return True
@@ -120,17 +80,7 @@ class UserModel:
         conn.close()
         return dic
 
-    def update_by_email(self, email, new_email):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        UPDATE user SET email = ? WHERE email = ?;
-        """, (new_email, email))
-        conn.commit()
-        conn.close()
-        return True
-
-    def update_email_by_id(self, id, new_email):
+    def change_email(self, id, new_email):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
@@ -152,7 +102,7 @@ class UserModel:
 
     #-------------------------Password-------------------------------
 
-    def update_password_by_id(self, id, new_password):
+    def change_password(self, id, new_password):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
@@ -162,15 +112,13 @@ class UserModel:
         conn.close()
         return True
 
- 
-
 
 def convert_to_dict(rows):
     result = []
     for row in rows:
         d = {
             'id': row[0],
-            'name': row[1],
+            'username': row[1],
             'email': row[2],
             'password': row[3]
         }
