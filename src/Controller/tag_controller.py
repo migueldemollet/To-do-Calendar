@@ -23,26 +23,15 @@ class TagController:
         if (not check_color(tag.color)):
             print("Invalid color")
             return 1
+        if ([self.user_controller.get_by_id(tag.user.id)] == []):
+            print("User does not exist")
+            return 1
         if(self.tag_model.get_by_id(tag.id) == []):
             self.tag_model.add(tag)
             return True
         else:
             print("Tag already exists")
             return 0
-
-    def get_all(self, user_id):
-        if (not check_is_int(user_id)):
-            print("Invalid user id")
-            return 1
-        self.tags = self.tag_model.get_all(user_id)
-        self.user = self.user_controller.get_by_id(user_id)[0]
-        return list_tags(self.tags, self.user)
-    
-    def delete_all(self, user_id):
-        if (not check_is_int(user_id)):
-            print("Invalid user id")
-            return 1
-        return self.tag_model.delete_all(user_id)
 
     #-------------------------id-------------------------------
     
@@ -54,8 +43,8 @@ class TagController:
         if (self.tags == []):
             print("Tag does not exist")
             return 0
-        self.user = self.user_controller.get_by_id(self.tags[0]['id_user'])[0]
-        return list_tags(self.tags, self.user)[0]
+        self.user = self.user_controller.get_by_id(self.tags[0]['id_user'])
+        return list_to_tags(self.tags, self.user)[0]
 
     def delete_by_id(self, id):
         if (not check_is_int(id)):
@@ -77,25 +66,25 @@ class TagController:
             print("Tag name cannot be empty")
             return 1
         self.tags = self.tag_model.get_by_name(name, user_id)
-        self.user = self.user_controller.get_by_id(user_id)[0]
-        return list_tags(self.tags, self.user)
+        self.user = self.user_controller.get_by_id(user_id)
+        return list_to_tags(self.tags, self.user)
 
-    def change_name(self, name, new_name, user_id):
-        if (not check_is_int(user_id)):
+    def change_name(self, tag, new_name):
+        if (not check_is_int(tag.user.id)):
             print("Invalid user id")
             return 1
-        if(name == new_name):
+        if(tag.name == new_name):
             print("Tag already has this name")
             return 1
 
-        if (name == "" or new_name == ""):
+        if (tag.name == "" or new_name == ""):
             print("Tag name cannot be empty")
             return 1
 
-        if(self.tag_model.get_by_name(name, user_id) != []):
-            return self.tag_model.change_name(name, new_name, user_id)
+        if(self.tag_model.get_by_id(tag.id) != []):
+            return self.tag_model.change_name(tag.id, new_name)
         else:
-            print("Tag "+name+" does not exist")
+            print("Tag "+tag.name+" does not exist")
             return 0
     
     def delete_by_name(self, name, user_id):
@@ -118,8 +107,8 @@ class TagController:
             print("Invalid user id")
             return 1
         self.tags = self.tag_model.get_by_color(color, user_id)
-        self.user = self.user_controller.get_by_id(user_id)[0]
-        return list_tags(self.tags, self.user)
+        self.user = self.user_controller.get_by_id(user_id)
+        return list_to_tags(self.tags, self.user)
     
     def change_color(self, tag, new_color):
         if (not check_color(new_color)):
@@ -153,4 +142,28 @@ class TagController:
             return self.tag_model.delete_by_color(color, user_id)
         else:
             print("Tag with color "+color+" does not exist")
+            return 0
+
+    #-------------------------id_user-------------------------------
+
+    def get_by_user(self, user_id):
+        if (not check_is_int(user_id)):
+            print("Invalid user id")
+            return 1
+        self.user = self.user_controller.get_by_id(user_id)
+        if(type(self.user) == int):
+            print("User does not exist")
+            return 0
+        self.tags = self.tag_model.get_by_user(user_id)
+        
+        return list_to_tags(self.tags, self.user)
+    
+    def delete_by_user(self, user_id):
+        if (not check_is_int(user_id)):
+            print("Invalid user id")
+            return 1
+        if(type(self.user_controller.get_by_id(user_id)) != int):
+            return self.tag_model.delete_by_user(user_id)
+        else:
+            print("User does not exist")
             return 0

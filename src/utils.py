@@ -17,7 +17,7 @@ def check_date(date):
 def check_priority(priority):
     return priority >= 0 and priority <= 2
 
-def check_status(status):
+def check_state(status):
     return status == 0 or status == 1
 
 def check_color(color):
@@ -41,8 +41,26 @@ def check_password(password):
 def has_password(password):
     return hashlib.md5(password.encode()).hexdigest()
 
-def list_to_user(list):
+def list_to_users(list):
     return [User(user['id'], user['username'], user['email'], user['password']) for user in list]
 
-def list_tags(list, user):
+def list_to_tags(list, user):
     return [Tag(tag['id'], tag['name'], tag['color'], user) for tag in list]
+
+def list_to_tasks(list, tags, user):
+    result = []
+    for task, tag in zip(list, tags):
+        result.append(
+            Task(
+                task['id'], 
+                task['name'], 
+                task['description'], 
+                task['state'], 
+                task['date'], 
+                task['priority'], 
+                task['color'], 
+                tag, 
+                user
+            )
+        )
+    return result

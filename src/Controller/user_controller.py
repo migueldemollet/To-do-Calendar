@@ -27,7 +27,11 @@ class UserController:
         if (not check_is_int(id)):
             print("Invalid id")
             return 1
-        return list_to_user(self.user_model.get_by_id(id))
+        self.user = self.user_model.get_by_id(id)
+        if (self.user == []):
+            print("User does not exist")
+            return 0
+        return list_to_users(self.user)[0]
     
     #-------------------------Username-------------------------------
 

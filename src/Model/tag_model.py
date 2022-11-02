@@ -14,28 +14,6 @@ class TagModel:
         conn.close()
         return True
 
-    def get_all(self, id_user):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        SELECT * FROM tag WHERE id_user = ?;
-        """, (id_user,))
-        
-        dic = convert_to_dict(cursor.fetchall())
-        conn.close()
-        
-        return dic
-
-    def delete_all(self, id_user):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        DELETE FROM tag WHERE id_user = ?;
-        """, (id_user,))
-        conn.commit()
-        conn.close()
-        return True
-
     #-------------------------Id-------------------------------
 
     def get_by_id(self, id):
@@ -74,12 +52,12 @@ class TagModel:
         
         return dic
 
-    def change_name(self, name, new_name, user_id):
+    def change_name(self, id, new_name):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        UPDATE tag SET name = ? WHERE name = ? AND id_user = ?;
-        """, (new_name, name, user_id))
+        UPDATE tag SET name = ? WHERE id = ?;
+        """, (new_name, id))
         conn.commit()
         conn.close()
         return True
@@ -130,7 +108,7 @@ class TagModel:
 
     #-------------------------id_user-------------------------------
 
-    def get_by_id_user(self, id_user):
+    def get_by_user(self, id_user):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
@@ -142,7 +120,7 @@ class TagModel:
         
         return dic
 
-    def delete_by_id_user(self, id_user):
+    def delete_by_user(self, id_user):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
@@ -156,11 +134,10 @@ class TagModel:
 def convert_to_dict(rows):
     result = []
     for row in rows:
-        d = {
+        result.append({
             'id': row[0],
             'name': row[1],
             'color': row[2],
             'id_user': row[3]
-        }
-        result.append(d)
+        })
     return result

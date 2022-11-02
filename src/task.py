@@ -17,7 +17,7 @@ class Task():
         return "Task: " + self.name + " Description: " + self.description + " State: " + self.state + " Date: " + self.date + " Priority: " + str(self.priority) + " Color: " + self.color + " Tag: " + str(self.tag) + " User: " + str(self.user)
     
     def __eq__(self, other):
-        return self.name == other.name
+        return self.id == other.id
 
     def start(self):
         self.state = 0

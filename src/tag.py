@@ -11,4 +11,4 @@ class Tag():
         return "Tag: " + self.name + "\nColor: " + self.color
 
     def __eq__(self, other):
-        return self.name == other.name
+        return self.id == other.id
