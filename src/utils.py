@@ -1,6 +1,9 @@
 import datetime
 import re
 import hashlib
+from user import User
+from tag import Tag
+from task import Task
 
 color_list = ["red", "green", "blue", "yellow", "pink", "purple", "orange", "white", "black"]
 
@@ -21,7 +24,7 @@ def check_color(color):
     return color in color_list
 
 def check_is_int(num):
-    return type(num) == int
+    return (type(num) == int and num > 0)
 
 def check_username(username):
     return (len(username) > 0 and len(username) <= 16)
@@ -37,4 +40,9 @@ def check_password(password):
 
 def has_password(password):
     return hashlib.md5(password.encode()).hexdigest()
-    
+
+def list_to_user(list):
+    return [User(user['id'], user['username'], user['email'], user['password']) for user in list]
+
+def list_tags(list, user):
+    return [Tag(tag['id'], tag['name'], tag['color'], user) for tag in list]

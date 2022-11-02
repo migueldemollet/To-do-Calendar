@@ -13,6 +13,7 @@ class UserController:
         self.user_model = UserModel("./DB/to_do_calendar_test.db")
         self.task_model = TaskModel("./DB/to_do_calendar_test.db")
         self.tag_model = TagModel("./DB/to_do_calendar_test.db")
+        self.user = []
 
     def add(self, user):
         if(self.user_model.get_by_username(user.username) == []):
@@ -21,6 +22,12 @@ class UserController:
         else:
             print("User already exists")
             return 0
+
+    def get_by_id(self, id):
+        if (not check_is_int(id)):
+            print("Invalid id")
+            return 1
+        return list_to_user(self.user_model.get_by_id(id))
     
     #-------------------------Username-------------------------------
 
@@ -90,4 +97,22 @@ class UserController:
             print("User does not exist")
             return 0
         return self.user_model.change_password(username, has_password(new_password))
+
+    #-------------------------Friends-------------------------------
+
+    def add_friend(self, username, friend_username):
+        if (not check_username(username) or not check_username(friend_username)):
+            print("Invalid username")
+            return 1
+        if (self.user_model.get_by_username(username) == [] or self.user_model.get_by_username(friend_username) == []):
+            print("User does not exist")
+            return 0
+        if (self.user_model.get_by_username(username)[0].friends == []):
+            self.user_model.add_friend(username, friend_username)
+            return True
+        if (friend_username in self.user_model.get_by_username(username)[4].friends):
+            print("Friend already exists")
+            return 0
+        self.user_model.add_friend(username, friend_username)
+        return True
 

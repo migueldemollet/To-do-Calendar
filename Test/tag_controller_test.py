@@ -12,6 +12,8 @@ class TestTagController(unittest.TestCase):
         super().__init__(methodName)
         self.controller = TagController()
         self.user = User(1, "user1", "user1@tdcalendar.com", "password1")
+        self.tag1 = Tag(1, 'tag1', 'red', self.user)
+        self.tag2 = Tag(2, 'tag2', 'blue', self.user)
 
     def setUp(self):
         restore()
@@ -32,19 +34,33 @@ class TestTagController(unittest.TestCase):
         self.assertEqual(self.controller.add(new_tag), 1)
 
     def test_get_all(self):
-        self.assertEqual(self.controller.get_all(self.user.id), [{'id':1, 'name': 'tag1', 'color': 'red', 'id_user': 1}, {'id':2, 'name': 'tag2', 'color': 'blue', 'id_user': 1}])
+        self.assertEqual(self.controller.get_all(self.user.id), [self.tag1, self.tag2])
         self.assertEqual(self.controller.get_all("df"), 1)
 
     def test_delete_all(self):
         self.assertEqual(self.controller.delete_all(self.user.id), True)
         self.assertEqual(self.controller.delete_all("ty"), 1)
+
+    #-------------------------Id-------------------------------
+
+    def test_get_by_id(self):
+        self.assertEqual(self.controller.get_by_id(1), self.tag1)
+        self.assertEqual(self.controller.get_by_id(2), self.tag2)
+        self.assertEqual(self.controller.get_by_id(4), 0)
+        self.assertEqual(self.controller.get_by_id(-1), 1)
+        self.assertEqual(self.controller.get_by_id(0), 1)
+
+    def test_delete_by_id(self):
+        self.assertEqual(self.controller.delete_by_id(1), True)
+        self.assertEqual(self.controller.delete_by_id(1), 0)
+        self.assertEqual(self.controller.delete_by_id(0), 1)
         
 
     #-------------------------Name-------------------------------
 
     def test_get_by_name(self):
-        self.assertEqual(self.controller.get_by_name('tag1', self.user.id), [{'id':1, 'name': 'tag1', 'color': 'red', 'id_user': 1}])
-        self.assertEqual(self.controller.get_by_name('tag2', self.user.id), [{'id':2, 'name': 'tag2', 'color': 'blue', 'id_user': 1}])
+        self.assertEqual(self.controller.get_by_name('tag1', self.user.id), [self.tag1])
+        self.assertEqual(self.controller.get_by_name('tag2', self.user.id), [self.tag2])
         self.assertEqual(self.controller.get_by_name('tag3', self.user.id), [])
         self.assertEqual(self.controller.get_by_name('', self.user.id), 1)
         self.assertEqual(self.controller.get_by_name('tag3', "fff"), 1)
@@ -65,8 +81,8 @@ class TestTagController(unittest.TestCase):
     #-------------------------Color-------------------------------
 
     def test_get_by_color(self):
-        self.assertEqual(self.controller.get_by_color('red', self.user.id), [{'id':1, 'name': 'tag1', 'color': 'red', 'id_user': 1}])
-        self.assertEqual(self.controller.get_by_color('blue', self.user.id), [{'id':2, 'name': 'tag2', 'color': 'blue', 'id_user': 1}])
+        self.assertEqual(self.controller.get_by_color('red', self.user.id), [self.tag1])
+        self.assertEqual(self.controller.get_by_color('blue', self.user.id), [self.tag2])
         self.assertEqual(self.controller.get_by_color('green', self.user.id), [])
         self.assertEqual(self.controller.get_by_color('', self.user.id), 1)
         self.assertEqual(self.controller.get_by_color('blue', "self.user.id"), 1)
