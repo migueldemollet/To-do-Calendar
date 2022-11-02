@@ -33,14 +33,6 @@ class TestTagController(unittest.TestCase):
         new_tag.user = User(67, "user1", "user1@tdcalendar.com", "password1")
         self.assertEqual(self.controller.add(new_tag), 1)
 
-    def test_get_all(self):
-        self.assertEqual(self.controller.get_all(self.user.id), [self.tag1, self.tag2])
-        self.assertEqual(self.controller.get_all("df"), 1)
-
-    def test_delete_all(self):
-        self.assertEqual(self.controller.delete_all(self.user.id), True)
-        self.assertEqual(self.controller.delete_all("ty"), 1)
-
     #-------------------------Id-------------------------------
 
     def test_get_by_id(self):
@@ -66,10 +58,13 @@ class TestTagController(unittest.TestCase):
         self.assertEqual(self.controller.get_by_name('tag3', "fff"), 1)
 
     def test_change_name(self):
-        self.assertEqual(self.controller.change_name('tag1', 'tag4', self.user.id), True)
-        self.assertEqual(self.controller.change_name('tag4', 'tag4', self.user.id), 1)
-        self.assertEqual(self.controller.change_name('tag1', 'tag7', self.user.id), 0)
-        self.assertEqual(self.controller.change_name('tag1', '', self.user.id), 1)
+        tag = Tag(1, 'tag1', 'red', self.user)
+        self.assertEqual(self.controller.change_name(tag, 'tag4'), True)
+        tag.name = 'tag4'
+        self.assertEqual(self.controller.change_name(tag, 'tag4'), 1)
+        self.assertEqual(self.controller.change_name(tag, ''), 1)
+        tag.user.id = 0
+        self.assertEqual(self.controller.change_name(tag, 'tag1'), 1)
         
 
     def test_delete_by_name(self):
@@ -105,6 +100,18 @@ class TestTagController(unittest.TestCase):
         self.assertEqual(self.controller.delete_by_color('red', self.user.id), 0)
         self.assertEqual(self.controller.delete_by_color('redxx', self.user.id), 1)
         self.assertEqual(self.controller.delete_by_color('red', "self.user.id"), 1)
+
+    #-------------------------id_user-------------------------------
+
+    def test_get_by_user(self):
+        self.assertEqual(self.controller.get_by_user(self.user.id), [self.tag1, self.tag2])
+        self.assertEqual(self.controller.get_by_user("df"), 1)
+        self.assertEqual(self.controller.get_by_user(874), 0)
+
+    def test_delete_by_user(self):
+        self.assertEqual(self.controller.delete_by_user(self.user.id), True)
+        self.assertEqual(self.controller.delete_by_user("ty"), 1)
+        self.assertEqual(self.controller.delete_by_user(68), 0)
 
 def restore():
     conn = sqlite3.connect('./DB/to_do_calendar_test.db')
