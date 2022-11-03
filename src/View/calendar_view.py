@@ -5,7 +5,11 @@ class Agenda(Calendar):
 
     def __init__(self, master=None, **kw):
         Calendar.__init__(self, master, **kw)
+        
+        self._CONTROLLER_getTasks()
 
+        self.list_buttons = []
+        
         """ self.left_frame = Frame(master, background="red",
         borderwidth=5,  relief=RIDGE,
         height=500, 
@@ -38,8 +42,23 @@ class Agenda(Calendar):
                 borra = 1
 
   
-    
+    def _CONTROLLER_complete_task(self,selected_day_tasks):
+        print (self.list_buttons[selected_day_tasks].cget('text'))
+        #self.list_buttons[selected_day_tasks].configure(font =(overstrike = 1))
+        
+    def _CONTROLLER_getTasks(self):
+        date = self.datetime.today()# + self.timedelta(days=2)
+        self.calevent_create(date, 'Llamar jefe', 'TRABAJO')
+        self.calevent_create(date, 'Revisar correo', 'TRABAJO')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=3), 'Fichar al salir', 'TRABAJO')
+        self.calevent_create(date + self.timedelta(days=3), 'Llamar al delegado!!', 'UNIVERSITAT')
+        #self.calevent_remove(date + self.timedelta(days=3))
 
+        self.tag_config('UNIVERSITAT', background='DarkOliveGreen1', foreground='black')
+        self.tag_config('TRABAJO', background='bisque', foreground='black')
+        self.tag_config('mix',background='grey',foreground='black')
+    
     def _show_event(self, date):
         """Display events on date if visible."""
         w, d = self._get_day_coords(date)
@@ -231,15 +250,23 @@ class Agenda(Calendar):
         for widget_i in self.right_frame.winfo_children():
             widget_i.destroy()
 
+        self.list_buttons.clear()
+        
         #Mostramos las tareas del dia seleccionado
+        selected_day_tasks = 0
         for event_id,ev in self.calevents.items():
             if (self._sel_date == ev['date']):
-                button_ch = Checkbutton(self.right_frame, text=ev['tags'][0]+": "+ev['text']  ,  font="Segoe", bg = (self._tags[ev['tags'][0]]['background']), foreground='black')
-                holi = self._tags[ev['tags'][0]]
-                print(self._tags[ev['tags'][0]]['background'])
+                #button_ch = Checkbutton(self.right_frame, text=ev['tags'][0]+": "+ev['text']  , font=('Segoe', 10) ,  bg = (self._tags[ev['tags'][0]]['background']), foreground='black')
+                button_ch = Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
+                    [print(selected_day_tasks),self._CONTROLLER_complete_task(selected_day_tasks)], \
+                    text=ev['tags'][0]+": "+ev['text']  , font=('Segoe', 10) ,  \
+                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black')
+                self.list_buttons.append(button_ch)
+                selected_day_tasks += 1
                 button_ch.pack()
                 
-
+                
+        #button_ch.config(text="hello")
             
 
 """averaaa=self.left_frame.cget('borderwidth')
