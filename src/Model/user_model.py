@@ -8,8 +8,8 @@ class UserModel:
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        INSERT INTO user (id, name, email, password ) VALUES (?,?, ?, ?);
-        """, (user.id,user.name, user.email, user.password))
+        INSERT INTO user (id, username, email, password ) VALUES (?,?, ?, ?);
+        """, (user.id,user.username, user.email, user.password))
         conn.commit()
         conn.close()
         return True

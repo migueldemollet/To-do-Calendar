@@ -35,7 +35,7 @@ def check_email(email):
 
 def check_password(password):
     #password must be min 8 characters long, must contain at least 1 letter, 1 number and 1 special character
-    regex = r'^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$'
+    regex = r'^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@.#$%^&*]{8,}$'
     return re.match(regex, password)
 
 def has_password(password):
