@@ -4,11 +4,24 @@ import tkinter.font as tkFont
 
 class Agenda(Calendar):
 
-    def __init__(self, master=None, **kw):
+    def __init__(self, master=None,  **kw):
+        
+        WINDOW_WIDTH = int(master.winfo_screenwidth()*80/100)
+        WINDOW_HEIGHT = int(master.winfo_screenheight()*60/100)
+        WINDOW_MARGIN_X = int((master.winfo_screenwidth()-WINDOW_WIDTH)/2)
+        WINDOW_MARGIN_Y = int((master.winfo_screenheight()-WINDOW_HEIGHT-60)/2)
+        
+        master.geometry(str(WINDOW_WIDTH)+'x'+str(WINDOW_HEIGHT)+"+"+str(WINDOW_MARGIN_X)+"+"+str(WINDOW_MARGIN_Y)+"")
+        
+        
         Calendar.__init__(self, master, **kw)
         self.normal_Font = tkFont.Font(family="Segoe", size=10, slant='roman', overstrike = 0)
         self.completed_Font = tkFont.Font(family="Segoe", size=10, slant='italic', overstrike = 1)
         self.icon_Font = tkFont.Font(family="Console", size=10)
+        self.alert_Font = tkFont.Font(family="Console", size=12)
+        
+        
+        self._CONTROLLER_getTags()
         self._CONTROLLER_getTasks()
 
         self.list_buttons = []
@@ -22,11 +35,13 @@ class Agenda(Calendar):
         fill=BOTH, 
         expand=True,
         )"""
-        self.message_label = Label(master)
+        
+        
+        self.message_label = Label(master, font=self.alert_Font, fg='red')
         self.message_label.pack(side=BOTTOM)
 
         self.right_frame = Frame(master, background="AliceBlue",
-            borderwidth=5,  relief=RIDGE,
+            borderwidth=15,  relief=RIDGE,
             width=100,
         )
         self.right_frame.pack(side=RIGHT,
@@ -35,6 +50,12 @@ class Agenda(Calendar):
             padx=20,
             pady=30
         ) 
+        
+        """self.sb = Scrollbar(master, command=self.right_frame.yview)
+        self.sb.pack(side="right")
+        self.right_frame.configure(yscrollcommand=self.sb.set)"""
+        
+        
 
         
 
@@ -44,8 +65,8 @@ class Agenda(Calendar):
                 self._cal_frame.rowconfigure(i + 1, uniform=1)
                 self._cal_frame.columnconfigure(j + 1, uniform=1)
                 label.configure(justify="center", anchor="n", padding=(1, 4))
-                borra = 1
-
+                
+        
     
     
   
@@ -54,22 +75,33 @@ class Agenda(Calendar):
             self.calevents[ev_id]['completed'] = 1
         else:
             self.calevents[ev_id]['completed'] = 0
-        print (self.calevents[ev_id]['text'] + "switched to " + str(self.calevents[ev_id]['completed']))
         
-        self._on_click(event)
+        self._on_click(event,1)
+        
+        self.message_label.configure(text=(self.calevents[ev_id]['text'] + "switched to " + str(self.calevents[ev_id]['completed'])))
+        self.message_label.update()
         
 
     def _CONTROLLER_show_description(self,event_id,event):
         self.message_label.configure(text='NOT IMPLEMENTED!')
+        self.update()
         
     def _CONTROLLER_edit_task(self,event_id,event):
         self.message_label.configure(text='NOT IMPLEMENTED!')
+        self.update()
         
         
     def _CONTROLLER_delete_task(self,event_id,event):
         self.message_label.configure(text='NOT IMPLEMENTED!')
+        self.update()
         
+     
+    def _CONTROLLER_getTags(self):
+        self.tag_config('UNIVERSITAT', background='DarkOliveGreen1', foreground='black')
+        self.tag_config('TRABAJO', background='bisque', foreground='black')
+        self.tag_config('mix',background='grey',foreground='black')
         
+       
         
     def _CONTROLLER_getTasks(self):
         date = self.datetime.today()# + self.timedelta(days=2)
@@ -81,20 +113,34 @@ class Agenda(Calendar):
         self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
         self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
         self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
         self.calevent_create(date + self.timedelta(days=3), 'Fichar al salir', 'TRABAJO')
         self.calevent_create(date + self.timedelta(days=3), 'Llamar al delegado!!', 'UNIVERSITAT')
         #self.calevent_remove(date + self.timedelta(days=3))
 
-        self.tag_config('UNIVERSITAT', background='DarkOliveGreen1', foreground='black')
-        self.tag_config('TRABAJO', background='bisque', foreground='black')
-        self.tag_config('mix',background='grey',foreground='black')
         
         for event_id,ev in self.calevents.items():
             if(event_id%2 == 0):
                 ev['completed'] = 0
             else:
                 ev['completed'] = 1
-            print(ev['completed'])
             
     
     
@@ -264,34 +310,41 @@ class Agenda(Calendar):
                         
                     label.configure(text=text)
             
-    def _on_click(self, event):
+    def _on_click(self, event,option=0):
         """Select the day on which the user clicked."""
         #To clear Message bottom label:
         self.message_label.configure(text='')
         
         if self._properties['state'] == 'normal':
-            label = event.widget
-            if "disabled" not in label.state():
-                day = int(label.cget("text").split("\n")[0])
-                style = label.cget("style")
-                
-                if day > 20 and label in self._calendar[0]:
-                    self._prev_month()
-                elif day < 10 and (label in self._calendar[4] or label in self._calendar[5]):
-                    self._next_month()
-                
-                if day:
+            if(option==1):
+                self._remove_selection()
+                self._display_selection()
+                self.event_generate("<<CalendarSelected>>")
+            else:
+                label = event.widget
+                if "disabled" not in label.state():
+                    day = int(label.cget("text").split("\n")[0])
+                    style = label.cget("style")
                     
-                    if isinstance(day,str):
-                        day = int(day.split("\n")[0])
-                    day = int(day)
-                    year, month = self._date.year, self._date.month
-                    self._remove_selection()
-                    self._sel_date = self.date(year, month, day)
-                    self._display_selection()
-                    if self._textvariable is not None:
-                        self._textvariable.set(self.format_date(self._sel_date))
-                    self.event_generate("<<CalendarSelected>>")
+                    
+                    if option == 0:
+                        if day > 20 and label in self._calendar[0]:
+                            self._prev_month()
+                        elif day < 10 and (label in self._calendar[4] or label in self._calendar[5]):
+                            self._next_month()
+                    
+                    if day:
+                        
+                        if isinstance(day,str):
+                            day = int(day.split("\n")[0])
+                        day = int(day)
+                        year, month = self._date.year, self._date.month
+                        self._remove_selection()
+                        self._sel_date = self.date(year, month, day)
+                        self._display_selection()
+                        if self._textvariable is not None:
+                            self._textvariable.set(self.format_date(self._sel_date))
+                        self.event_generate("<<CalendarSelected>>")
 
         #limpiamos el frame de tareas del dia seleccionado
         for widget_i in self.right_frame.winfo_children():
@@ -303,7 +356,6 @@ class Agenda(Calendar):
         selected_day_tasks = 0
         for event_id,ev in self.calevents.items():
             if (self._sel_date == ev['date']):
-                print("Overstrike: "+str(ev['completed'])+"\n")
                 if(ev['completed']==0):
                     task_font = self.normal_Font
                 else:
@@ -314,27 +366,27 @@ class Agenda(Calendar):
                     
                 #button_ch = Checkbutton(self.right_frame, text=ev['tags'][0]+": "+ev['text']  , font=('Segoe', 10) ,  bg = (self._tags[ev['tags'][0]]['background']), foreground='black')
                 button_ch = Button(self.right_frame, command=lambda event_id=event_id: \
-                    [print(event_id),self._CONTROLLER_complete_task(event_id,event)], \
+                    [self._CONTROLLER_complete_task(event_id,event)], \
                     text=ev['tags'][0]+": "+ev['text']  , font=task_font ,  \
-                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1)
+                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1,pady=0,padx=0)
                 button_ch.grid(row=selected_day_tasks,column=0, sticky='ew')#pack(fill=X)
                 self.list_buttons.append(button_ch)
                 
                 Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
                     [self._CONTROLLER_show_description(event_id,event)], \
                     text="☰"  , font=self.icon_Font, \
-                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks,column=1, sticky="ew")#pack(side=LEFT)
+                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks,column=1, sticky="ew",pady=0,padx=0)#pack(side=LEFT)
                 
                 
                 Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
                     [self._CONTROLLER_edit_task(event_id,event)], \
                     text="✎"  , font=self.icon_Font, \
-                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks,column=2, sticky="ew")#pack(side=LEFT)
+                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks,column=2, sticky="ew",pady=0,padx=0)#pack(side=LEFT)
                 
                 Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
                     [self._CONTROLLER_delete_task(event_id,event)], \
                     text="❌"  ,  font=self.icon_Font,\
-                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks,column=3, sticky="ew")#.pack(side=LEFT)
+                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks,column=3, sticky="ew",pady=0,padx=0)#.pack(side=LEFT)
                 
                 """Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
                     [self._CONTROLLER_complete_task(selected_day_tasks)], \
@@ -347,6 +399,6 @@ class Agenda(Calendar):
                 
         #button_ch.config(text="hello")
             
-
+    
 """averaaa=self.left_frame.cget('borderwidth')
         self.left_frame.configure(borderwidth=self.left_frame.cget('borderwidth')+1)"""
