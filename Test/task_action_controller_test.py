@@ -29,44 +29,51 @@ class TestTaskActionController(unittest.TestCase):
     
     def test_create_task(self):
         task_new = Task(4, "task4", "description4", 1, "01/01/2022", 2, "green", self.tag3, self.user2, [])
-        self.assertEqual(self.controller.create_task(task_new), True)
-        self.assertEqual(self.controller.create_task(self.task1), 0)
+        self.assertEqual(self.controller.add(task_new), True)
+        self.assertEqual(self.controller.add(self.task1), 0)
         self.task2.id = "fer"
-        self.assertEqual(self.controller.create_task(self.task2), 1)
+        self.assertEqual(self.controller.add(self.task2), 1)
         self.task2.id = 2
         self.task3.user.id = "fer"
-        self.assertEqual(self.controller.create_task(self.task3), 1)
+        self.assertEqual(self.controller.add(self.task3), 1)
 
     #-------------------------Share-------------------------------
     
     def test_share_task(self):
-        self.assertEqual(self.controller.share_task(self.task2, self.user1), True)
-        self.assertEqual(self.controller.share_task(self.task1, self.user2), 0)
+        self.assertEqual(self.controller.share(self.task2, self.user1), True)
+        self.assertEqual(self.controller.share(self.task1, self.user2), 0)
         self.task2.id = "fer"
-        self.assertEqual(self.controller.share_task(self.task2, self.user2), 1)
+        self.assertEqual(self.controller.share(self.task2, self.user2), 1)
         self.task2.id = 2
         self.task2.user.id = "fer"
-        self.assertEqual(self.controller.share_task(self.task3, self.user2), 1)
+        self.assertEqual(self.controller.share(self.task3, self.user2), 1)
         self.task3.user.id = 3
-        self.assertEqual(self.controller.share_task(self.task3, self.user2), 1)
+        self.assertEqual(self.controller.share(self.task3, self.user2), 1)
 
     #-------------------------Unshare-------------------------------
     
     def test_unshare_task(self):
-        self.assertEqual(self.controller.unshare_task(self.task1, self.user2), True)
-        self.assertEqual(self.controller.unshare_task(self.task2, self.user1), 0)
+        self.assertEqual(self.controller.unshare(self.task1, self.user2), True)
+        self.assertEqual(self.controller.unshare(self.task2, self.user1), 0)
         self.task1.id = "fer"
-        self.assertEqual(self.controller.unshare_task(self.task1, self.user2), 1)
+        self.assertEqual(self.controller.unshare(self.task1, self.user2), 1)
         self.task1.id = 1
         self.user2.id = "fer"
-        self.assertEqual(self.controller.unshare_task(self.task1, self.user2), 1)
+        self.assertEqual(self.controller.unshare(self.task1, self.user2), 1)
     
     #-------------------------Task_id-------------------------------
     
     def test_get_user_by_task_id(self):
         self.assertEqual(self.controller.get_users_by_task_id(self.task1.id), [self.user2]) 
-        self.assertEqual(self.controller.get_users_by_task_id(4), 0)
+        self.assertEqual(self.controller.get_users_by_task_id(4), [])
         self.assertEqual(self.controller.get_users_by_task_id("fer"), 1)
+    
+    #-------------------------User_id-------------------------------
+
+    def test_get_tasks_by_user_id(self):
+        self.assertEqual(self.controller.get_tasks_shared_by_user_id(self.user2.id), [self.task1])
+        self.assertEqual(self.controller.get_tasks_shared_by_user_id(4), [])
+        self.assertEqual(self.controller.get_tasks_shared_by_user_id("fer"), 1)
     
 def restore():
     conn = sqlite3.connect('./DB/to_do_calendar_test.db')
