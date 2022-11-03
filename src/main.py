@@ -4,8 +4,8 @@ import tkinter as tk
 if __name__ == '__main__':
     root = tk.Tk()
     root.geometry("1200x500")
-    
+    #cursor="hand1"
     agenda = Agenda(root, selectmode='day')
     agenda.pack(fill="both", expand=True)
     
-    root.mainloop()    
+    root.mainloop()

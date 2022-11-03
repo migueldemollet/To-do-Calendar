@@ -1,11 +1,14 @@
 from tkcalendar import Calendar
 from tkinter import *
+import tkinter.font as tkFont
 
 class Agenda(Calendar):
 
     def __init__(self, master=None, **kw):
         Calendar.__init__(self, master, **kw)
-        
+        self.normal_Font = tkFont.Font(family="Segoe", size=10, slant='roman', overstrike = 0)
+        self.completed_Font = tkFont.Font(family="Segoe", size=10, slant='italic', overstrike = 1)
+        self.icon_Font = tkFont.Font(family="Console", size=10)
         self._CONTROLLER_getTasks()
 
         self.list_buttons = []
@@ -19,6 +22,8 @@ class Agenda(Calendar):
         fill=BOTH, 
         expand=True,
         )"""
+        self.message_label = Label(master)
+        self.message_label.pack(side=BOTTOM)
 
         self.right_frame = Frame(master, background="AliceBlue",
             borderwidth=5,  relief=RIDGE,
@@ -41,15 +46,40 @@ class Agenda(Calendar):
                 label.configure(justify="center", anchor="n", padding=(1, 4))
                 borra = 1
 
+    
+    
   
-    def _CONTROLLER_complete_task(self,selected_day_tasks):
-        print (self.list_buttons[selected_day_tasks].cget('text'))
-        #self.list_buttons[selected_day_tasks].configure(font =(overstrike = 1))
+    def _CONTROLLER_complete_task(self,ev_id,event):
+        if(self.calevents[ev_id]['completed'] == 0):
+            self.calevents[ev_id]['completed'] = 1
+        else:
+            self.calevents[ev_id]['completed'] = 0
+        print (self.calevents[ev_id]['text'] + "switched to " + str(self.calevents[ev_id]['completed']))
+        
+        self._on_click(event)
+        
+
+    def _CONTROLLER_show_description(self,event_id,event):
+        self.message_label.configure(text='NOT IMPLEMENTED!')
+        
+    def _CONTROLLER_edit_task(self,event_id,event):
+        self.message_label.configure(text='NOT IMPLEMENTED!')
+        
+        
+    def _CONTROLLER_delete_task(self,event_id,event):
+        self.message_label.configure(text='NOT IMPLEMENTED!')
+        
+        
         
     def _CONTROLLER_getTasks(self):
         date = self.datetime.today()# + self.timedelta(days=2)
         self.calevent_create(date, 'Llamar jefe', 'TRABAJO')
         self.calevent_create(date, 'Revisar correo', 'TRABAJO')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
         self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
         self.calevent_create(date + self.timedelta(days=3), 'Fichar al salir', 'TRABAJO')
         self.calevent_create(date + self.timedelta(days=3), 'Llamar al delegado!!', 'UNIVERSITAT')
@@ -58,6 +88,16 @@ class Agenda(Calendar):
         self.tag_config('UNIVERSITAT', background='DarkOliveGreen1', foreground='black')
         self.tag_config('TRABAJO', background='bisque', foreground='black')
         self.tag_config('mix',background='grey',foreground='black')
+        
+        for event_id,ev in self.calevents.items():
+            if(event_id%2 == 0):
+                ev['completed'] = 0
+            else:
+                ev['completed'] = 1
+            print(ev['completed'])
+            
+    
+    
     
     def _show_event(self, date):
         """Display events on date if visible."""
@@ -90,8 +130,13 @@ class Agenda(Calendar):
 
             # modified lines:
             
-            text = '%s\n' % date.day + '\n'.join([self.calevents[ev]['text'][0:17] for ev in ev_ids])
-
+            #text = '%s\n' % date.day + '\n'.join([self.calevents[ev]['text'][0:17] for ev in ev_ids])
+            text = str(date.day)+'\n'
+            for ev in ev_ids[0:2]:
+                text = text + self.calevents[ev]['text'][0:17] + '\n'
+                    
+            if(len(ev_ids)>3):
+                text = text+'...'
 
 
             label.configure(text=text)
@@ -141,7 +186,14 @@ class Agenda(Calendar):
                         if len(taglist_show) > 1:
                             label.configure(style='tag_%s.%s.TLabel' % ('mix', self._style_prefixe))
                         # modified lines:
-                        text = '%s\n' % day_number + '\n'.join([self.calevents[ev]['text'][0:17] for ev in ev_ids])
+                        #text = '%s\n' % day_number + '\n'.join([self.calevents[ev]['text'][0:17] for ev in ev_ids])
+                        text = str(date.day)+'\n'
+                        for ev in ev_ids[0:2]:
+                            text = text + self.calevents[ev]['text'][0:17] + '\n'
+                    
+                        if(len(ev_ids)>3):
+                            text = text+'...'
+                            
                         label.configure(text=text)
                 else:
                     label.configure(text='', style=style)
@@ -202,32 +254,27 @@ class Agenda(Calendar):
                         label.configure(style='tag_%s.%s.TLabel' % ('mix', self._style_prefixe))
 
                     # modified lines:
-                    text = '%s\n' % date.day + '\n'.join([self.calevents[ev]['text'][0:17] for ev in ev_ids])
+                    #text = '%s\n' % date.day + '\n'.join([self.calevents[ev]['text'][0:17] for ev in ev_ids])
+                    text = str(date.day)+'\n'
+                    for ev in ev_ids[0:2]:
+                        text = text + self.calevents[ev]['text'][0:17] + '\n'
+                    
+                    if(len(ev_ids)>3):
+                        text = text+'...'
+                        
                     label.configure(text=text)
             
     def _on_click(self, event):
         """Select the day on which the user clicked."""
+        #To clear Message bottom label:
+        self.message_label.configure(text='')
         
-            
-        """averaaa=self.left_frame.cget('borderwidth')
-        self.left_frame.configure(borderwidth=self.left_frame.cget('borderwidth')+1)"""
-        """ = Frame(master, background="red",
-        borderwidth=5,  relief=RIDGE,
-        height=500, 
-        width=50, 
-        )"""
         if self._properties['state'] == 'normal':
             label = event.widget
             if "disabled" not in label.state():
                 day = int(label.cget("text").split("\n")[0])
                 style = label.cget("style")
-                #test =  ['normal_om.%s.TLabel' % self._style_prefixe, 'we_om.%s.TLabel' % self._style_prefixe]
-                #if style in ['normal_om.%s.TLabel' % self._style_prefixe, 'we_om.%s.TLabel' % self._style_prefixe, 'tag_message.%s.TLabel' % self._style_prefixe]:
-                #    if label in self._calendar[0]:
-                #        self._prev_month()
-                #    else:
-                #        self._next_month()
-
+                
                 if day > 20 and label in self._calendar[0]:
                     self._prev_month()
                 elif day < 10 and (label in self._calendar[4] or label in self._calendar[5]):
@@ -256,14 +303,46 @@ class Agenda(Calendar):
         selected_day_tasks = 0
         for event_id,ev in self.calevents.items():
             if (self._sel_date == ev['date']):
+                print("Overstrike: "+str(ev['completed'])+"\n")
+                if(ev['completed']==0):
+                    task_font = self.normal_Font
+                else:
+                    task_font = self.completed_Font
+                    
+                #self.right_frame.rowconfigure(selected_day_tasks, weight=1)
+                self.right_frame.columnconfigure(0, weight=1000)
+                    
                 #button_ch = Checkbutton(self.right_frame, text=ev['tags'][0]+": "+ev['text']  , font=('Segoe', 10) ,  bg = (self._tags[ev['tags'][0]]['background']), foreground='black')
-                button_ch = Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
-                    [print(selected_day_tasks),self._CONTROLLER_complete_task(selected_day_tasks)], \
-                    text=ev['tags'][0]+": "+ev['text']  , font=('Segoe', 10) ,  \
-                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black')
+                button_ch = Button(self.right_frame, command=lambda event_id=event_id: \
+                    [print(event_id),self._CONTROLLER_complete_task(event_id,event)], \
+                    text=ev['tags'][0]+": "+ev['text']  , font=task_font ,  \
+                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1)
+                button_ch.grid(row=selected_day_tasks,column=0, sticky='ew')#pack(fill=X)
                 self.list_buttons.append(button_ch)
+                
+                Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
+                    [self._CONTROLLER_show_description(event_id,event)], \
+                    text="☰"  , font=self.icon_Font, \
+                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks,column=1, sticky="ew")#pack(side=LEFT)
+                
+                
+                Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
+                    [self._CONTROLLER_edit_task(event_id,event)], \
+                    text="✎"  , font=self.icon_Font, \
+                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks,column=2, sticky="ew")#pack(side=LEFT)
+                
+                Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
+                    [self._CONTROLLER_delete_task(event_id,event)], \
+                    text="❌"  ,  font=self.icon_Font,\
+                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks,column=3, sticky="ew")#.pack(side=LEFT)
+                
+                """Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
+                    [self._CONTROLLER_complete_task(selected_day_tasks)], \
+                    text="edit"  ,  \
+                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black').grid(row=selected_day_tasks,column=3, sticky="nsew")#.pack(side=LEFT)
+                """
                 selected_day_tasks += 1
-                button_ch.pack()
+                
                 
                 
         #button_ch.config(text="hello")
