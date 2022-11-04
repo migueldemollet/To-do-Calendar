@@ -58,97 +58,52 @@ class FriendsModel:
         conn.close()
         return True
 
-    #-------------------------Id_user_1-------------------------------
-
-    def get_by_id_user_1(self, id_user_1):
+    def get_id(self, user_id_1, user_id_2):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        SELECT * FROM friends WHERE id_user_1 = ?;
-        """, (id_user_1,))
-
+        SELECT id FROM friends WHERE id_user_1 = ? AND id_user_2 = ?;
+        """, (user_id_1, user_id_2))
         dic = convert_to_dict(cursor.fetchall())
         conn.close()
-
         return dic
 
-    def delete_by_id_user_1(self, id_user_1):
+    #-------------------------Id_user_1-------------------------------
+
+    def get_by_user(self, user_id):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT * FROM friends WHERE id_user_1 = ? ;
+        """, (user_id))
+        dic = convert_to_dict(cursor.fetchall())
+        conn.close()
+        return dic
+
+    def delete_by_user(self, user_id):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
         DELETE FROM friends WHERE id_user_1 = ?;
-        """, (id_user_1,))
+        """, (user_id,))
         conn.commit()
         conn.close()
         return True
-    #-------------------------Id_user_2-------------------------------
 
-    def get_by_id_user_2(self, id_user_2):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        SELECT * FROM friends WHERE id_user_2 = ?;
-        """, (id_user_2,))
-
-        dic = convert_to_dict(cursor.fetchall())
-        conn.close()
-
-        return dic
-
-    def delete_by_id_user_2(self, id_user_2):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        DELETE FROM friends WHERE id_user_2 = ?;
-        """, (id_user_2,))
-        conn.commit()
-        conn.close()
-        return True
 
     #-------------------------State-------------------------------
 
-    def get_by_state(self, state):
+    def get_by_state(self, user_id,state):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        SELECT * FROM friends WHERE state = ?;
-        """, (state,))
-        dic = convert_to_dict(cursor.fetchall())
-        conn.close()
-
-        return dic
-
-    def get_state_by_id(self, id):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        SELECT state FROM friends WHERE id = ?;
-        """, (id,))
+        SELECT * FROM friends WHERE id_user_1 = ? AND state = ?;
+        """, (user_id,state))
         dic = convert_to_dict(cursor.fetchall())
         conn.close()
         return dic
-        
-    def get_state_by_id_user_1(self, id_user_1):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        SELECT state FROM friends WHERE id_user_1 = ?;
-        """, (id_user_1,))
-        dic = convert_to_dict(cursor.fetchall())
-        conn.close()
-        return dic
-
-    def get_state_by_id_user_2(self, id_user_2):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        SELECT state FROM friends WHERE id_user_2 = ?;
-        """, (id_user_2,))
-        dic = convert_to_dict(cursor.fetchall())
-        conn.close()
-        return dic
-
-    def update_state_by_id(self, id, state):
+       
+    def change_state(self, id, state):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
@@ -158,33 +113,12 @@ class FriendsModel:
         conn.close()
         return True
 
-    def update_state_by_id_user_1(self, id_user_1, state):
+    def delete_by_state(self,user_id,state):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        UPDATE friends SET state = ? WHERE id_user_1 = ?;
-        """, (state, id_user_1))
-        conn.commit()
-        conn.close()
-        return True
-
-    def update_state_by_id_user_2(self, id_user_2, state):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        UPDATE friends SET state = ? WHERE id_user_2 = ?;
-        """, (state, id_user_2))
-        conn.commit()
-        conn.close()
-        return True
-        
-
-    def delete_by_state(self, state):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        DELETE FROM friends WHERE state = ?;
-        """, (state,))
+        DELETE FROM friends WHERE id_user_1 = ? AND state = ?;
+        """, (user_id,state))
         conn.commit()
         conn.close()
         return True

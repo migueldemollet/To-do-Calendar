@@ -4,15 +4,11 @@ from task import Task
 from utils import *
 sys.path.insert(2, 'Src/Model/')
 from user_model import UserModel
-from task_model import TaskModel
-from tag_model import TagModel
 from utils import *
 
 class UserController:
     def __init__(self):
         self.user_model = UserModel("./DB/to_do_calendar_test.db")
-        self.task_model = TaskModel("./DB/to_do_calendar_test.db")
-        self.tag_model = TagModel("./DB/to_do_calendar_test.db")
         self.user = []
 
     def add(self, user):

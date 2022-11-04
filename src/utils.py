@@ -4,6 +4,7 @@ import hashlib
 from user import User
 from tag import Tag
 from task import Task
+from friends import Friend
 
 color_list = ["red", "green", "blue", "yellow", "pink", "purple", "orange", "white", "black"]
 
@@ -64,3 +65,6 @@ def list_to_tasks(list, tags, user):
             )
         )
     return result
+
+def list_to_friends(list,users):
+    return [Friend(friend['id'],user,  user,friend['role']) for friend, user in zip(list, users)]
