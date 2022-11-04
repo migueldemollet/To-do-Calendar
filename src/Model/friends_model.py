@@ -5,33 +5,11 @@ class FriendsModel:
         self.db_name = db_name
 
     def add(self, friend):
-            conn = sqlite3.connect(self.db_name)
-            cursor = conn.cursor()
-            cursor.execute("""
-            INSERT INTO friends (id,id_user_1, id_user_2, state) VALUES (?,?, ?, ?);
-            """, (friend.id,friend.id_user_1, friend.id_user_2, friend.state))
-            conn.commit()
-            conn.close()
-            return True
-
-    def get_all(self):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        SELECT * FROM friends;
-        """)
-
-        dic = convert_to_dict(cursor.fetchall())
-        conn.close()
-
-        return dic
-
-    def delete_all(self):
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        cursor.execute("""
-        DELETE FROM friends;
-        """)
+        INSERT INTO friends (id,id_user_1, id_user_2, state) VALUES (?,?, ?, ?);
+        """, (friend.id,friend.id_user_1, friend.id_user_2, friend.state))
         conn.commit()
         conn.close()
         return True

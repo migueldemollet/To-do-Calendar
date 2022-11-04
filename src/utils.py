@@ -48,9 +48,9 @@ def list_to_users(list):
 def list_to_tags(list, user):
     return [Tag(tag['id'], tag['name'], tag['color'], user) for tag in list]
 
-def list_to_tasks(list, tags, user):
+def list_to_tasks(list, tags, user, users_shared):
     result = []
-    for task, tag in zip(list, tags):
+    for task, tag, user_shared in zip(list, tags, users_shared):
         result.append(
             Task(
                 task['id'], 
@@ -61,7 +61,8 @@ def list_to_tasks(list, tags, user):
                 task['priority'], 
                 task['color'], 
                 tag, 
-                user
+                user,
+                user_shared
             )
         )
     return result

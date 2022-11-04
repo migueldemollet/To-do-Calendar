@@ -2,6 +2,7 @@ import sys
 sys.path.insert(1, 'Src/Controller/')
 from tag_controller import TagController
 from user_controller import UserController
+from task_action_controller import TaskActionController
 from utils import *
 sys.path.insert(2, 'Src/Model/')
 from task_model import TaskModel
@@ -10,11 +11,14 @@ from tag_model import TagModel
 class TaskController:
     def __init__(self):
         self.task_model = TaskModel("./DB/to_do_calendar_test.db")
+        self.task_action_controller = TaskActionController()
         self.tag_controller = TagController()
         self.user_controller = UserController()
+
         self.tasks = []
         self.tags = []
         self.users = []
+        self.users_shared = []
 
     def add(self, task):
         if (task.name == ""):
@@ -35,16 +39,51 @@ class TaskController:
         if ([self.tag_controller.get_by_id(task.tag.id)] == []):
             print("Tag with name "+str(task.tag.name)+" does not exist")
             return 0
-        if ([self.user_controller.get_by_id(task.user.id)] == []):
-            print("User with name "+str(task.user.name)+" does not exist")
+        self.users = self.user_controller.get_by_id(task.user.id)
+        if (type(self.users) == int):
+            print("User with username "+str(task.user.username)+" does not exist")
             return 0
-        
-        if(self.task_model.get_by_id(task.id) == []):
-            return self.task_model.add(task)
-        else:
+        if(self.task_model.get_by_id(task.id) != []):
             print("Task already exists")
             return 0
 
+        self.task_model.add(task)
+        return self.task_action_controller.add(task)
+    
+    def share(self, task, user):
+        if (not check_is_int(task.id)):
+            print("Invalid user id")
+            return 1
+        if (not check_is_int(user.id)):
+            print("Invalid user id")
+            return 1
+        self.users = self.user_controller.get_by_id(user.id)
+        if (type(self.users) == int):
+            print("User with name "+str(user.name)+" does not exist")
+            return 0
+        if(self.task_model.get_by_id(task.id) == []):
+            print("Task "+task.name+" does not exist")
+            return 0
+
+        return self.task_action_controller.share(task, user)
+    
+    def unshare_task(self, task, user):
+        if (not check_is_int(task.id)):
+            print("Invalid user id")
+            return 1
+        if (not check_is_int(user.id)):
+            print("Invalid user id")
+            return 1
+        self.users = self.user_controller.get_by_id(user.id)
+        if (type(self.users) == int):
+            print("User with name "+str(user.name)+" does not exist")
+            return 0
+        if(self.task_model.get_by_id(task.id) == []):
+            print("Task "+task.name+" does not exist")
+            return 0
+
+        return self.task_action_controller.unshared_task(task, user)
+        
     #-------------------------Id---------------------------------
 
     def get_by_id(self, id):
@@ -56,9 +95,10 @@ class TaskController:
             print("Task with id "+str(id)+" does not exist")
             return 0
         self.user = self.user_controller.get_by_id(self.tasks[0]['id_user'])
-        self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
+        self.tags = self.tag_controller.get_by_id(self.tasks[0]['id_tag'])
+        self.users_shared = self.task_action_controller.get_users_by_task(id)
         
-        return list_to_tasks(self.tasks, self.tags, self.user)[0]
+        return list_to_tasks(self.tasks, [self.tags], self.user, [self.users_shared])[0]
 
     def delete_by_id(self, id):
         if (not check_is_int(id)):
@@ -81,10 +121,14 @@ class TaskController:
             return 1
         
         self.tasks = self.task_model.get_by_name(name, user_id)
+        if (self.tasks == []):
+            print("Task with name "+str(name)+" does not exist")
+            return 0
         self.user = self.user_controller.get_by_id(user_id)
-        self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
+        self.tags = self.tag_controller.get_by_id(self.tasks[0]['id_tag'])
+        self.users_shared = self.task_action_controller.get_users_by_task(self.tasks[0]['id'])
 
-        return list_to_tasks(self.tasks, self.tags, self.user)
+        return list_to_tasks(self.tasks, [self.tags], self.user, [self.users_shared])[0]
 
     def change_name(self, task, new_name):
         if(task.name == new_name):
@@ -139,10 +183,14 @@ class TaskController:
             return 1
         
         self.tasks = self.task_model.get_by_state(status, user_id)
+        if (self.tasks == []):
+            print("No tasks with status "+str(status)+" exist")
+            return 0
         self.user = self.user_controller.get_by_id(user_id)
         self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
+        self.users_shared = [self.task_action_controller.get_users_by_task(task['id']) for task in self.tasks]
         
-        return list_to_tasks(self.tasks, self.tags, self.user)
+        return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
     def change_state(self, task, new_state):
         if (not check_is_int(task.user.id)):
@@ -186,10 +234,14 @@ class TaskController:
             print("Invalid date format (dd/mm/yyyy)")
             return 1
         self.tasks = self.task_model.get_by_date(date, user_id)
+        if (self.tasks == []):
+            print("No tasks with date "+str(date)+" exist")
+            return 0
         self.user = self.user_controller.get_by_id(user_id)
         self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
+        self.users_shared = [self.task_action_controller.get_users_by_task(task['id']) for task in self.tasks]
         
-        return list_to_tasks(self.tasks, self.tags, self.user)
+        return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
     def change_date(self, task, new_date):
         if (not check_date(new_date)):
@@ -229,10 +281,14 @@ class TaskController:
             print("Invalid priority must be 0, 1 or 2")
             return 1
         self.tasks = self.task_model.get_by_priority(priority, user_id)
+        if (self.tasks == []):
+            print("No tasks with priority "+str(priority)+" exist")
+            return 0
         self.user = self.user_controller.get_by_id(user_id)
         self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
+        self.users_shared = [self.task_action_controller.get_users_by_task(task['id']) for task in self.tasks]
         
-        return list_to_tasks(self.tasks, self.tags, self.user)
+        return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
 
     def change_priority(self, task, new_priority):
@@ -277,10 +333,14 @@ class TaskController:
             return 1
 
         self.tasks = self.task_model.get_by_color(color, user_id)
+        if (self.tasks == []):
+            print("No tasks with color "+str(color)+" exist")
+            return 0
         self.user = self.user_controller.get_by_id(user_id)
         self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
+        self.users_shared = [self.task_action_controller.get_users_by_task(task['id']) for task in self.tasks]
         
-        return list_to_tasks(self.tasks, self.tags, self.user)
+        return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
     def change_color(self, task, new_color):
         if (not check_is_int(task.user.id)):
@@ -326,10 +386,14 @@ class TaskController:
             print("Tag with id "+str(tag_id)+" does not exist")
             return 0
         self.tasks = self.task_model.get_by_tag(tag_id, user_id)
+        if (self.tasks == []):
+            print("No tasks with tag "+str(tag_id)+" exist")
+            return 0
         self.user = self.user_controller.get_by_id(user_id)
         self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
+        self.users_shared = [self.task_action_controller.get_users_by_task(task['id']) for task in self.tasks]
 
-        return list_to_tasks(self.tasks, self.tags, self.user)
+        return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
     def change_tag(self, task, new_tag):
         if (not check_is_int(task.user.id)):
@@ -386,8 +450,10 @@ class TaskController:
             return 0
         self.tasks = self.task_model.get_by_user(user_id)
         self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
+        self.users_shared = [self.task_action_controller.get_users_by_task(task['id']) for task in self.tasks]
+        task_shared = self.task_action_controller.get_tasks_by_user(user_id)
 
-        return list_to_tasks(self.tasks, self.tags, self.user)
+        return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared) + task_shared
 
     def delete_by_user(self, user_id):
         if (not check_is_int(user_id)):
