@@ -50,18 +50,20 @@ class TaskActionController():
             return 0
         return self.model_task_user.delete_by_user_task_role(user.id, task.id)
 
-    def get_users_by_task_id(self, task_id):
+    def get_users_by_task(self, task_id):
         if (not check_is_int(task_id)):
             print("Invalid task id")
             return 1
         self.tasks = self.model_task_user.get_by_task(task_id, 1)
         return [self.user_controller.get_by_id(task['user_id']) for task in self.tasks]
     
-    def get_tasks_shared_by_user_id(self, user_id):
+    def get_tasks_by_user(self, user_id):
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
         self.tasks = self.model_task_user.get_by_user(user_id, 1)
-        return [self.user_controller.get_by_id(task['task_id']) for task in self.tasks]
+
+        from task_controller import TaskController
+        return [TaskController().get_by_id(task['task_id']) for task in self.tasks]
         
         

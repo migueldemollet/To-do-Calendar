@@ -64,16 +64,16 @@ class TestTaskActionController(unittest.TestCase):
     #-------------------------Task_id-------------------------------
     
     def test_get_user_by_task_id(self):
-        self.assertEqual(self.controller.get_users_by_task_id(self.task1.id), [self.user2]) 
-        self.assertEqual(self.controller.get_users_by_task_id(4), [])
-        self.assertEqual(self.controller.get_users_by_task_id("fer"), 1)
+        self.assertEqual(self.controller.get_users_by_task(self.task1.id), [self.user2]) 
+        self.assertEqual(self.controller.get_users_by_task(4), [])
+        self.assertEqual(self.controller.get_users_by_task("fer"), 1)
     
     #-------------------------User_id-------------------------------
 
     def test_get_tasks_by_user_id(self):
-        self.assertEqual(self.controller.get_tasks_shared_by_user_id(self.user2.id), [self.task1])
-        self.assertEqual(self.controller.get_tasks_shared_by_user_id(4), [])
-        self.assertEqual(self.controller.get_tasks_shared_by_user_id("fer"), 1)
+        self.assertEqual(self.controller.get_tasks_by_user(self.user2.id), [self.task1])
+        self.assertEqual(self.controller.get_tasks_by_user(4), [])
+        self.assertEqual(self.controller.get_tasks_by_user("fer"), 1)
     
 def restore():
     conn = sqlite3.connect('./DB/to_do_calendar_test.db')

@@ -96,7 +96,7 @@ class TaskController:
             return 0
         self.user = self.user_controller.get_by_id(self.tasks[0]['id_user'])
         self.tags = self.tag_controller.get_by_id(self.tasks[0]['id_tag'])
-        self.users_shared = self.task_action_controller.get_users_by_task_id(id)
+        self.users_shared = self.task_action_controller.get_users_by_task(id)
         
         return list_to_tasks(self.tasks, [self.tags], self.user, [self.users_shared])[0]
 
@@ -126,7 +126,7 @@ class TaskController:
             return 0
         self.user = self.user_controller.get_by_id(user_id)
         self.tags = self.tag_controller.get_by_id(self.tasks[0]['id_tag'])
-        self.users_shared = self.task_action_controller.get_users_by_task_id(self.tasks[0]['id'])
+        self.users_shared = self.task_action_controller.get_users_by_task(self.tasks[0]['id'])
 
         return list_to_tasks(self.tasks, [self.tags], self.user, [self.users_shared])[0]
 
@@ -188,7 +188,7 @@ class TaskController:
             return 0
         self.user = self.user_controller.get_by_id(user_id)
         self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
-        self.users_shared = [self.task_action_controller.get_users_by_task_id(task['id']) for task in self.tasks]
+        self.users_shared = [self.task_action_controller.get_users_by_task(task['id']) for task in self.tasks]
         
         return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
@@ -239,7 +239,7 @@ class TaskController:
             return 0
         self.user = self.user_controller.get_by_id(user_id)
         self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
-        self.users_shared = [self.task_action_controller.get_users_by_task_id(task['id']) for task in self.tasks]
+        self.users_shared = [self.task_action_controller.get_users_by_task(task['id']) for task in self.tasks]
         
         return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
@@ -286,7 +286,7 @@ class TaskController:
             return 0
         self.user = self.user_controller.get_by_id(user_id)
         self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
-        self.users_shared = [self.task_action_controller.get_users_by_task_id(task['id']) for task in self.tasks]
+        self.users_shared = [self.task_action_controller.get_users_by_task(task['id']) for task in self.tasks]
         
         return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
@@ -338,7 +338,7 @@ class TaskController:
             return 0
         self.user = self.user_controller.get_by_id(user_id)
         self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
-        self.users_shared = [self.task_action_controller.get_users_by_task_id(task['id']) for task in self.tasks]
+        self.users_shared = [self.task_action_controller.get_users_by_task(task['id']) for task in self.tasks]
         
         return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
@@ -391,7 +391,7 @@ class TaskController:
             return 0
         self.user = self.user_controller.get_by_id(user_id)
         self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
-        self.users_shared = [self.task_action_controller.get_users_by_task_id(task['id']) for task in self.tasks]
+        self.users_shared = [self.task_action_controller.get_users_by_task(task['id']) for task in self.tasks]
 
         return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
@@ -450,9 +450,10 @@ class TaskController:
             return 0
         self.tasks = self.task_model.get_by_user(user_id)
         self.tags = [self.tag_controller.get_by_id(task['id_tag']) for task in self.tasks]
-        self.users_shared = [self.task_action_controller.get_users_by_task_id(task['id']) for task in self.tasks]
+        self.users_shared = [self.task_action_controller.get_users_by_task(task['id']) for task in self.tasks]
+        task_shared = self.task_action_controller.get_tasks_by_user(user_id)
 
-        return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
+        return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared) + task_shared
 
     def delete_by_user(self, user_id):
         if (not check_is_int(user_id)):

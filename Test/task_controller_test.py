@@ -255,7 +255,8 @@ class TestTaskController(unittest.TestCase):
 
     def test_get_by_user(self):
         self.assertEqual(self.controller.get_by_user(self.user1.id), [self.task1, self.task2])
-        self.assertEqual(self.controller.get_by_user(self.user2.id), [self.task3])
+        task = self.controller.get_by_user(self.user2.id)
+        self.assertEqual(self.controller.get_by_user(self.user2.id), [self.task3, self.task1])
         self.assertEqual(self.controller.get_by_user("sdsd"), 1)
         self.assertEqual(self.controller.get_by_user(8520), 0)
 
