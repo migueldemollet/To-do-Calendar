@@ -4,12 +4,22 @@ class FriendsModel:
     def __init__(self, db_name):
         self.db_name = db_name
 
-    def add(self, friend):
+    def add(self, user_id_1, user_id_2,state=0):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        INSERT INTO friends (id,id_user_1, id_user_2, state) VALUES (?,?, ?, ?);
-        """, (friend.id,friend.id_user_1, friend.id_user_2, friend.state))
+        INSERT INTO friends (id_user_1, id_user_2,state) VALUES (?, ?, ?);
+        """, (user_id_1, user_id_2,state))
+        conn.commit()
+        conn.close()
+        return True
+
+    def delete(self,id):
+        conn = sqlite3.connect(self.db_name)
+        cursor = conn.cursor()
+        cursor.execute("""
+        DELETE FROM friends WHERE id = ?;
+        """, (id,))
         conn.commit()
         conn.close()
         return True
@@ -36,11 +46,11 @@ class FriendsModel:
         conn.close()
         return True
 
-    def get_id(self, user_id_1, user_id_2):
+    def check_relationship(self, user_id_1, user_id_2):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        SELECT id FROM friends WHERE id_user_1 = ? AND id_user_2 = ?;
+        SELECT * FROM friends WHERE id_user_1 = ? AND id_user_2 = ?;
         """, (user_id_1, user_id_2))
         dic = convert_to_dict(cursor.fetchall())
         conn.close()
@@ -52,11 +62,12 @@ class FriendsModel:
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-        SELECT * FROM friends WHERE id_user_1 = ? ;
-        """, (user_id))
+        SELECT * FROM friends WHERE id_user_1 = ?;
+        """, (user_id,))
         dic = convert_to_dict(cursor.fetchall())
         conn.close()
         return dic
+        
 
     def delete_by_user(self, user_id):
         conn = sqlite3.connect(self.db_name)

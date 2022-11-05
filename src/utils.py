@@ -68,4 +68,4 @@ def list_to_tasks(list, tags, user, users_shared):
     return result
 
 def list_to_friends(list,users):
-    return [Friend(friend['id'],user,  user,friend['role']) for friend, user in zip(list, users)]
+    return [Friend(friend['id'],user,friend['state']) for friend, user in zip(list, users)]
