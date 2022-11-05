@@ -27,21 +27,28 @@ class TestTaskActionController(unittest.TestCase):
     def tearDown(self):
         restore()
     
-    def test_create_task(self):
+    #-------------------------Create task-------------------------------
+    
+    def test_create_task_correct(self):
         task_new = Task(4, "task4", "description4", 1, "01/01/2022", 2, "green", self.tag3, self.user2, [])
         self.assertEqual(self.controller.add(task_new), True)
-        self.assertEqual(self.controller.add(self.task1), 0)
+    
+    def test_create_task_incorrect_value(self):
         self.task2.id = "fer"
         self.assertEqual(self.controller.add(self.task2), 1)
         self.task2.id = 2
         self.task3.user.id = "fer"
         self.assertEqual(self.controller.add(self.task3), 1)
 
+    def test_create_task_incorrect_db(self):
+        self.assertEqual(self.controller.add(self.task1), 0)
+
     #-------------------------Share-------------------------------
     
-    def test_share_task(self):
+    def test_share_task_correct(self):
         self.assertEqual(self.controller.share(self.task2, self.user1), True)
-        self.assertEqual(self.controller.share(self.task1, self.user2), 0)
+
+    def test_share_task_incorrect_value(self):
         self.task2.id = "fer"
         self.assertEqual(self.controller.share(self.task2, self.user2), 1)
         self.task2.id = 2
@@ -50,30 +57,46 @@ class TestTaskActionController(unittest.TestCase):
         self.task3.user.id = 3
         self.assertEqual(self.controller.share(self.task3, self.user2), 1)
 
+    def test_share_task_incorrect_db(self):
+        self.assertEqual(self.controller.share(self.task1, self.user2), 0)
+
     #-------------------------Unshare-------------------------------
     
-    def test_unshare_task(self):
+    def test_unshare_task_correct(self):
         self.assertEqual(self.controller.unshare(self.task1, self.user2), True)
         self.assertEqual(self.controller.unshare(self.task2, self.user1), 0)
+    
+    def test_unshare_task_incorrect_value(self):
         self.task1.id = "fer"
         self.assertEqual(self.controller.unshare(self.task1, self.user2), 1)
         self.task1.id = 1
         self.user2.id = "fer"
         self.assertEqual(self.controller.unshare(self.task1, self.user2), 1)
+
+    def test_unshare_task_incorrect_db(self):
+        self.assertEqual(self.controller.unshare(self.task2, self.user1), 0)
     
     #-------------------------Task_id-------------------------------
     
-    def test_get_user_by_task_id(self):
+    def test_get_user_by_task_id_correct(self):
         self.assertEqual(self.controller.get_users_by_task(self.task1.id), [self.user2]) 
-        self.assertEqual(self.controller.get_users_by_task(4), [])
+    
+    def test_get_user_by_task_id_incorrect_value(self):
         self.assertEqual(self.controller.get_users_by_task("fer"), 1)
+    
+    def test_get_user_by_task_id_incorrect_db(self):
+        self.assertEqual(self.controller.get_users_by_task(4), 0)
     
     #-------------------------User_id-------------------------------
 
-    def test_get_tasks_by_user_id(self):
+    def test_get_tasks_by_user_id_correct(self):
         self.assertEqual(self.controller.get_tasks_by_user(self.user2.id), [self.task1])
-        self.assertEqual(self.controller.get_tasks_by_user(4), [])
+
+    def test_get_tasks_by_user_id_incorrect_value(self):
         self.assertEqual(self.controller.get_tasks_by_user("fer"), 1)
+    
+    def test_get_tasks_by_user_id_incorrect_db(self):
+        self.assertEqual(self.controller.get_tasks_by_user(4), 0)
     
 def restore():
     conn = sqlite3.connect('./DB/to_do_calendar_test.db')
