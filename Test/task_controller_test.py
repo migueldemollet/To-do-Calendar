@@ -171,99 +171,164 @@ class TestTaskController(unittest.TestCase):
         self.assertEqual(self.controller.delete_by_date('111/32/2022', self.user1.id), 1)
         self.assertEqual(self.controller.delete_by_date('01/01/2022', "fsdas"), 1)
 
-    #-------------------------Priority-------------------------------
+    #-------------------------Priority:get-------------------------------
 
-    def test_get_by_priority(self):
+    def test_get_by_priority_correct(self):
         self.assertEqual(self.controller.get_by_priority(0, self.user1.id), [self.task1])
         self.assertEqual(self.controller.get_by_priority(1, self.user1.id), [self.task2])
         self.assertEqual(self.controller.get_by_priority(2, self.user2.id), [self.task3])
+
+    def test_get_by_priority_incorrect(self):
         self.assertEqual(self.controller.get_by_priority(3, self.user1.id), 1)
         self.assertEqual(self.controller.get_by_priority(-1, self.user1.id), 1)
 
-    def test_change_priority(self):
-        task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
+    def test_get_by_priority_incorrect_bd(self):
+        self.assertEqual(self.controller.get_by_priority(0, 100), 0)
+
+
+
+    #-------------------------Priority:change-------------------------------
+
+    def test_change_priority_correct(self):
+        self.assertEqual(self.controller.change_priority(self.task1, 1), True)
+        self.task1.priority = 1
+        self.assertEqual(self.controller.change_priority(self.task1, 2), True)
+        self.task1.priority = 2
+
+    def test_change_priority_incorrect(self):
+        self.assertEqual(self.controller.change_priority(self.task1, 2), 1)
+        self.assertEqual(self.controller.change_priority(self.task1, -1), 1)
+        self.assertEqual(self.controller.change_priority(self.task1, 3), 1)
+
+    def test_change_priority_incorrect_bd(self):
         task_invented = Task(167, "task1", "description1", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
-        self.assertEqual(self.controller.change_priority(task, 1), True)
-        task.priority = 1
-        self.assertEqual(self.controller.change_priority(task, 2), True)
-        task.priority = 2
-        self.assertEqual(self.controller.change_priority(task, 2), 1)
-        self.assertEqual(self.controller.change_priority(task, -1), 1)
-        self.assertEqual(self.controller.change_priority(task, 3), 1)
         self.assertEqual(self.controller.change_priority(task_invented, 2), 0)
 
-    def test_delete_by_priority(self):
+
+    #-------------------------Priority:delete-------------------------------
+
+    def test_delete_by_priority_correct(self):
         self.assertEqual(self.controller.delete_by_priority(1, self.user1.id), True)
-        self.assertEqual(self.controller.delete_by_priority(1, self.user1.id), 0)
         self.assertEqual(self.controller.delete_by_priority(2, self.user2.id), True)
-        self.assertEqual(self.controller.delete_by_priority(2, self.user2.id), 0)
+
+    def test_delete_by_priority_incorrect(self):
         self.assertEqual(self.controller.delete_by_priority(3, self.user1.id), 1)
         self.assertEqual(self.controller.delete_by_priority(-1, self.user1.id), 1)
         self.assertEqual(self.controller.delete_by_priority(1, "fsdas"), 1)
 
-    #-------------------------Color-------------------------------
+    def test_delete_by_priority_incorrect_bd(self):
+        self.controller.delete_by_priority(1, self.user1.id)
+        self.assertEqual(self.controller.delete_by_priority(1, self.user1.id), 0)
+        self.controller.delete_by_priority(2, self.user2.id)
+        self.assertEqual(self.controller.delete_by_priority(2, self.user2.id), 0)
 
-    def test_get_by_color(self):
+
+    #-------------------------Color:get-------------------------------
+
+    def test_get_by_color_correct(self):
         self.assertEqual(self.controller.get_by_color('red', self.user1.id), [self.task1])
         self.assertEqual(self.controller.get_by_color('blue', self.user1.id), [self.task2])
-        self.assertEqual(self.controller.get_by_color('green', self.user1.id), 0)
+
+    def test_get_by_color_incorrect(self):
         self.assertEqual(self.controller.get_by_color('red1', self.user1.id), 1)
         self.assertEqual(self.controller.get_by_color('blue', "fd"), 1)
+
+    def test_get_by_color_incorrect_bd(self):
+        self.assertEqual(self.controller.get_by_color('green', self.user1.id), 0)
     
-    def test_change_color(self):
-        task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
+    #-------------------------Color:change-------------------------------
+
+    def test_change_color_correct(self):
+        self.assertEqual(self.controller.change_color(self.task1, 'blue'), True)
+
+    def test_change_color_incorrect(self):
+        self.assertEqual(self.controller.change_color(self.task1, 'blue'), 1)
+        self.assertEqual(self.controller.change_color(self.task1, 'left'), 1)
+
+    def test_change_color_incorrect_bd(self):
         task_invented = Task(167, "task1", "description1", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
-        self.assertEqual(self.controller.change_color(task, 'blue'), True)
-        self.assertEqual(self.controller.change_color(task, 'blue'), 1)
-        self.assertEqual(self.controller.change_color(task, 'left'), 1)
         self.assertEqual(self.controller.change_color(task_invented, 'blue'), 0)
 
-    def test_delete_by_color(self):
+    #-------------------------Color:delete-------------------------------
+
+    def test_delete_by_color_correct(self):
         self.assertEqual(self.controller.delete_by_color('red', self.user1.id), True)
-        self.assertEqual(self.controller.delete_by_color('red', self.user1.id), 0)
+
+    def test_delete_by_color_incorrect(self):
         self.assertEqual(self.controller.delete_by_color('dfdfd', self.user1.id), 1)
         self.assertEqual(self.controller.delete_by_color('red', "fsdas"), 1)
 
-    #-------------------------Tag-------------------------------
+    def test_delete_by_color_incorrect_bd(self):
+         self.controller.delete_by_color('red', self.user1.id)
+         self.assertEqual(self.controller.delete_by_color('red', self.user1.id), 0)
 
-    def test_get_by_tag(self):
+
+    #-------------------------Tag:get-------------------------------#
+    def test_get_by_tag_correct(self):
         self.assertEqual(self.controller.get_by_tag(1, self.user1.id), [self.task1])
         self.assertEqual(self.controller.get_by_tag(2, self.user1.id), [self.task2])
         self.assertEqual(self.controller.get_by_tag(3, self.user2.id), [self.task3])
+
+    def test_get_by_tag_incorrect(self):
         self.assertEqual(self.controller.get_by_tag(0, self.user1.id), 1)
-        self.assertEqual(self.controller.get_by_tag(4, self.user1.id), 0)
         self.assertEqual(self.controller.get_by_tag("sdsd", self.user1.id), 1)
         self.assertEqual(self.controller.get_by_tag(1, "sdsd"), 1)
-    
-    def test_change_tag(self):
-        task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
+
+    def test_get_by_tag_incorrect_bd(self):
+        self.assertEqual(self.controller.get_by_tag(4, self.user1.id), 0)
+        
+    #-------------------------Tag:change-------------------------------#
+
+    def test_change_tag_correct(self):
+        self.assertEqual(self.controller.change_tag(self.task1, 2), True)
+
+    def test_change_tag_incorrect(self):
+         self.assertEqual(self.controller.change_tag(self.task1, 2), 1)
+         self.assertEqual(self.controller.change_tag(self.task1, 0), 1)
+
+    def test_change_tag_incorrect_bd(self):
         task_invented = Task(167, "task1", "description1", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
-        self.assertEqual(self.controller.change_tag(task, 2), True)
-        self.assertEqual(self.controller.change_tag(task, 2), 1)
-        self.assertEqual(self.controller.change_tag(task, 4), 0)
-        self.assertEqual(self.controller.change_tag(task, 0), 1)
+        self.assertEqual(self.controller.change_tag(self.task1, 4), 0)
         self.assertEqual(self.controller.change_tag(task_invented, 2), 0)
 
-    def test_delete_by_tag(self):
+    #-------------------------Tag:delete-------------------------------#
+
+    def test_delete_by_tag_correct(self):
         self.assertEqual(self.controller.delete_by_tag(1, self.user1.id), True)
+   
+    def test_delete_by_tag_incorrect(self):
         self.assertEqual(self.controller.delete_by_tag(0, self.user1.id), 1)
-        self.assertEqual(self.controller.delete_by_tag(5, self.user1.id), 0)
         self.assertEqual(self.controller.delete_by_tag("dfd", self.user1.id), 1)
         self.assertEqual(self.controller.delete_by_tag(1, "fsdas"), 1)
 
-    #-------------------------User-------------------------------
+    def test_delete_by_tag_incorrect_bd(self):
+        self.assertEqual(self.controller.delete_by_tag(5, self.user1.id), 0)
 
-    def test_get_by_user(self):
+        
+    #-------------------------User:id-------------------------------#
+
+    def test_get_by_user_id_correct(self):
         self.assertEqual(self.controller.get_by_user(self.user1.id), [self.task1, self.task2])
-        task = self.controller.get_by_user(self.user2.id)
-        self.assertEqual(self.controller.get_by_user(self.user2.id), [self.task3, self.task1])
-        self.assertEqual(self.controller.get_by_user("sdsd"), 1)
-        self.assertEqual(self.controller.get_by_user(8520), 0)
+    
 
-    def test_delete_by_user(self):
+    def test_get_by_user_id_incorrect_value(self):
+        self.assertEqual(self.controller.get_by_user("sdsd"), 1)
+
+    def test_get_by_user_id_incorrect_db(self):
+        self.assertEqual(self.controller.get_by_user(100), 0)
+
+    #-------------------------User:delete-------------------------------#
+
+    def test_delete_by_user_id_correct(self):
         self.assertEqual(self.controller.delete_by_user(self.user1.id), True)
-        self.assertEqual(self.controller.delete_by_user("dfd"), 1)
-        self.assertEqual(self.controller.delete_by_user(8520), 0)
+   
+    def test_delete_by_user_id_incorrect_value(self):
+        self.assertEqual(self.controller.delete_by_user("sdsd"), 1)
+
+    def test_delete_by_user_id_incorrect_db(self):
+        self.assertEqual(self.controller.delete_by_user(100), 0)
+    
+
 
 
 def restore():
