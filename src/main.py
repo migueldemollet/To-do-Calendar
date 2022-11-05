@@ -12,7 +12,7 @@ if __name__ == '__main__':
         root = tk.Tk()
         root.title("TODO-Calendar")
         root.resizable(0,0)
-        root.tk.call('wm', 'iconphoto', root._w, tk.PhotoImage(file='public\img\logo_sm.ico'))
+        #root.tk.call('wm', 'iconphoto', root._w, tk.PhotoImage(file='public\img\logo_sm.ico'))
                 
         #cursor="hand1"
         agenda = Agenda(root, selectmode='day',id_user='1')

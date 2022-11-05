@@ -6,13 +6,15 @@ class Agenda(Calendar):
 
     def __init__(self, master=None,  **kw):
         
-        WINDOW_WIDTH = int(master.winfo_screenwidth()*80/100)
-        WINDOW_HEIGHT = int(master.winfo_screenheight()*60/100)
-        WINDOW_MARGIN_X = int((master.winfo_screenwidth()-WINDOW_WIDTH)/2)
-        WINDOW_MARGIN_Y = int((master.winfo_screenheight()-WINDOW_HEIGHT-60)/2)
+        self.WINDOW_WIDTH = int(master.winfo_screenwidth()*80/100)
+        self.WINDOW_HEIGHT = int(master.winfo_screenheight()*60/100)
+        self.WINDOW_MARGIN_X = int((master.winfo_screenwidth()-self.WINDOW_WIDTH)/2)
+        self.WINDOW_MARGIN_Y = int((master.winfo_screenheight()-self.WINDOW_HEIGHT-60)/2)
         
-        master.geometry(str(WINDOW_WIDTH)+'x'+str(WINDOW_HEIGHT)+"+"+str(WINDOW_MARGIN_X)+"+"+str(WINDOW_MARGIN_Y)+"")
+        master.geometry(str(self.WINDOW_WIDTH)+'x'+str(self.WINDOW_HEIGHT)+"+"+str(self.WINDOW_MARGIN_X)+"+"+str(self.WINDOW_MARGIN_Y)+"")
         
+        print(self.WINDOW_HEIGHT)
+        print(self.WINDOW_WIDTH)
         
         Calendar.__init__(self, master, **kw)
         self.normal_Font = tkFont.Font(family="Segoe", size=10, slant='roman', overstrike = 0)
@@ -42,7 +44,7 @@ class Agenda(Calendar):
 
         self.right_frame = Frame(master, background="AliceBlue",
             borderwidth=15,  relief=RIDGE,
-            width=100,
+            width=self.WINDOW_WIDTH*0.2,
         )
         self.right_frame.pack(side=RIGHT,
             fill=BOTH, 
