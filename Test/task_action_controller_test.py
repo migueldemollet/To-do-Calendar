@@ -7,6 +7,7 @@ from tag import Tag
 from user import User
 sys.path.insert(1, 'Src/Controller/')
 from task_action_controller import TaskActionController
+from random import randint
 
 class TestTaskActionController(unittest.TestCase):
     def __init__(self, methodName: str = ...):
@@ -14,6 +15,7 @@ class TestTaskActionController(unittest.TestCase):
         self.controller = TaskActionController()
         self.user1 = User(1, "user1", "user1@tdcalendar.com", "password1", [])
         self.user2 = User(2, "user2", "user2@tdcalendar.com", "password1", [])
+        self.user3 = User(3, "user3", "user3@tdcalendar.com", "password1", [])
         self.tag1 = Tag(1, "tag1", "red", self.user1)
         self.tag2 = Tag(2, "tag2", "blue", self.user1)
         self.tag3 = Tag(3, "tag3", "green", self.user2)
@@ -30,8 +32,14 @@ class TestTaskActionController(unittest.TestCase):
     #-------------------------Create task-------------------------------
     
     def test_create_task_correct(self):
-        task_new = Task(4, "task4", "description4", 1, "01/01/2022", 2, "green", self.tag3, self.user2, [])
-        self.assertEqual(self.controller.add(task_new), True)
+        priorities = [0, 0, 0, 1, 1, 1, 2, 2, 2]
+        tags = [self.tag1, self.tag3, self.tag2, self.tag1, self.tag3, self.tag2, self.tag1, self.tag3, self.tag2]
+        users = [self.user3, self.user1, self.user2, self.user2, self.user3, self.user1, self.user1, self.user2, self.user1]
+        id = 4
+        for priority, tag, user in zip(priorities, tags, users):
+            task = Task(id, "task"+str(id), "description4", randint(0, 1), "01/01/2022", priority, "red", tag, user, [])
+            self.assertEqual(self.controller.add(task), True)
+            id += 1 
     
     def test_create_task_incorrect_value(self):
         self.task2.id = "fer"
@@ -167,7 +175,8 @@ def restore():
     '''
     INSERT INTO `user` (`id`, `username`, `email`, `password`) VALUES
     (1, 'user1', 'user1@tdcalendar.com', 'password1'),
-    (2, 'user2', 'user2@tdcalendar.com', 'password1')
+    (2, 'user2', 'user2@tdcalendar.com', 'password1'),
+    (3, 'user3', 'user3@tdcalendar.com', 'password1')
     '''
     )
 

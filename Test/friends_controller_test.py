@@ -37,7 +37,22 @@ class TestFriendsController(unittest.TestCase):
     def test_add_friend_incorrect_db(self):
         self.assertEqual(self.controller.add(self.user1.id,self.user2.id), 0)
 
+    
+    #-------------------------find-------------------------------#
+
+    def test_find_friend_correct(self):
+        self.assertEqual(self.controller.find(1,2), self.friend)
+
+    def test_find_friend_incorrect_values(self):
+        self.assertEqual(self.controller.find("string",1), 1)
+        self.assertEqual(self.controller.find(1,"string"), 1)
+    
+    def test_find_friend_incorrect_db(self):
+        self.assertEqual(self.controller.find(2,3), 0)
+
+
     #-------------------------Delete-------------------------------#
+
     def test_delete_friend_correct(self):
         self.assertEqual(self.controller.delete(2), True)
 
@@ -47,7 +62,9 @@ class TestFriendsController(unittest.TestCase):
     def test_delete_friend_incorrect_db(self):
         self.assertEqual(self.controller.delete(3), 0)
 
+
     #-------------------------Id:get-------------------------------#
+
     def test_get_by_id_friend_correct(self):
         self.assertEqual(self.controller.get_by_id(1), self.friend)
 
@@ -57,7 +74,9 @@ class TestFriendsController(unittest.TestCase):
     def test_get_by_id_friend_incorrect_db(self):
         self.assertEqual(self.controller.get_by_id(3), 0)
 
+
     #-------------------------User:get-------------------------------#
+
     def test_get_by_user_friend_correct(self):
         self.assertEqual(self.controller.get_by_user(1), self.user1.friends)
 
@@ -67,7 +86,9 @@ class TestFriendsController(unittest.TestCase):
     def test_get_by_user_friend_incorrect_db(self):
         self.assertEqual(self.controller.get_by_user(4), 0)
 
+
     #-------------------------User:delete-------------------------------#
+
     def test_delete_by_user_friend_correct(self):
         self.assertEqual(self.controller.delete_by_user(1), True)
 
@@ -77,7 +98,9 @@ class TestFriendsController(unittest.TestCase):
     def test_delete_by_user_friend_incorrect_db(self):
         self.assertEqual(self.controller.delete_by_user(4), 0)
 
+
     #-------------------------State:state-------------------------------# 
+
     def test_state_friend_correct(self):
         self.assertEqual(self.controller.get_by_state(1,1), [self.friend])
 
@@ -88,7 +111,9 @@ class TestFriendsController(unittest.TestCase):
     def test_state_friend_incorrect_db(self):
         self.assertEqual(self.controller.get_by_state(1,2), 0)
 
+
     #-------------------------State:change-------------------------------#
+
     def test_change_state_friend_correct(self):
         self.assertEqual(self.controller.change_state(1,0), True)
 
@@ -99,7 +124,9 @@ class TestFriendsController(unittest.TestCase):
     def test_change_state_friend_incorrect_db(self):
         self.assertEqual(self.controller.change_state(3,1), 0)
 
+
     #-------------------------State:delete-------------------------------#
+    
     def test_delete_by_state_friend_correct(self):
         self.assertEqual(self.controller.delete_by_state(1,1), True)
 
