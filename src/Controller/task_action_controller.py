@@ -55,6 +55,9 @@ class TaskActionController():
             print("Invalid task id")
             return 1
         self.tasks = self.model_task_user.get_by_task(task_id, 1)
+        if (self.tasks == []):
+            print("Task not found")
+            return 0
         return [self.user_controller.get_by_id(task['user_id']) for task in self.tasks]
     
     def get_tasks_by_user(self, user_id):
@@ -62,6 +65,9 @@ class TaskActionController():
             print("Invalid user id")
             return 1
         self.tasks = self.model_task_user.get_by_user(user_id, 1)
+        if (self.tasks == []):
+            print("User not found")
+            return 0
 
         from task_controller import TaskController
         return [TaskController().get_by_id(task['task_id']) for task in self.tasks]

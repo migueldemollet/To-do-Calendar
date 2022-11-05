@@ -20,11 +20,16 @@ class TestTagController(unittest.TestCase):
     
     def tearDown(self):
         restore()
+
+
+    #-------------------------Insert-------------------------------
     
-    def test_add_tag(self):
+    def test_add_correct(self):
         new_tag = Tag(4, 'tag4', 'orange', self.user)
         self.assertEqual(self.controller.add(new_tag), True)
-        self.assertEqual(self.controller.add(new_tag), 0)
+    
+    def test_add_incorrect_value(self):
+        new_tag = Tag(4, 'tag4', 'orange', self.user)
         new_tag.name = ''
         self.assertEqual(self.controller.add(new_tag), 1)
         new_tag.name = 'tag4'
@@ -32,85 +37,150 @@ class TestTagController(unittest.TestCase):
         self.assertEqual(self.controller.add(new_tag), 1)
         new_tag.user = User(67, "user1", "user1@tdcalendar.com", "password1")
         self.assertEqual(self.controller.add(new_tag), 1)
+    
+    def test_add_incorrect_db(self):
+        new_tag = Tag(4, 'tag4', 'orange', self.user)
+        self.controller.add(new_tag)
+        self.assertEqual(self.controller.add(new_tag), 0)
 
-    #-------------------------Id-------------------------------
 
-    def test_get_by_id(self):
+    #-------------------------Id:get-------------------------------
+
+    def test_get_by_id_correct(self):
         self.assertEqual(self.controller.get_by_id(1), self.tag1)
         self.assertEqual(self.controller.get_by_id(2), self.tag2)
-        self.assertEqual(self.controller.get_by_id(4), 0)
+
+    def test_get_by_id_incorrect_fronter(self):
         self.assertEqual(self.controller.get_by_id(-1), 1)
         self.assertEqual(self.controller.get_by_id(0), 1)
 
-    def test_delete_by_id(self):
+    def test_get_by_id_db(self):
+        self.assertEqual(self.controller.get_by_id(4), 0)
+
+
+    #-------------------------Id:delete-------------------------------
+
+    def test_delete_by_id_correct(self):
         self.assertEqual(self.controller.delete_by_id(1), True)
         self.assertEqual(self.controller.delete_by_id(1), 0)
+
+    def test_delete_by_id_incorrect_fronter(self):
         self.assertEqual(self.controller.delete_by_id(0), 1)
-        
+        self.assertEqual(self.controller.delete_by_id(-1), 1)
+    
+    def test_delete_by_id_incorrect_formater(self):
+        self.assertEqual(self.controller.delete_by_id("dfdfd"), 1)
 
-    #-------------------------Name-------------------------------
+    def test_delete_by_id_db(self):
+        self.controller.delete_by_id(1)
+        self.assertEqual(self.controller.delete_by_id(1), 0)
+        self.assertEqual(self.controller.delete_by_id(23443), 0)
 
-    def test_get_by_name(self):
+
+    #-------------------------Name:get-------------------------------
+
+    def test_get_by_name_correct(self):
         self.assertEqual(self.controller.get_by_name('tag1', self.user.id), [self.tag1])
         self.assertEqual(self.controller.get_by_name('tag2', self.user.id), [self.tag2])
-        self.assertEqual(self.controller.get_by_name('tag3', self.user.id), [])
+
+    def test_get_by_name_incorrect_value(self):
         self.assertEqual(self.controller.get_by_name('', self.user.id), 1)
         self.assertEqual(self.controller.get_by_name('tag3', "fff"), 1)
 
-    def test_change_name(self):
-        tag = Tag(1, 'tag1', 'red', self.user)
-        self.assertEqual(self.controller.change_name(tag, 'tag4'), True)
-        tag.name = 'tag4'
-        self.assertEqual(self.controller.change_name(tag, 'tag4'), 1)
-        self.assertEqual(self.controller.change_name(tag, ''), 1)
-        tag.user.id = 0
-        self.assertEqual(self.controller.change_name(tag, 'tag1'), 1)
-        
+    def test_get_by_name_incorrect_db(self):
+        self.assertEqual(self.controller.get_by_name('tag3', self.user.id), 0)
 
-    def test_delete_by_name(self):
+    
+    #-------------------------Name:get-------------------------------
+    
+    def test_change_name_correct(self):
+        self.assertEqual(self.controller.change_name(self.tag1, 'tag4'), True)
+
+    def test_change_name_incorrect(self):
+        self.assertEqual(self.controller.change_name(self.tag1, 'tag4'), 1)
+        self.assertEqual(self.controller.change_name(self.tag1, ''), 1)
+        self.tag1.user.id = 0
+        self.assertEqual(self.controller.change_name(self.tag1, 'tag1'), 1)
+
+    #-------------------------Name:delete-------------------------------
+
+    def test_delete_by_name_correct(self):
         self.assertEqual(self.controller.delete_by_name('tag1', self.user.id), True)
-        self.assertEqual(self.controller.delete_by_name('tag1', self.user.id), 0)
-        self.assertEqual(self.controller.delete_by_name('tag1xx', self.user.id), 0)
+        
+    def test_delete_by_name_incorrect_value(self):
         self.assertEqual(self.controller.delete_by_name('tag1xx', "sd"), 1)
 
-    #-------------------------Color-------------------------------
+    def test_delete_by_name_incorrect_db(self):
+        self.controller.delete_by_name('tag1', self.user.id)
+        self.assertEqual(self.controller.delete_by_name('tag1', self.user.id), 0)
+        self.assertEqual(self.controller.delete_by_name('tag1xx', self.user.id), 0)
+
+
+    #-------------------------Color:get-------------------------------
 
     def test_get_by_color(self):
         self.assertEqual(self.controller.get_by_color('red', self.user.id), [self.tag1])
         self.assertEqual(self.controller.get_by_color('blue', self.user.id), [self.tag2])
-        self.assertEqual(self.controller.get_by_color('green', self.user.id), [])
+
+    def test_get_by_color_incorrect_value(self):
         self.assertEqual(self.controller.get_by_color('', self.user.id), 1)
         self.assertEqual(self.controller.get_by_color('blue', "self.user.id"), 1)
 
-    def test_change_color(self):
-        tag = Tag(1, 'tag1', 'red', self.user)
+    def test_get_by_color_incorrect_db(self):
+        self.assertEqual(self.controller.get_by_color('green', self.user.id), 0)
+
+    #-------------------------Color:change-------------------------------
+
+    def test_change_color_correct(self):
+        self.assertEqual(self.controller.change_color(self.tag1, 'blue'), True)
+
+    def test_change_color_incorrect_values(self):
+        self.controller.change_color(self.tag1, 'blue')
+        self.assertEqual(self.controller.change_color(self.tag1, 'blue'), 1)
+        self.tag1.color = 'green'
+        self.assertEqual(self.controller.change_color(self.tag1, 'yellow'), 1)
+        self.assertEqual(self.controller.change_color(self.tag1, ''), 1)
+        self.tag1.user.id = "fdf"
+        self.assertEqual(self.controller.change_color(self.tag1, 'blue'), 1)
+
+    def test_change_color_incorrect_db(self):
         tag_invented = Tag(56, 'fdfdf', 'red', self.user)
-        self.assertEqual(self.controller.change_color(tag, 'blue'), True)
-        tag.color = 'blue'
-        self.assertEqual(self.controller.change_color(tag, 'blue'), 1)
-        tag.color = 'green'
-        self.assertEqual(self.controller.change_color(tag, 'yellow'), 1)
-        self.assertEqual(self.controller.change_color(tag, ''), 1)
         self.assertEqual(self.controller.change_color(tag_invented, 'green'), 0)
-        tag.user.id = "fdf"
-        self.assertEqual(self.controller.change_color(tag, 'blue'), 1)
+
+    #-------------------------Color:delete-------------------------------
     
-    def test_delete_by_color(self):
+    def test_delete_by_color_correct(self):
         self.assertEqual(self.controller.delete_by_color('red', self.user.id), True)
-        self.assertEqual(self.controller.delete_by_color('red', self.user.id), 0)
+
+    def test_delete_by_color_incorrect_value(self):
         self.assertEqual(self.controller.delete_by_color('redxx', self.user.id), 1)
         self.assertEqual(self.controller.delete_by_color('red', "self.user.id"), 1)
 
-    #-------------------------id_user-------------------------------
+    def test_delete_by_color_incorrect_db(self):
+        self.controller.delete_by_color('red', self.user.id)
+        self.assertEqual(self.controller.delete_by_color('red', self.user.id), 0)
 
-    def test_get_by_user(self):
+    
+    #-------------------------id_user:get-------------------------------
+
+    def test_get_by_user_correct(self):
         self.assertEqual(self.controller.get_by_user(self.user.id), [self.tag1, self.tag2])
+    
+    def test_get_by_user_incorrect_value(self):
         self.assertEqual(self.controller.get_by_user("df"), 1)
+    
+    def test_get_by_user_incorrect_db(self):
         self.assertEqual(self.controller.get_by_user(874), 0)
+
+    #-------------------------id_user:delete-------------------------------
 
     def test_delete_by_user(self):
         self.assertEqual(self.controller.delete_by_user(self.user.id), True)
+    
+    def test_delete_by_user_incorrect_value(self):
         self.assertEqual(self.controller.delete_by_user("ty"), 1)
+    
+    def test_delete_by_user_incorrect_db(self):
         self.assertEqual(self.controller.delete_by_user(68), 0)
 
 def restore():

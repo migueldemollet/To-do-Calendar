@@ -4,7 +4,6 @@ from user_controller import UserController
 from utils import *
 sys.path.insert(2, 'Src/Model/')
 from tag_model import TagModel
-from user_model import UserModel
 
 class TagController:
     def __init__(self):
@@ -66,6 +65,9 @@ class TagController:
             print("Tag name cannot be empty")
             return 1
         self.tags = self.tag_model.get_by_name(name, user_id)
+        if (self.tags == []):
+            print("Tag does not exist")
+            return 0
         self.user = self.user_controller.get_by_id(user_id)
         return list_to_tags(self.tags, self.user)
 
@@ -107,6 +109,9 @@ class TagController:
             print("Invalid user id")
             return 1
         self.tags = self.tag_model.get_by_color(color, user_id)
+        if (self.tags == []):
+            print("Tag does not exist")
+            return 0
         self.user = self.user_controller.get_by_id(user_id)
         return list_to_tags(self.tags, self.user)
     

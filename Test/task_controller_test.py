@@ -29,12 +29,15 @@ class TestTaskController(unittest.TestCase):
     def tearDown(self):
         restore()
 
+    #-------------------------Add------------------------------
 
-    def test_add_task(self):
+    def test_add_task_correct(self):
         task = Task(4, "task4", "description4", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.add(task), True)
         self.assertEqual(self.controller.add(task), 0)
-        task.name = ""
+    
+    def test_add_task_incorrect_values(self):
+        task = Task(4, "task4", "description4", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.add(task), 1)
         task.name = "task4"
         task.date = "dfko/ds/2022"
@@ -48,128 +51,218 @@ class TestTaskController(unittest.TestCase):
         task.color = "sdff"
         self.assertEqual(self.controller.add(task), 1)
         task.color = "red"
+    
+    def test_add_task_incorrect_db(self):
+        task = Task(4, "task4", "description4", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
+        self.controller.add(task), True
+        self.assertEqual(self.controller.add(task), 0)
         task.tag.id = 0
         self.assertEqual(self.controller.add(task), 0)
         task.tag.id = 1
         task.user.id = 0
         self.assertEqual(self.controller.add(task), 0)
     
+
     #-------------------------Share------------------------------
 
-    def test_share(self):
+    def test_share_correct(self):
         self.assertEqual(self.controller.share(self.task2, self.user1), True)
-        self.assertEqual(self.controller.share(self.task2, self.user1), 0)
+    
+    def test_share_incorrect_values(self):
         self.task2.id = 0
         self.assertEqual(self.controller.share(self.task2, self.user2), 1)
         self.task2.id = 2
         self.user2.id = 0
         self.assertEqual(self.controller.share(self.task2, self.user2), 1)
+    
+    def test_share_incorrect_db(self):
+        self.controller.share(self.task2, self.user1)
+        self.assertEqual(self.controller.share(self.task2, self.user1), 0)
 
-    #-------------------------Id---------------------------------
 
-    def test_get_by_id(self):
+    #-------------------------Id:get---------------------------------
+
+    def test_get_by_id_correct(self):
         self.assertEqual(self.controller.get_by_id(1), self.task1)
         self.assertEqual(self.controller.get_by_id(2), self.task2)
         self.assertEqual(self.controller.get_by_id(3), self.task3)
-        self.assertEqual(self.controller.get_by_id(4), 0)
+    
+    def test_get_by_id_incorrect_values(self):
         self.assertEqual(self.controller.get_by_id(0), 1)
         self.assertEqual(self.controller.get_by_id("sdsd"), 1)
+    
+    def test_get_by_id_incorrect_db(self):
+        self.assertEqual(self.controller.get_by_id(4), 0)
+    
+    #-------------------------id:delete---------------------------------
 
-    def test_delete_by_id(self):
+    def test_delete_by_id_correct(self):
         self.assertEqual(self.controller.delete_by_id(1), True)
         self.assertEqual(self.controller.delete_by_id(1), 0)
         self.assertEqual(self.controller.delete_by_id(2), True)
+    def test_delete_by_id_incorrect_values(self):
         self.assertEqual(self.controller.delete_by_id(0), 1)
-        self.assertEqual(self.controller.delete_by_id(4), 0)
         self.assertEqual(self.controller.delete_by_id("dfd"), 1)
+    
+    def test_delete_by_id_incorrect_db(self):
+        self.controller.delete_by_id(1)
+        self.assertEqual(self.controller.delete_by_id(1), 0)
+        self.assertEqual(self.controller.delete_by_id(4), 0)
 
-    #-------------------------Name-------------------------------
 
-    def test_get_by_name(self):
+
+    #-------------------------Name:get-------------------------------
+
+    def test_get_by_name_correct(self):
         self.assertEqual(self.controller.get_by_name("task1", self.task1.user.id), self.task1)
         self.assertEqual(self.controller.get_by_name("task2", self.task2.user.id), self.task2)
         self.assertEqual(self.controller.get_by_name("task3", self.task3.user.id), self.task3)
-        self.assertEqual(self.controller.get_by_name("task4", self.task1.user.id), 0)
+    
+    def test_get_by_name_incorrect_values(self):
         self.assertEqual(self.controller.get_by_name('', self.task1.user.id), 1)
         self.assertEqual(self.controller.get_by_name("task1", 0), 1)
+    
+    def test_get_by_name_incorrect_db(self):
+        self.assertEqual(self.controller.get_by_name("task4", self.task1.user.id), 0)
+    
+    #-------------------------Name:change-------------------------------
 
-    def test_change_name(self):
+    def test_change_name_correct(self):
         task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.change_name(task, 'task4'), True)
         task.name = "task4"
+    
+    def test_change_name_incorrect_values(self):
+        task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.change_name(task, 'task4'), 1)
         self.assertEqual(self.controller.change_name(task, ''), 1)
         task.user.id = 0
         self.assertEqual(self.controller.change_name(task, 'task4'), 1)
+    
+    def test_change_name_incorrect_db(self):
+        task = Task(575, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
+        self.assertEqual(self.controller.change_name(task, 'task4'), 0)
 
-    def test_delete_by_name(self):
+    #-------------------------Nmae:delete-------------------------------
+    def test_delete_by_name_correct(self):
         self.assertEqual(self.controller.delete_by_name('task1', self.user1.id), True)
-        self.assertEqual(self.controller.delete_by_name('task1', self.user1.id), 0)
-        self.assertEqual(self.controller.delete_by_name('task1xx', self.user1.id), 0)
+
+    def test_delete_by_name_incorrect_values(self):
         self.assertEqual(self.controller.delete_by_name('', self.user1.id), 1)
         self.assertEqual(self.controller.delete_by_name('task1', 0), 1)
+    
+    def test_delete_by_name_incorrect_db(self):
+        self.controller.delete_by_name('task1', self.user1.id)
+        self.assertEqual(self.controller.delete_by_name('task1', self.user1.id), 0)
+        self.assertEqual(self.controller.delete_by_name('task1xx', self.user1.id), 0)
 
+    
     #-------------------------Description--------------------------
 
-    def test_change_despriction(self):
+    def test_change_despriction_correct(self):
         task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.change_description(task, 'description4'), True)
+        self.assertEqual(self.controller.change_description(task, ''), True)
+    
+    def test_change_description_incorrect_values(self):
+        task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
         task.description = "description4"
         self.assertEqual(self.controller.change_description(task, 'description4'), 1)
-        self.assertEqual(self.controller.change_description(task, ''), True)
         task.user.id = 0
         self.assertEqual(self.controller.change_description(task, 'description4'), 1)
+    
+    def test_change_description_incorrect_db(self):
+        task = Task(575, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
+        self.assertEqual(self.controller.change_description(task, 'description4'), 0)
 
-    #-------------------------State-------------------------------
 
-    def test_get_by_state(self):
+    #-------------------------State:get-------------------------------
+
+    def test_get_by_state_correct(self):
         self.assertEqual(self.controller.get_by_state(0, self.user1.id), [self.task1])
         self.assertEqual(self.controller.get_by_state(1, self.user1.id), [self.task2])
-        self.assertEqual(self.controller.get_by_state(0, self.user2.id), 0)
+    
+    def test_get_by_state_incorrect_values(self):
         self.assertEqual(self.controller.get_by_state(2, self.user1.id), 1)
         self.assertEqual(self.controller.get_by_state(-1, self.user1.id), 1)
+    
+    def test_get_by_state_incorrect_db(self):
+        self.assertEqual(self.controller.get_by_state(0, self.user2.id), 0)
+    
+    #-------------------------State:change-------------------------------
 
-    def test_change_state(self):
+    def test_change_state_correct(self):
         task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
-        task_invented = Task(167, "task1", "description1", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.change_state(task, 1), True)
+
+    def test_change_state_incorrect_values(self):
+        task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
         task.state = 1
         self.assertEqual(self.controller.change_state(task, 1), 1)
         self.assertEqual(self.controller.change_state(task, 2), 1)
         self.assertEqual(self.controller.change_state(task, -1), 1)
+    
+    def test_change_state_incorrect_db(self):
+        task_invented = Task(167, "task1", "description1", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.change_state(task_invented, 1), 0)
+    
+    #-------------------------State:delete-------------------------------
 
-    def test_delete_by_status(self):
+    def test_delete_by_state_correct(self):
         self.assertEqual(self.controller.delete_by_state(0, self.user1.id), True)
-        self.assertEqual(self.controller.delete_by_state(0, self.user1.id), 0)
         self.assertEqual(self.controller.delete_by_state(1, self.user1.id), True)
+    
+    def test_delete_by_state_incorrect_values(self):
         self.assertEqual(self.controller.delete_by_state(2, self.user1.id), 1)
         self.assertEqual(self.controller.delete_by_state(-1, self.user1.id), 1)
         self.assertEqual(self.controller.delete_by_state(-1, "f"), 1)
+    
+    def test_delete_by_state_incorrect_db(self):
+        self.controller.delete_by_state(0, self.user1.id)
+        self.assertEqual(self.controller.delete_by_state(0, self.user1.id), 0)
 
-    #-------------------------Date-------------------------------
 
-    def test_get_by_date(self):
+    #-------------------------Date:get-------------------------------
+
+    def test_get_by_date_correct(self):
         self.assertEqual(self.controller.get_by_date('01/01/2022', self.user1.id), [self.user1])
         self.assertEqual(self.controller.get_by_date('01/02/2022', self.user1.id), [self.user2])
-        self.assertEqual(self.controller.get_by_date('01/03/2022', self.user1.id), 0)
+    
+    def test_get_by_date_incorrect_values(self):
         self.assertEqual(self.controller.get_by_date('01/0sd4/sa2022', self.user1.id), 1)
         self.assertEqual(self.controller.get_by_date('01/01/2022', "ff"), 1)
+    
+    def test_get_by_date_incorrect_db(self):
+        self.assertEqual(self.controller.get_by_date('01/01/2022', self.user2.id), 0)
+    
+    #-------------------------Date:change-------------------------------
 
-    def test_change_date(self):
+    def test_change_date_correct(self):
         task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
-        task_invented = Task(167, "task1", "description1", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.change_date(task, '01/04/2022'), True)
+    
+    def test_change_date_incorrect_values(self):
+        task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.change_date(task, '01/04/2022'), 1)
         self.assertEqual(self.controller.change_date(task, '35/04/2022'), 1)
         self.assertEqual(self.controller.change_date(task, '45/-2/e3'), 1)
+    
+    def test_change_date_incorrect_db(self):
+        task_invented = Task(167, "task1", "description1", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.change_date(task_invented, '01/04/2022'), 0)
+    
+    #-------------------------Date:delete-------------------------------
     
     def test_delete_by_date(self):
         self.assertEqual(self.controller.delete_by_date('01/01/2022', self.user1.id), True)
-        self.assertEqual(self.controller.delete_by_date('01/01/2022', self.user1.id), 0)
+    
+    def test_delete_by_date_incorrect_values(self):
         self.assertEqual(self.controller.delete_by_date('111/32/2022', self.user1.id), 1)
         self.assertEqual(self.controller.delete_by_date('01/01/2022', "fsdas"), 1)
+    
+    def test_delete_by_date_incorrect_db(self):
+        self.controller.delete_by_date('01/01/2022', self.user1.id)
+        self.assertEqual(self.controller.delete_by_date('01/01/2022', self.user1.id), 0)
 
     #-------------------------Priority:get-------------------------------
 
@@ -437,5 +530,3 @@ def restore():
 
 if __name__ == '__main__':
     unittest.main()
-        
-    
