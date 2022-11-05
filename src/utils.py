@@ -39,7 +39,7 @@ def check_password(password):
     regex = r'^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@.#$%^&*]{8,}$'
     return re.match(regex, password)
 
-def has_password(password):
+def hash_password(password):
     return hashlib.md5(password.encode()).hexdigest()
 
 def list_to_users(list):

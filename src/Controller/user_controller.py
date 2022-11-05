@@ -25,6 +25,7 @@ class UserController:
             print("Invalid password")
             return 1
         if(self.user_model.get_by_id(user.id) == []):
+            user.password = hash_password(user.password)
             return self.user_model.add(user)
         else:
             print("User already exists")
@@ -132,22 +133,19 @@ class UserController:
         if (self.user_model.get_by_username(user.username) == []):
             print("User does not exist")
             return 0
-        return self.user_model.change_password(user.id, has_password(new_password))
+        return self.user_model.change_password(user.id, hash_password(new_password))
 
-    #-------------------------Friends-------------------------------
+    #-------------------------Login-------------------------------
 
-    def add_friend(self, username, friend_username):
-        if (not check_username(username) or not check_username(friend_username)):
-            print("Invalid username")
+    def login(self, username, password):
+        if (not check_username(username) or not check_password(password)):
+            print("Invalid username or password")
             return 1
-        if (self.user_model.get_by_username(username) == [] or self.user_model.get_by_username(friend_username) == []):
+        if (self.user_model.get_by_username(username) == []):
             print("User does not exist")
             return 0
-        if (self.user_model.get_by_username(username)[0].friends == []):
-            self.user_model.add_friend(username, friend_username)
-            return True
-        if (friend_username in self.user_model.get_by_username(username)[4].friends):
-            print("Friend already exists")
+        if (self.user_model.get_by_username(username)[0]['password'] != hash_password(password)):
+            print("Incorrect password")
             return 0
-        self.user_model.add_friend(username, friend_username)
-        return True
+        else:
+            return True
