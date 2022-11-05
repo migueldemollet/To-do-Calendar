@@ -384,10 +384,19 @@ class TestTaskController(unittest.TestCase):
 
 
     #-------------------------Tag:get-------------------------------#
+
+    def get_tag_id_by_name(self, name):
+        if (name == self.tag1.name):
+            return 1
+        elif (name == self.tag2.name):
+            return 2
+        else:
+            return 3
+    
     def test_get_by_tag_correct(self):
-        self.assertEqual(self.controller.get_by_tag(1, self.user1.id), [self.task1])
-        self.assertEqual(self.controller.get_by_tag(2, self.user1.id), [self.task2])
-        self.assertEqual(self.controller.get_by_tag(3, self.user2.id), [self.task3])
+        self.assertEqual(self.controller.get_by_tag(self.get_tag_id_by_name("tag1"), self.user1.id), [self.task1])
+        self.assertEqual(self.controller.get_by_tag(self.get_tag_id_by_name("tag2"), self.user1.id), [self.task2])
+        self.assertEqual(self.controller.get_by_tag(self.get_tag_id_by_name("tag3"), self.user2.id), [self.task3])
 
     def test_get_by_tag_incorrect(self):
         self.assertEqual(self.controller.get_by_tag(0, self.user1.id), 1)
