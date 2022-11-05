@@ -11,8 +11,8 @@ class TestUserController(unittest.TestCase):
     def __init__(self, methodName: str = ...) -> None:
         super().__init__(methodName)
         self.controller = UserController()
-        self.user1 = User(1, "user1", "user1@tdcalendar.com", "password1")
-        self.user2 = User(2, "user2", "user2@tdcalendar.com", "password1")
+        self.user1 = User(1, "user1", "user1@tdcalendar.com", "5e06b84ac4f276aa03afc04fd1e82856")
+        self.user2 = User(2, "user2", "user2@tdcalendar.com", "d6f85014ab40ab641c6b801818c4b681")
 
     def setUp(self):
         restore()
@@ -44,6 +44,7 @@ class TestUserController(unittest.TestCase):
     def test_add_user_incorrect_db(self):
         user = User(3, 'user3', 'user3@tdcalendar.com', 'password3@')
         self.controller.add(user)
+        user = User(3, 'user3', 'user3@tdcalendar.com', 'password3@')
         self.assertEqual(self.controller.add(user), 0)
     
 
@@ -150,6 +151,22 @@ class TestUserController(unittest.TestCase):
         self.user1.username = "sdsd"
         self.assertEqual(self.controller.change_password(self.user1, 'password1@'), 0)
 
+    #-------------------------login-------------------------------
+
+    def test_login_correct(self):
+        self.assertEqual(self.controller.login('user1', 'password1@'), True)
+        self.assertEqual(self.controller.login('user2', 'password2@'), True)
+    
+    def test_login_incorrect_value(self):
+        self.assertEqual(self.controller.login('', 'password1'), 1)
+        self.assertEqual(self.controller.login('user1', ''), 1)
+        self.assertEqual(self.controller.login('user1', 'password1'), 1)
+        self.assertEqual(self.controller.login('user1', 'password1'), 1)
+        self.assertEqual(self.controller.login('user1', 'password1'), 1)
+    
+    def test_login_incorrect_db(self):
+        self.assertEqual(self.controller.login('user1sdsd', 'password1@'), 0)
+
 def restore():
     conn = sqlite3.connect('./DB/to_do_calendar_test.db')
     c = conn.cursor()
@@ -170,8 +187,8 @@ def restore():
     c.execute(
     '''
     INSERT INTO `user` (`id`, `username`, `email`, `password`) VALUES
-    (1, 'user1', 'user1@tdcalendar.com', 'password1'),
-    (2, 'user2', 'user2@tdcalendar.com', 'password1')
+    (1, 'user1', 'user1@tdcalendar.com', '5e06b84ac4f276aa03afc04fd1e82856'),
+    (2, 'user2', 'user2@tdcalendar.com', 'd6f85014ab40ab641c6b801818c4b681')
     '''
     )
 
