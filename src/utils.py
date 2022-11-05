@@ -42,8 +42,8 @@ def check_password(password):
 def hash_password(password):
     return hashlib.md5(password.encode()).hexdigest()
 
-def list_to_users(list):
-    return [User(user['id'], user['username'], user['email'], user['password']) for user in list]
+def list_to_users(list, friend):
+    return [User(user['id'], user['username'], user['email'], user['password'], friend) for user in list]
 
 def list_to_tags(list, user):
     return [Tag(tag['id'], tag['name'], tag['color'], user) for tag in list]
@@ -67,5 +67,5 @@ def list_to_tasks(list, tags, user, users_shared):
         )
     return result
 
-def list_to_friends(list,users):
-    return [Friend(friend['id'],user,friend['state']) for friend, user in zip(list, users)]
+def list_to_friends(list, users):
+    return [Friend(friend['id'], user, friend['state']) for friend, user in zip(list, users)]

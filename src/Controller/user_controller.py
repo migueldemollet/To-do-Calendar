@@ -1,15 +1,18 @@
 import sys
-sys.path.insert(1, 'Src/')
-from task import Task
+sys.path.insert(1, 'Src/Controller/')
+from friends_controller import FriendController
 from utils import *
 sys.path.insert(2, 'Src/Model/')
 from user_model import UserModel
-from utils import *
+
+
 
 class UserController:
     def __init__(self):
         self.user_model = UserModel("./DB/to_do_calendar_test.db")
+        self.friend_controller = FriendController()
         self.user = []
+        self.friends = []
 
     def add(self, user):
         if (not check_is_int(user.id)):
@@ -41,7 +44,8 @@ class UserController:
         if (self.user == []):
             print("User does not exist")
             return 0
-        return list_to_users(self.user)[0]
+        self.friends = self.friend_controller.get_by_user(id)
+        return list_to_users(self.user, self.friends)[0]
 
     def delete_by_id(self, id):
         if (not check_is_int(id)):
@@ -62,7 +66,8 @@ class UserController:
         if (self.user == []):
             print("User does not exist")
             return 0
-        return list_to_users(self.user)[0]
+        self.friends = self.friend_controller.get_by_user(self.user[0]['id'])
+        return list_to_users(self.user, self.friends)[0]
 
     def change_username(self, user, new_username):
         if (not check_username(user.username) or not check_username(new_username)):
@@ -98,7 +103,8 @@ class UserController:
         if (self.user == []):
             print("User does not exist")
             return 0
-        return list_to_users(self.user)[0]
+        self.friends = self.friend_controller.get_by_user(self.user[0]['id'])
+        return list_to_users(self.user, self.friends)[0]
 
     def change_email(self, user, new_email):
         if (not check_username(user.username) or not check_email(new_email)):
@@ -149,3 +155,38 @@ class UserController:
             return 0
         else:
             return True
+        
+    #-------------------------Friends-------------------------------
+
+    def add_friend(self, user_id, user_friend_id):
+        if (not check_is_int(user_id) or not check_is_int(user_friend_id)):
+            print("Invalid id")
+            return 1
+        if (self.user_model.get_by_id(user_id) == []):
+            print("User does not exist")
+            return 0
+        if (self.user_model.get_by_id(user_friend_id) == []):
+            print("User friend does not exist")
+            return 0
+        return self.friend_controller.add(user_id, user_friend_id)
+
+    def confirm_friend(self, user_id, user_friend_id):
+        if (not check_is_int(user_id) or not check_is_int(user_friend_id)):
+            print("Invalid id")
+            return 1
+        if (self.user_model.get_by_id(user_id) == []):
+            print("User does not exist")
+            return 0
+        if (self.user_model.get_by_id(user_friend_id) == []):
+            print("User friend does not exist")
+            return 0
+        self.friends = self.friend_controller.find(user_id, user_friend_id)
+        if (type(self.friends) == int):
+            return self.friends
+        return self.friend_controller.change_state(self.friends.id, 1)
+
+    def delete_friend(self, friend_id):
+        if (not check_is_int(friend_id)):
+            print("Invalid id")
+            return 1
+        return self.friend_controller.delete(friend_id)

@@ -66,7 +66,7 @@ class TaskController:
 
         return self.task_action_controller.share(task, user)
     
-    def unshare_task(self, task, user):
+    def unshare(self, task, user):
         if (not check_is_int(task.id)):
             print("Invalid user id")
             return 1
@@ -81,7 +81,7 @@ class TaskController:
             print("Task "+task.name+" does not exist")
             return 0
 
-        return self.task_action_controller.unshared_task(task, user)
+        return self.task_action_controller.unshare(task, user)
         
     #-------------------------Id---------------------------------
 

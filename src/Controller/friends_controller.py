@@ -1,16 +1,12 @@
 import sys
-from utils import *
-
 sys.path.insert(1, 'Src/controller/')
-from user_controller import UserController
-
+from utils import *
 sys.path.insert(2, 'Src/Model/')
 from friends_model import FriendsModel
 
 
 class FriendController:
     def __init__(self) -> None:
-        self.user_controller = UserController()
         self.friends_model = FriendsModel("./DB/to_do_calendar_test.db")
         self.friends = []
         self.users= []
@@ -28,7 +24,7 @@ class FriendController:
             return 0
         return self.friends_model.add(user_id_1, user_id_2)
 
-    def delete(self,id):
+    def delete(self, id):
         if (not check_is_int(id)):
             print("Invalid id")
             return 1
@@ -47,7 +43,7 @@ class FriendController:
         if (self.friends == []):
             print("Friend does not exist")
             return 0
-        self.users = self.user_controller.get_by_id(self.friends[0]['id_user_2'])
+        self.users = get_user(self.friends[0]['id_user_2'])
         return list_to_friends(self.friends, [self.users])[0]
 
     #-------------------------Username-------------------------------
@@ -60,7 +56,7 @@ class FriendController:
         if (self.friends == []):
             print("Friend does not exist")
             return 0
-        self.users = [self.user_controller.get_by_id(friend['id_user_2']) for friend in self.friends]
+        self.users = [get_user(friend['id_user_2']) for friend in self.friends]
         return list_to_friends(self.friends, self.users)
 
     def delete_by_user(self, user_id):
@@ -85,7 +81,7 @@ class FriendController:
         if (self.friends == []):
             print("Friend does not exist")
             return 0
-        self.users = [self.user_controller.get_by_id(friend['id_user_2']) for friend in self.friends]
+        self.users = [get_user(friend['id_user_2']) for friend in self.friends]
         return list_to_friends(self.friends, self.users)
        
     
@@ -112,6 +108,29 @@ class FriendController:
             print("Friend does not exist")
             return 0
         return self.friends_model.delete_by_state(user_id,state)
+    
+    #-------------------------Find-------------------------------
+
+    def find(self, user_id, user_friend_id):
+        if (not check_is_int(user_id)):
+            print("Invalid user")
+            return 1
+        if (not check_is_int(user_friend_id)):
+            print("Invalid user")
+            return 1
+        if (user_id == user_friend_id):
+            print("Sorry, you need to find a friend")
+            return 1
+        self.friends = self.friends_model.check_relationship(user_id, user_friend_id)
+        if (self.friends == []):
+            print("Friend does not exist")
+            return 0
+        self.users = [get_user(friend['id_user_2']) for friend in self.friends]
+        return list_to_friends(self.friends, self.users)[0]
+
+def get_user(user_id):
+    from user_controller import UserController
+    return UserController().get_by_id(user_id)
         
     
 
