@@ -1,6 +1,10 @@
 from tkcalendar import Calendar
 from tkinter import *
 import tkinter.font as tkFont
+from Controller.tag_controller import *
+from Controller.task_controller import *
+
+
 
 class Agenda(Calendar):
 
@@ -22,11 +26,19 @@ class Agenda(Calendar):
         self.icon_Font = tkFont.Font(family="Console", size=10)
         self.alert_Font = tkFont.Font(family="Console", size=12)
         
-        
+
+        self.Controller_TAG = TagController()
+        self.Controller_TASK = TaskController()
+
+        self.tag_config('mix',background='grey',foreground='black')
         self._CONTROLLER_getTags()
         self._CONTROLLER_getTasks()
+              
+        #self._sel_date=self.datetime.today()
+        #self._show_event(self._sel_date)
 
-        self.list_buttons = []
+        
+        
         
         """ self.left_frame = Frame(master, background="red",
         borderwidth=5,  relief=RIDGE,
@@ -53,6 +65,14 @@ class Agenda(Calendar):
             pady=30
         ) 
         
+        #self.top= Toplevel(self.right_frame)
+        #self.top.geometry("200x100+"+str(int(self.WINDOW_WIDTH+self.WINDOW_MARGIN_X/2)-200)+"+"+str(int(self.WINDOW_HEIGHT+self.WINDOW_MARGIN_Y/2)-400)+"")
+        
+        self.list_buttons = []
+        self.list_buttons_open_desc = {}
+
+        self.list_desc = []
+
         """self.sb = Scrollbar(master, command=self.right_frame.yview)
         self.sb.pack(side="right")
         self.right_frame.configure(yscrollcommand=self.sb.set)"""
@@ -68,25 +88,50 @@ class Agenda(Calendar):
                 self._cal_frame.columnconfigure(j + 1, uniform=1)
                 label.configure(justify="center", anchor="n", padding=(1, 4))
                 
-        
+        self._prev_month()
+        self._next_month()
     
     
   
     def _CONTROLLER_complete_task(self,ev_id,event):
         if(self.calevents[ev_id]['completed'] == 0):
             self.calevents[ev_id]['completed'] = 1
+            self.Controller_TASK.change_state(self.Controller_TASK.get_by_id(self.calevents[ev_id]['taskid']),1)
         else:
             self.calevents[ev_id]['completed'] = 0
-        
+            self.Controller_TASK.change_state(self.Controller_TASK.get_by_id(self.calevents[ev_id]['taskid']),0)
+       
         self._on_click(event,1)
         
-        self.message_label.configure(text=(self.calevents[ev_id]['text'] + "switched to " + str(self.calevents[ev_id]['completed'])))
-        self.message_label.update()
         
 
-    def _CONTROLLER_show_description(self,event_id,event):
-        self.message_label.configure(text='NOT IMPLEMENTED!')
-        self.update()
+    def _CONTROLLER_show_description(self,ev_id,selected_day_num,event):
+        for i in self.list_desc:
+            i.destroy()
+
+        self.list_desc.clear()
+        
+        if (self.list_buttons_open_desc[selected_day_num]):
+            self.list_buttons_open_desc[selected_day_num]=0
+            for i in self.list_desc:
+                i.destroy()
+
+            self.list_desc.clear()
+        else:
+            for id in self.list_buttons_open_desc.keys():
+                self.list_buttons_open_desc[id] = 0
+
+            #self.top.title(self.calevents[ev_id]['text'])
+            T = Text(self.right_frame, height = 5, width = 52)
+            T.grid(row=selected_day_num*2+1,column=0, columnspan=4,sticky='ew')
+            T.insert(END, self.calevents[ev_id]['descripcion'])
+            self.list_desc.append(T)
+            self.list_buttons_open_desc[selected_day_num]=1
+
+        self.message_label.configure(text='')
+
+        """self.message_label.configure(text='NOT IMPLEMENTED!')
+        self.update()"""
         
     def _CONTROLLER_edit_task(self,event_id,event):
         self.message_label.configure(text='NOT IMPLEMENTED!')
@@ -94,56 +139,50 @@ class Agenda(Calendar):
         
         
     def _CONTROLLER_delete_task(self,event_id,event):
-        self.message_label.configure(text='NOT IMPLEMENTED!')
-        self.update()
+        hi =self.calevents[event_id]
+        self.Controller_TASK.delete_by_id(self.calevents[event_id]['taskid'])
+
+        self.calevent_remove(event_id)
+
+        self._prev_month()
+        self._next_month()
+
+        """self.update()"""
+
+        self._on_click(event,1)
+
+
         
      
     def _CONTROLLER_getTags(self):
-        self.tag_config('UNIVERSITAT', background='DarkOliveGreen1', foreground='black')
+        for tag in self.Controller_TAG.get_by_user(1):
+            self.tag_config(tag.name, background=tag.color, foreground='black')
+
+        """self.tag_config('UNIVERSITAT', background='DarkOliveGreen1', foreground='black')
         self.tag_config('TRABAJO', background='bisque', foreground='black')
-        self.tag_config('mix',background='grey',foreground='black')
+        self.tag_config('mix',background='grey',foreground='black')"""
         
        
         
     def _CONTROLLER_getTasks(self):
         date = self.datetime.today()# + self.timedelta(days=2)
-        self.calevent_create(date, 'Llamar jefe', 'TRABAJO')
-        self.calevent_create(date, 'Revisar correo', 'TRABAJO')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
-        self.calevent_create(date + self.timedelta(days=3), 'Fichar al salir', 'TRABAJO')
-        self.calevent_create(date + self.timedelta(days=3), 'Llamar al delegado!!', 'UNIVERSITAT')
-        #self.calevent_remove(date + self.timedelta(days=3))
+
+        for task in self.Controller_TASK.get_by_user(1):
+            dia,mes,any = task.date.split('/')
+            date_task=datetime.date(year=int(any), month=int(mes), day=int(dia))
+            self.calevent_create(date_task, task.name, task.description,task.state,task.priority,task.id,self.Controller_TAG.get_by_id(task.tag.id).name)
+            
+    
+        """   self.calevent_create(date + self.timedelta(days=-7), 'Trabajo TQS', 'UNIVERSITAT')
+        self.calevent_create(date + self.timedelta(days=3), 'Llamar al delegado!!', 'tag2')"""
 
         
-        for event_id,ev in self.calevents.items():
+        """for event_id,ev in self.calevents.items():
             if(event_id%2 == 0):
                 ev['completed'] = 0
             else:
                 ev['completed'] = 1
-            
+            """
     
     
     
@@ -156,38 +195,78 @@ class Agenda(Calendar):
             if not label.cget('text'):
                 # this is an other month's day and showothermonth is False
                 return
-            ev_ids = self._calevent_dates[date]
-            i = len(ev_ids) - 1
+            ev_ids = {}
+
+            if date in self._calevent_dates:
+                ev_ids = self._calevent_dates[date]
+
+            for x in range(len(ev_ids)):
+                if self.calevents[ev_ids[x]]['completed']==0 and self.calevents[ev_ids[x]]['tags']:
+                    tag = self.calevents[ev_ids[x]]['tags'][-1]
+                    label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))
+                    break
+
+
+            """i = len(ev_ids) - 1
             while i >= 0 and not self.calevents[ev_ids[i]]['tags']:
+                ' and self.calevents[ev_ids[i]]['completed']==1:'
                 i -= 1
                 
 
             if i >= 0:
                 tag = self.calevents[ev_ids[i]]['tags'][-1]
-                label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))
+                if (self.calevents[ev_ids[i]]['completed']==0):
+                    label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))"""
+
+            
                 
                 
 
             taglist_show=[]
             for item in ev_ids:
-                if(self.calevents[item]['tags'] not in taglist_show):
+                if(self.calevents[item]['tags'] not in taglist_show and self.calevents[item]['completed']==0):
                         taglist_show.append(self.calevents[item]['tags'])
 
             if len(taglist_show) > 1:
                 label.configure(style='tag_%s.%s.TLabel' % ('mix', self._style_prefixe))
 
+            if len(taglist_show) == 0:
+                #w, d = self._get_day_coords(label)
+                if w is not None:
+                    week_end = [0, 6] if self['firstweekday'] == 'sunday' else [5, 6]
+                    if d in week_end:
+                        label.configure(style='we.%s.TLabel' % self._style_prefixe)
+                    else:
+                        label.configure(style='normal.%s.TLabel' % self._style_prefixe)
+
+                #label.configure(style='tag_%s.%s.TLabel' % ('mix', self._style_prefixe))
+
+            #if len(taglist_show) == 0:
+                #label.configure(style='tag_%s.%s.TLabel' % ('mix', self._style_prefixe))
+
             # modified lines:
             
             #text = '%s\n' % date.day + '\n'.join([self.calevents[ev]['text'][0:17] for ev in ev_ids])
+
+            
+
             text = str(date.day)+'\n'
-            for ev in ev_ids[0:2]:
-                text = text + self.calevents[ev]['text'][0:17] + '\n'
+
+            events_uncompleted = 0
+            for ev in ev_ids:
+                if(self.calevents[ev]['completed']==0):
+                    if(events_uncompleted < 3):
+                        text = text + self.calevents[ev]['text'][0:17] + '\n'
+                    events_uncompleted += 1
+                
                     
-            if(len(ev_ids)>3):
+            if(events_uncompleted>3):
                 text = text+'...'
 
 
             label.configure(text=text)
+        #else:
+
             
     def _display_days_without_othermonthdays(self):
         year, month = self._date.year, self._date.month
@@ -219,16 +298,24 @@ class Agenda(Calendar):
                     date = self.date(year, month, day_number)
                     if date in self._calevent_dates:
                         ev_ids = self._calevent_dates[date]
-                        i = len(ev_ids) - 1
-                        while i >= 0 and not self.calevents[ev_ids[i]]['tags']:
+
+                        for x in range(len(ev_ids)):
+                            if self.calevents[ev_ids[x]]['completed']==0 and self.calevents[ev_ids[x]]['tags']:
+                                tag = self.calevents[ev_ids[x]]['tags'][-1]
+                                label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))
+                                break
+
+                        """i = len(ev_ids) - 1
+                        while i >= 0 and not (self.calevents[ev_ids[i]]['tags']):
                             i -= 1
                         if i >= 0:
                             tag = self.calevents[ev_ids[i]]['tags'][-1]
-                            label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))
+                            if (self.calevents[ev_ids[i]]['completed']==0):
+                                label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))"""
 
                         taglist_show=[]
                         for item in ev_ids:
-                            if(self.calevents[item]['tags'] not in taglist_show):
+                            if(self.calevents[item]['tags'] not in taglist_show and self.calevents[item]['completed']==0):
                                     taglist_show.append(self.calevents[item]['tags'])
 
                         if len(taglist_show) > 1:
@@ -236,11 +323,23 @@ class Agenda(Calendar):
                         # modified lines:
                         #text = '%s\n' % day_number + '\n'.join([self.calevents[ev]['text'][0:17] for ev in ev_ids])
                         text = str(date.day)+'\n'
-                        for ev in ev_ids[0:2]:
+                        """for ev in ev_ids[0:3]:
                             text = text + self.calevents[ev]['text'][0:17] + '\n'
                     
                         if(len(ev_ids)>3):
+                            text = text+'...'"""
+
+
+                        events_uncompleted = 0
+                        for ev in ev_ids:
+                            if(self.calevents[ev]['completed']==0):
+                                if(events_uncompleted < 3):
+                                    text = text + self.calevents[ev]['text'][0:17] + '\n'
+                                events_uncompleted += 1
+                                        
+                        if(events_uncompleted>3):
                             text = text+'...'
+
                             
                         label.configure(text=text)
                 else:
@@ -286,16 +385,24 @@ class Agenda(Calendar):
                 if cal[i_week][i_day] in self._calevent_dates:
                     date = cal[i_week][i_day]
                     ev_ids = self._calevent_dates[date]
-                    i = len(ev_ids) - 1
+                    """i = len(ev_ids) - 1
                     while i >= 0 and not self.calevents[ev_ids[i]]['tags']:
                         i -= 1
                     if i >= 0:
                         tag = self.calevents[ev_ids[i]]['tags'][-1]
-                        label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))
+                        if (self.calevents[ev_ids[i]]['completed']==0):
+                            label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))
+                    """
+
+                    for x in range(len(ev_ids)):
+                        if self.calevents[ev_ids[x]]['completed']==0 and self.calevents[ev_ids[x]]['tags']:
+                            tag = self.calevents[ev_ids[x]]['tags'][-1]
+                            label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))
+                            break
 
                     taglist_show=[]
                     for item in ev_ids:
-                        if(self.calevents[item]['tags'] not in taglist_show):
+                        if(self.calevents[item]['tags'] not in taglist_show and self.calevents[item]['completed']==0):
                                 taglist_show.append(self.calevents[item]['tags'])
 
                     if len(taglist_show) > 1:
@@ -304,14 +411,103 @@ class Agenda(Calendar):
                     # modified lines:
                     #text = '%s\n' % date.day + '\n'.join([self.calevents[ev]['text'][0:17] for ev in ev_ids])
                     text = str(date.day)+'\n'
-                    for ev in ev_ids[0:2]:
+                    """for ev in ev_ids[0:3]:
                         text = text + self.calevents[ev]['text'][0:17] + '\n'
                     
                     if(len(ev_ids)>3):
+                        text = text+'...'"""
+
+                    events_uncompleted = 0
+                    for ev in ev_ids:
+                        if(self.calevents[ev]['completed']==0):
+                            if(events_uncompleted < 3):
+                                text = text + self.calevents[ev]['text'][0:17] + '\n'
+                            events_uncompleted += 1
+                            
+                    if(events_uncompleted>3):
                         text = text+'...'
+
+                    if(events_uncompleted==0):
+                        text = str(date.day)+'\n'
                         
                     label.configure(text=text)
-            
+
+    def calevent_create(self, date, text, description, state, priority, taskid, tags=[]):
+        
+        """
+        Add new event in calendar and return event id.
+
+        Options:
+
+            date : datetime.date or datetime.datetime
+                event date
+
+            text : str
+                text to put in the tooltip associated to date.
+
+            tags : list
+                list of tags to apply to the event. The last tag determines
+                the way the event is displayed. If there are several events on
+                the same day, the lowest one (on the tooltip list) which has
+                tags determines the colors of the day.
+        """
+        if isinstance(date, Calendar.datetime):
+            date = date.date()
+        if not isinstance(date, Calendar.date):
+            raise TypeError("date option should be a %s instance" % (Calendar.date))
+        if self.calevents:
+            ev_id = max(self.calevents) + 1
+        else:
+            ev_id = 0
+        if isinstance(tags, str):
+            tags_ = [tags]
+        else:
+            tags_ = list(tags)
+        self.calevents[ev_id] = {'date': date, 'text': text, 'tags': tags_, 'descripcion':description, 'completed':state, 'priority':priority, 'taskid':taskid}
+        for tag in tags_:
+            if tag not in self._tags:
+                self._tag_initialize(tag)
+        if date not in self._calevent_dates:
+            self._calevent_dates[date] = [ev_id]
+        else:
+            self._calevent_dates[date].append(ev_id)
+        if(self.calevents[ev_id]['completed']==0):
+            self._show_event(date)
+        return ev_id
+
+    def _remove_selection(self):
+        if self._sel_date is not None:
+            buit = 1
+            for id,ev in self.calevents.items():
+                hi = ev['date']
+                jo = self._sel_date
+                if ev['date']==self._sel_date and ev['completed']==0:
+                    buit = 0
+                    break
+            #if self._sel_date in self._calevent_dates and buit ==0:
+            if self._sel_date in self._calevent_dates:
+                self._show_event(self._sel_date)
+            else:
+                """w1, d1 = self._get_day_coords(self._date)
+                self._calendar[w1][d1].configure(text=str(d1))"""
+                w, d = self._get_day_coords(self._sel_date)
+                if w is not None:
+                    week_end = [0, 6] if self['firstweekday'] == 'sunday' else [5, 6]
+                    if self._sel_date.month == self._date.month:
+                        if d in week_end:
+                            self._calendar[w][d].configure(style='we.%s.TLabel' % self._style_prefixe)
+                        else:
+                            self._calendar[w][d].configure(style='normal.%s.TLabel' % self._style_prefixe)
+                    else:
+                        if d in week_end:
+                            self._calendar[w][d].configure(style='we_om.%s.TLabel' % self._style_prefixe)
+                        else:
+                            self._calendar[w][d].configure(style='normal_om.%s.TLabel' % self._style_prefixe)    
+
+
+    def _get_next_event_id(self):
+        return(len(self.calevents))
+
     def _on_click(self, event,option=0):
         """Select the day on which the user clicked."""
         #To clear Message bottom label:
@@ -353,6 +549,7 @@ class Agenda(Calendar):
             widget_i.destroy()
 
         self.list_buttons.clear()
+        self.list_buttons_open_desc.clear()
         
         #Mostramos las tareas del dia seleccionado
         selected_day_tasks = 0
@@ -371,24 +568,24 @@ class Agenda(Calendar):
                     [self._CONTROLLER_complete_task(event_id,event)], \
                     text=ev['tags'][0]+": "+ev['text']  , font=task_font ,  \
                     bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1,pady=0,padx=0)
-                button_ch.grid(row=selected_day_tasks,column=0, sticky='ew')#pack(fill=X)
+                button_ch.grid(row=selected_day_tasks*2,column=0, sticky='ew')#pack(fill=X)
                 self.list_buttons.append(button_ch)
                 
-                Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
-                    [self._CONTROLLER_show_description(event_id,event)], \
+                Button(self.right_frame, command=lambda event_id=event_id,selected_day_tasks=selected_day_tasks: \
+                    [self._CONTROLLER_show_description(event_id,selected_day_tasks,event)], \
                     text="☰"  , font=self.icon_Font, \
-                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks,column=1, sticky="ew",pady=0,padx=0)#pack(side=LEFT)
-                
+                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks*2,column=1, sticky="ew",pady=0,padx=0)#pack(side=LEFT)
+                self.list_buttons_open_desc[selected_day_tasks]=0
                 
                 Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
                     [self._CONTROLLER_edit_task(event_id,event)], \
                     text="✎"  , font=self.icon_Font, \
-                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks,column=2, sticky="ew",pady=0,padx=0)#pack(side=LEFT)
+                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks*2,column=2, sticky="ew",pady=0,padx=0)#pack(side=LEFT)
                 
-                Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
+                Button(self.right_frame, command=lambda event_id=event_id: \
                     [self._CONTROLLER_delete_task(event_id,event)], \
                     text="❌"  ,  font=self.icon_Font,\
-                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks,column=3, sticky="ew",pady=0,padx=0)#.pack(side=LEFT)
+                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks*2,column=3, sticky="ew",pady=0,padx=0)#.pack(side=LEFT)
                 
                 """Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
                     [self._CONTROLLER_complete_task(selected_day_tasks)], \

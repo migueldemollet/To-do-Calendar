@@ -83,10 +83,39 @@ CREATE TABLE `user_task` (
 )
 
 #insert data into table user
-c.execute("INSERT INTO user VALUES (1, 'user1', 'user1@tdcalendar.com', 'be3a7f14702be45fd3157db6144ca5bc')")
-c.execute("INSERT INTO user VALUES (2, 'user2', 'user2@tdcalendar.com', 'f998bdf7077a317b289a99b98a5f44d6')")
+c.execute(
+  '''
+  INSERT INTO `user` (`id`, `username`, `email`, `password`) VALUES
+  (1, 'user1', 'user1@tdcalendar.com', 'password1'),
+  (2, 'user2', 'user2@tdcalendar.com', 'password1')
+  '''
+)
+
+#insert data into table tags
+c.execute(
+  '''
+  INSERT INTO `tag` (`id`, `name`, `color`, `id_user`) VALUES
+  (1, 'tag1', 'bisque', 1),
+  (2, 'tag2', 'DarkOliveGreen1', 1),
+  (3, 'tag3', 'LightPink2', 2)
+  '''
+)
+
+c.execute(
+  '''
+    INSERT INTO `task` (`id`, `name`, `description`, `state`, `date`, `priority`, `color`, `id_tag`, `id_user`) VALUES
+    (1, 'task1', 'description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1', 0, '05/11/2022', 0, 'red', 1, 1),
+    (2, 'task2', 'description2', 1, '06/11/2022', 1, 'blue', 2, 1),
+    (3, 'task3', 'description3', 1, '05/12/2022', 2, 'green', 3, 1),
+    (4, 'task4', 'ESTO', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (5, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (6, 'task6', 'UN', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (7, 'task7', 'PROGRAMON', 0, '06/11/2022', 1, 'blue', 2, 1)
+    '''
+)
+
 #insert data into table friend
-c.execute("INSERT INTO friend VALUES (1, 1, 2, 0)")
+#c.execute("INSERT INTO friend VALUES (1, 1, 2, 0)")
 
 conn.commit()
 conn.close()

@@ -12,7 +12,7 @@ if __name__ == '__main__':
         root = tk.Tk()
         root.title("TODO-Calendar")
         root.resizable(0,0)
-        #root.tk.call('wm', 'iconphoto', root._w, tk.PhotoImage(file='public\img\logo_sm.ico'))
+        root.tk.call('wm', 'iconphoto', root._w, tk.PhotoImage(file='public\img\logo_sm.ico'))
                 
         #cursor="hand1"
         agenda = Agenda(root, selectmode='day',id_user='1')
@@ -31,9 +31,15 @@ if __name__ == '__main__':
     def check_register():
         exec_root()
 
+
+    
+
     log_tk = tk.Tk()
     log_tk.title('Login')
     log_tk.resizable(0,0)
+
+    exec_root()
+    exit()
     
     notebook = ttk.Notebook(log_tk)
     notebook.pack()

@@ -56,7 +56,7 @@ class TaskActionController():
             return 1
         self.tasks = self.model_task_user.get_by_task(task_id, 1)
         if (self.tasks == []):
-            print("Task not found")
+            #print("Task not found")
             return 0
         return [self.user_controller.get_by_id(task['user_id']) for task in self.tasks]
     

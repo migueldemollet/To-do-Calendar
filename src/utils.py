@@ -6,7 +6,7 @@ from tag import Tag
 from task import Task
 from friends import Friend
 
-color_list = ["red", "green", "blue", "yellow", "pink", "purple", "orange", "white", "black"]
+color_list = ["DarkOliveGreen1","bisque","red", "green", "blue", "yellow", "pink", "purple", "orange", "white", "black"]
 
 def check_date(date):
     try:
