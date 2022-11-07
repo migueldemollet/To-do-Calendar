@@ -56,7 +56,6 @@ class TestUserController(unittest.TestCase):
     #-------------------------Username:get-------------------------------
     
     def test_get_by_username_correct(self):
-        user = self.controller.get_by_username('user1')
         self.assertEqual(self.controller.get_by_username('user1'), self.user1)
 
     def test_get_by_username_incorrect_value(self):

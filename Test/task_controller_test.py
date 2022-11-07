@@ -1,5 +1,6 @@
 import sqlite3
 import unittest
+from unittest.mock import Mock
 import sys
 sys.path.insert(0, 'Src/')
 from task import Task
@@ -17,12 +18,16 @@ class TestTaskController(unittest.TestCase):
         self.user1 = User(1, "user1", "user1@tdcalendar.com", "password1", [])
         self.user2 = User(2, "user2", "user2@tdcalendar.com", "password1", [])
         self.user3 = User(3, "user3", "user3@tdcalendar.com", "password1", [])
+        self.user4 = User(4, "user4", "user4@tdcalendar.com", "password1", [])
+        self.user5 = User(5, "user5", "user5@tdcalendar.com", "password1", [])
         self.tag1 = Tag(1, "tag1", "red", self.user1)
         self.tag2 = Tag(2, "tag2", "blue", self.user1)
         self.tag3 = Tag(3, "tag3", "green", self.user2)
+        self.tag4 = Tag(4, "tag4", "green", self.user3)
         self.task1 = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1, [self.user2])
         self.task2 = Task(2, "task2", "description2", 1, "01/01/2022", 1, "blue", self.tag2, self.user1, [])
-        self.task3 = Task(3, "task3", "description3", 1, "01/01/2022", 2, "green", self.tag3, self.user2, [])
+        self.task3 = Task(3, "task3", "description3", 1, "01/01/2022", 2, "green", self.tag3, self.user2, [self.user1, self.user3])
+        self.task4 = Task(4, "task4", "description4", 1, "01/01/2022", 2, "green", self.tag4, self.user3, [self.user1, self.user2, self.user4, self.user5])
 
 
     def setUp(self):
@@ -127,12 +132,12 @@ class TestTaskController(unittest.TestCase):
         self.assertEqual(self.controller.delete_by_id(1), True)
         self.assertEqual(self.controller.delete_by_id(1), 0)
         self.assertEqual(self.controller.delete_by_id(2), True)
+
     def test_delete_by_id_incorrect_values(self):
         self.assertEqual(self.controller.delete_by_id(0), 1)
         self.assertEqual(self.controller.delete_by_id("dfd"), 1)
     
     def test_delete_by_id_incorrect_db(self):
-        self.controller.delete_by_id(1)
         self.assertEqual(self.controller.delete_by_id(1), 0)
         self.assertEqual(self.controller.delete_by_id(4), 0)
 
@@ -397,6 +402,19 @@ class TestTaskController(unittest.TestCase):
 
     def test_get_by_tag_incorrect_bd(self):
         self.assertEqual(self.controller.get_by_tag(4, self.user1.id), 0)
+
+    def test_get_by_tag_no_loop(self):
+        self.assertEqual(self.controller.get_by_tag(2, self.user1.id), [self.task2])
+    
+    def test_get_by_tag_1_loop(self):
+        self.assertEqual(self.controller.get_by_tag(1, self.user1.id), [self.task1])
+    
+    def test_get_by_tag_2_loop(self):
+        self.assertEqual(self.controller.get_by_tag(3, self.user2.id), [self.task3])
+    
+    def test_get_by_tag_n_loop(self):
+        self.assertEqual(self.controller.get_by_tag(4, self.user3.id), [self.task4])
+
         
     #-------------------------Tag:change-------------------------------#
 
@@ -522,7 +540,9 @@ def restore():
     INSERT INTO `user` (`id`, `username`, `email`, `password`) VALUES
     (1, 'user1', 'user1@tdcalendar.com', 'password1'),
     (2, 'user2', 'user2@tdcalendar.com', 'password1'),
-    (3, 'user3', 'user3@tdcalendar.com', 'password1')
+    (3, 'user3', 'user3@tdcalendar.com', 'password1'),
+    (4, 'user4', 'user4@tdcalendar.com', 'password1'),
+    (5, 'user5', 'user5@tdcalendar.com', 'password1')
     '''
     )
 
@@ -531,7 +551,8 @@ def restore():
     INSERT INTO `tag` (`id`, `name`, `color`, `id_user`) VALUES
     (1, 'tag1', 'red', 1),
     (2, 'tag2', 'blue', 1),
-    (3, 'tag3', 'green', 2)
+    (3, 'tag3', 'green', 2),
+    (4, 'tag4', 'green', 3)
     '''
     )
 
@@ -540,7 +561,8 @@ def restore():
     INSERT INTO `task` (`id`, `name`, `description`, `state`, `date`, `priority`, `color`, `id_tag`, `id_user`) VALUES
     (1, 'task1', 'description1', 0, '01/01/2022', 0, 'red', 1, 1),
     (2, 'task2', 'description2', 1, '01/02/2022', 1, 'blue', 2, 1),
-    (3, 'task3', 'description3', 1, '01/03/2022', 2, 'green', 3, 2)
+    (3, 'task3', 'description3', 1, '01/03/2022', 2, 'green', 3, 2),
+    (4, 'task4', 'description4', 1, '01/03/2022', 2, 'green', 4, 3)
     '''
     )
 
@@ -550,7 +572,14 @@ def restore():
     (1, 1, 1, 0),
     (2, 1, 2, 0),
     (3, 2, 3, 0),
-    (4, 2, 1, 1)
+    (4, 2, 1, 1),
+    (5, 1, 3, 1),
+    (6, 3, 3, 1),
+    (7, 3, 4, 0),
+    (8, 1, 4, 1),
+    (9, 2, 4, 1),
+    (10, 4, 4, 1),
+    (11, 5, 4, 1)
     '''
     )
 
