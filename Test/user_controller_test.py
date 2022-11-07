@@ -171,6 +171,14 @@ class TestUserController(unittest.TestCase):
     
     def test_login_incorrect_db(self):
         self.assertEqual(self.controller.login('user1sdsd', 'password1@'), 0)
+    
+    def test_login_mock(self):
+        self.controller.user_model = self.controller.mock_model
+        self.assertEqual(self.controller.login('test', 'password1@'), True)
+        self.assertEqual(self.controller.login('test', 'password2@'), 0)
+        self.assertEqual(self.controller.login('test1', 'password2@'), 0)
+        self.assertEqual(self.controller.login('', 'password1@'), 1)
+        self.assertEqual(self.controller.login('test', ''), 1)
 
 
     #-------------------------Friend:add-------------------------------

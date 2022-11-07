@@ -4,12 +4,14 @@ from friends_controller import FriendController
 from utils import *
 sys.path.insert(2, 'Src/Model/')
 from user_model import UserModel
+from mock_object import MochDb
 
 
 
 class UserController:
     def __init__(self):
         self.user_model = UserModel("./DB/to_do_calendar_test.db")
+        self.mock_model = MochDb("./DB/to_do_calendar_test.db")
         self.friend_controller = FriendController()
         self.user = []
         self.friends = []

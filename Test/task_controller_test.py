@@ -1,6 +1,5 @@
 import sqlite3
 import unittest
-from unittest.mock import Mock
 import sys
 sys.path.insert(0, 'Src/')
 from task import Task
@@ -42,7 +41,7 @@ class TestTaskController(unittest.TestCase):
         priorities = [0, 0, 0, 1, 1, 1, 2, 2, 2]
         tags = [self.tag1, self.tag3, self.tag2, self.tag1, self.tag3, self.tag2, self.tag1, self.tag3, self.tag2]
         users = [self.user3, self.user1, self.user2, self.user2, self.user3, self.user1, self.user1, self.user2, self.user1]
-        id = 4
+        id = 5
         for priority, tag, user in zip(priorities, tags, users):
             task = Task(id, "task"+str(id), "description4", randint(0, 1), "01/01/2022", priority, "red", tag, user)
             self.assertEqual(self.controller.add(task), True)
@@ -50,9 +49,9 @@ class TestTaskController(unittest.TestCase):
 
         
     def test_add_incorrect_values(self):
-        task = Task(4, "task4", "description4", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
+        task = Task(5, "task5", "description5", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.add(task), 1)
-        task.name = "task4"
+        task.name = "task5"
         task.date = "dfko/ds/2022"
         self.assertEqual(self.controller.add(task), 1)
         task.date = "01/01/2022"
@@ -124,7 +123,7 @@ class TestTaskController(unittest.TestCase):
         self.assertEqual(self.controller.get_by_id("sdsd"), 1)
     
     def test_get_by_id_incorrect_db(self):
-        self.assertEqual(self.controller.get_by_id(4), 0)
+        self.assertEqual(self.controller.get_by_id(5), 0)
     
     #-------------------------id:delete---------------------------------
 
@@ -138,8 +137,9 @@ class TestTaskController(unittest.TestCase):
         self.assertEqual(self.controller.delete_by_id("dfd"), 1)
     
     def test_delete_by_id_incorrect_db(self):
+        self.controller.delete_by_id(1)
         self.assertEqual(self.controller.delete_by_id(1), 0)
-        self.assertEqual(self.controller.delete_by_id(4), 0)
+        self.assertEqual(self.controller.delete_by_id(5), 0)
 
 
 
@@ -427,7 +427,7 @@ class TestTaskController(unittest.TestCase):
 
     def test_change_tag_incorrect_bd(self):
         task_invented = Task(167, "task1", "description1", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
-        self.assertEqual(self.controller.change_tag(self.task1, 4), 0)
+        self.assertEqual(self.controller.change_tag(self.task1, 7), 0)
         self.assertEqual(self.controller.change_tag(task_invented, 2), 0)
 
     #-------------------------Tag:delete-------------------------------#
@@ -447,7 +447,7 @@ class TestTaskController(unittest.TestCase):
     #-------------------------User:id-------------------------------#
 
     def test_get_by_user_id_correct(self):
-        self.assertEqual(self.controller.get_by_user(self.user1.id), [self.task1, self.task2])
+        self.assertEqual(self.controller.get_by_user(self.user1.id), [self.task1, self.task2, self.task3, self.task4])
     
 
     def test_get_by_user_id_incorrect_value(self):
