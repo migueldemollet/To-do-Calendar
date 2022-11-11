@@ -6,6 +6,7 @@ from user import User
 from friends import Friend
 sys.path.insert(1, 'Src/Controller/')
 from user_controller import UserController
+from mock_object import MochDb
 
 class TestUserController(unittest.TestCase):
     def __init__(self, methodName: str = ...) -> None:
@@ -173,7 +174,7 @@ class TestUserController(unittest.TestCase):
         self.assertEqual(self.controller.login('user1sdsd', 'password1@'), 0)
     
     def test_login_mock(self):
-        self.controller.user_model = self.controller.mock_model
+        self.controller.user_model = MochDb("./DB/to_do_calendar_test.db")
         self.assertEqual(self.controller.login('test', 'password1@'), True)
         self.assertEqual(self.controller.login('test', 'password2@'), 0)
         self.assertEqual(self.controller.login('test1', 'password2@'), 0)
