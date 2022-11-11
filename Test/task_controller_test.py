@@ -7,6 +7,7 @@ from tag import Tag
 from user import User
 sys.path.insert(1, 'Src/Controller/')
 from task_controller import TaskController
+from random import randint
 
 
 class TestTaskController(unittest.TestCase):
@@ -15,12 +16,17 @@ class TestTaskController(unittest.TestCase):
         self.controller = TaskController()
         self.user1 = User(1, "user1", "user1@tdcalendar.com", "password1", [])
         self.user2 = User(2, "user2", "user2@tdcalendar.com", "password1", [])
+        self.user3 = User(3, "user3", "user3@tdcalendar.com", "password1", [])
+        self.user4 = User(4, "user4", "user4@tdcalendar.com", "password1", [])
+        self.user5 = User(5, "user5", "user5@tdcalendar.com", "password1", [])
         self.tag1 = Tag(1, "tag1", "red", self.user1)
         self.tag2 = Tag(2, "tag2", "blue", self.user1)
         self.tag3 = Tag(3, "tag3", "green", self.user2)
+        self.tag4 = Tag(4, "tag4", "green", self.user3)
         self.task1 = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1, [self.user2])
         self.task2 = Task(2, "task2", "description2", 1, "01/01/2022", 1, "blue", self.tag2, self.user1, [])
-        self.task3 = Task(3, "task3", "description3", 1, "01/01/2022", 2, "green", self.tag3, self.user2, [])
+        self.task3 = Task(3, "task3", "description3", 1, "01/01/2022", 2, "green", self.tag3, self.user2, [self.user1, self.user3])
+        self.task4 = Task(4, "task4", "description4", 1, "01/01/2022", 2, "green", self.tag4, self.user3, [self.user1, self.user2, self.user4, self.user5])
 
 
     def setUp(self):
@@ -31,15 +37,21 @@ class TestTaskController(unittest.TestCase):
 
     #-------------------------Add------------------------------
 
-    def test_add_task_correct(self):
-        task = Task(4, "task4", "description4", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
-        self.assertEqual(self.controller.add(task), True)
-        self.assertEqual(self.controller.add(task), 0)
-    
-    def test_add_task_incorrect_values(self):
-        task = Task(4, "task4", "description4", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
+    def test_add_correct(self):
+        priorities = [0, 0, 0, 1, 1, 1, 2, 2, 2]
+        tags = [self.tag1, self.tag3, self.tag2, self.tag1, self.tag3, self.tag2, self.tag1, self.tag3, self.tag2]
+        users = [self.user3, self.user1, self.user2, self.user2, self.user3, self.user1, self.user1, self.user2, self.user1]
+        id = 5
+        for priority, tag, user in zip(priorities, tags, users):
+            task = Task(id, "task"+str(id), "description4", randint(0, 1), "01/01/2022", priority, "red", tag, user)
+            self.assertEqual(self.controller.add(task), True)
+            id += 1 
+
+        
+    def test_add_incorrect_values(self):
+        task = Task(5, "task5", "description5", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.add(task), 1)
-        task.name = "task4"
+        task.name = "task5"
         task.date = "dfko/ds/2022"
         self.assertEqual(self.controller.add(task), 1)
         task.date = "01/01/2022"
@@ -52,7 +64,7 @@ class TestTaskController(unittest.TestCase):
         self.assertEqual(self.controller.add(task), 1)
         task.color = "red"
     
-    def test_add_task_incorrect_db(self):
+    def test_add_incorrect_db(self):
         task = Task(4, "task4", "description4", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
         self.controller.add(task), True
         self.assertEqual(self.controller.add(task), 0)
@@ -79,6 +91,25 @@ class TestTaskController(unittest.TestCase):
         self.controller.share(self.task2, self.user1)
         self.assertEqual(self.controller.share(self.task2, self.user1), 0)
 
+    
+    #-------------------------Unshare------------------------------
+
+    def test_unshare_correct(self):
+        self.assertEqual(self.controller.unshare(self.task1, self.user2), True)
+    
+    def test_unshare_incorrect_values(self):
+        self.task1.id = 0
+        self.assertEqual(self.controller.unshare(self.task1, self.user2), 1)
+        self.task1.id = 1
+        self.user2.id = 0
+        self.assertEqual(self.controller.unshare(self.task1, self.user2), 1)
+    
+    def test_unshare_incorrect_db(self):
+        self.controller.unshare(self.task1, self.user2)
+        self.assertEqual(self.controller.unshare(self.task1, self.user2), 0)
+
+    
+
 
     #-------------------------Id:get---------------------------------
 
@@ -92,7 +123,7 @@ class TestTaskController(unittest.TestCase):
         self.assertEqual(self.controller.get_by_id("sdsd"), 1)
     
     def test_get_by_id_incorrect_db(self):
-        self.assertEqual(self.controller.get_by_id(4), 0)
+        self.assertEqual(self.controller.get_by_id(5), 0)
     
     #-------------------------id:delete---------------------------------
 
@@ -100,6 +131,7 @@ class TestTaskController(unittest.TestCase):
         self.assertEqual(self.controller.delete_by_id(1), True)
         self.assertEqual(self.controller.delete_by_id(1), 0)
         self.assertEqual(self.controller.delete_by_id(2), True)
+
     def test_delete_by_id_incorrect_values(self):
         self.assertEqual(self.controller.delete_by_id(0), 1)
         self.assertEqual(self.controller.delete_by_id("dfd"), 1)
@@ -107,7 +139,7 @@ class TestTaskController(unittest.TestCase):
     def test_delete_by_id_incorrect_db(self):
         self.controller.delete_by_id(1)
         self.assertEqual(self.controller.delete_by_id(1), 0)
-        self.assertEqual(self.controller.delete_by_id(4), 0)
+        self.assertEqual(self.controller.delete_by_id(5), 0)
 
 
 
@@ -357,6 +389,7 @@ class TestTaskController(unittest.TestCase):
 
 
     #-------------------------Tag:get-------------------------------#
+    
     def test_get_by_tag_correct(self):
         self.assertEqual(self.controller.get_by_tag(1, self.user1.id), [self.task1])
         self.assertEqual(self.controller.get_by_tag(2, self.user1.id), [self.task2])
@@ -369,6 +402,19 @@ class TestTaskController(unittest.TestCase):
 
     def test_get_by_tag_incorrect_bd(self):
         self.assertEqual(self.controller.get_by_tag(4, self.user1.id), 0)
+
+    def test_get_by_tag_no_loop(self):
+        self.assertEqual(self.controller.get_by_tag(2, self.user1.id), [self.task2])
+    
+    def test_get_by_tag_1_loop(self):
+        self.assertEqual(self.controller.get_by_tag(1, self.user1.id), [self.task1])
+    
+    def test_get_by_tag_2_loop(self):
+        self.assertEqual(self.controller.get_by_tag(3, self.user2.id), [self.task3])
+    
+    def test_get_by_tag_n_loop(self):
+        self.assertEqual(self.controller.get_by_tag(4, self.user3.id), [self.task4])
+
         
     #-------------------------Tag:change-------------------------------#
 
@@ -381,7 +427,7 @@ class TestTaskController(unittest.TestCase):
 
     def test_change_tag_incorrect_bd(self):
         task_invented = Task(167, "task1", "description1", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
-        self.assertEqual(self.controller.change_tag(self.task1, 4), 0)
+        self.assertEqual(self.controller.change_tag(self.task1, 7), 0)
         self.assertEqual(self.controller.change_tag(task_invented, 2), 0)
 
     #-------------------------Tag:delete-------------------------------#
@@ -401,7 +447,7 @@ class TestTaskController(unittest.TestCase):
     #-------------------------User:id-------------------------------#
 
     def test_get_by_user_id_correct(self):
-        self.assertEqual(self.controller.get_by_user(self.user1.id), [self.task1, self.task2])
+        self.assertEqual(self.controller.get_by_user(self.user1.id), [self.task1, self.task2, self.task3, self.task4])
     
 
     def test_get_by_user_id_incorrect_value(self):
@@ -493,7 +539,10 @@ def restore():
     '''
     INSERT INTO `user` (`id`, `username`, `email`, `password`) VALUES
     (1, 'user1', 'user1@tdcalendar.com', 'password1'),
-    (2, 'user2', 'user2@tdcalendar.com', 'password1')
+    (2, 'user2', 'user2@tdcalendar.com', 'password1'),
+    (3, 'user3', 'user3@tdcalendar.com', 'password1'),
+    (4, 'user4', 'user4@tdcalendar.com', 'password1'),
+    (5, 'user5', 'user5@tdcalendar.com', 'password1')
     '''
     )
 
@@ -502,7 +551,8 @@ def restore():
     INSERT INTO `tag` (`id`, `name`, `color`, `id_user`) VALUES
     (1, 'tag1', 'red', 1),
     (2, 'tag2', 'blue', 1),
-    (3, 'tag3', 'green', 2)
+    (3, 'tag3', 'green', 2),
+    (4, 'tag4', 'green', 3)
     '''
     )
 
@@ -511,7 +561,8 @@ def restore():
     INSERT INTO `task` (`id`, `name`, `description`, `state`, `date`, `priority`, `color`, `id_tag`, `id_user`) VALUES
     (1, 'task1', 'description1', 0, '01/01/2022', 0, 'red', 1, 1),
     (2, 'task2', 'description2', 1, '01/02/2022', 1, 'blue', 2, 1),
-    (3, 'task3', 'description3', 1, '01/03/2022', 2, 'green', 3, 2)
+    (3, 'task3', 'description3', 1, '01/03/2022', 2, 'green', 3, 2),
+    (4, 'task4', 'description4', 1, '01/03/2022', 2, 'green', 4, 3)
     '''
     )
 
@@ -521,7 +572,14 @@ def restore():
     (1, 1, 1, 0),
     (2, 1, 2, 0),
     (3, 2, 3, 0),
-    (4, 2, 1, 1)
+    (4, 2, 1, 1),
+    (5, 1, 3, 1),
+    (6, 3, 3, 1),
+    (7, 3, 4, 0),
+    (8, 1, 4, 1),
+    (9, 2, 4, 1),
+    (10, 4, 4, 1),
+    (11, 5, 4, 1)
     '''
     )
 

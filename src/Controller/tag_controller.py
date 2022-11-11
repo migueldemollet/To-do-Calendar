@@ -12,7 +12,18 @@ class TagController:
         self.tags = []
         self.user = []
 
-    def add(self, tag):
+    def add(self, tag: Tag) -> int | bool:
+        """Add a tag to the database
+
+        Args:
+            tag (Tag): Tag to be added
+
+        Returns:
+            int: 0 tag already exists
+            int: 1 values are not valid
+            bool: True Success
+        """
+
         if (not check_is_int(tag.user.id)):
             print("Invalid user id")
             return 1
@@ -26,15 +37,25 @@ class TagController:
             print("User does not exist")
             return 1
         if(self.tag_model.get_by_id(tag.id) == []):
-            self.tag_model.add(tag)
-            return True
+            return self.tag_model.add(tag)
         else:
             print("Tag already exists")
             return 0
 
     #-------------------------id-------------------------------
     
-    def get_by_id(self, id):
+    def get_by_id(self, id: int) -> int | Tag:
+        """Get a tag by id
+
+        Args:
+            id (int): Tag id
+        
+        Returns:
+            int: 0 tag does not exist
+            int: 1 values are not valid
+            Tag: Success
+        """
+
         if (not check_is_int(id)):
             print("Invalid tag id")
             return 1
@@ -45,7 +66,18 @@ class TagController:
         self.user = self.user_controller.get_by_id(self.tags[0]['id_user'])
         return list_to_tags(self.tags, self.user)[0]
 
-    def delete_by_id(self, id):
+    def delete_by_id(self, id: int) -> int | bool:
+        """Delete a tag by id
+
+        Args:
+            id (int): Tag id
+        
+        Returns:
+            int: 0 tag does not exist
+            int: 1 values are not valid
+            bool: True Success
+        """
+
         if (not check_is_int(id)):
             print("Invalid tag id")
             return 1
@@ -57,7 +89,19 @@ class TagController:
 
     #-------------------------Name-------------------------------
 
-    def get_by_name(self, name, user_id):
+    def get_by_name(self, name: str, user_id: int) -> int | list[Tag]:
+        """Get a tag by name
+
+        Args:
+            name (str): Tag name
+            user_id (int): User id
+        
+        Returns:
+            int: 0 tag does not exist
+            int: 1 values are not valid
+            list[Tag]: Success
+        """
+
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
@@ -71,7 +115,19 @@ class TagController:
         self.user = self.user_controller.get_by_id(user_id)
         return list_to_tags(self.tags, self.user)
 
-    def change_name(self, tag, new_name):
+    def change_name(self, tag: int, new_name: str) -> int | bool:
+        """Change a tag name
+        
+        Args:
+            tag (Tag): Tag to be changed
+            new_name (str): New tag name
+        
+        Returns:
+            int: 0 tag does not exist
+            int: 1 values are not valid
+            bool: True Success
+        """
+
         if (not check_is_int(tag.user.id)):
             print("Invalid user id")
             return 1
@@ -89,7 +145,19 @@ class TagController:
             print("Tag "+tag.name+" does not exist")
             return 0
     
-    def delete_by_name(self, name, user_id):
+    def delete_by_name(self, name: str, user_id: int) -> int | bool:
+        """Delete a tag by name
+
+        Args:
+            name (str): Tag name
+            user_id (int): User id
+        
+        Returns:
+            int: 0 tag does not exist
+            int: 1 values are not valid
+            bool: True Success
+        """
+
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
@@ -101,7 +169,19 @@ class TagController:
 
     #-------------------------Color-------------------------------
     
-    def get_by_color(self, color, user_id):
+    def get_by_color(self, color: str, user_id: int) -> int | list[Tag]:
+        """Get a tag by color
+
+        Args:
+            color (str): Tag color
+            user_id (int): User id
+        
+        Returns:
+            int: 0 tag does not exist
+            int: 1 values are not valid
+            list[Tag]: Success
+        """
+
         if (not check_color(color)):
             print("Invalid color")
             return 1
@@ -115,7 +195,19 @@ class TagController:
         self.user = self.user_controller.get_by_id(user_id)
         return list_to_tags(self.tags, self.user)
     
-    def change_color(self, tag, new_color):
+    def change_color(self, tag: Tag, new_color: str) -> int | bool:
+        """Change a tag color
+
+        Args:
+            tag (Tag): Tag to be changed
+            new_color (str): New tag color
+        
+        Returns:
+            int: 0 tag does not exist
+            int: 1 values are not valid
+            bool: True Success
+        """
+
         if (not check_color(new_color)):
             print("Invalid color")
             return 1
@@ -134,7 +226,19 @@ class TagController:
             print("Tag "+tag.name+" does not exist")
             return 0
     
-    def delete_by_color(self, color, user_id):
+    def delete_by_color(self, color: str, user_id: int) -> int | bool:
+        """Delete a tag by color
+
+        Args:
+            color (str): Tag color
+            user_id (int): User id
+        
+        Returns:
+            int: 0 tag does not exist
+            int: 1 values are not valid
+            bool: True Success
+        """
+
         if (not check_color(color)):
             print("Invalid color")
             return 1
@@ -151,7 +255,18 @@ class TagController:
 
     #-------------------------id_user-------------------------------
 
-    def get_by_user(self, user_id):
+    def get_by_user(self, user_id: int) -> int | list[Tag]:
+        """Get all tags from a user
+
+        Args:
+            user_id (int): User id
+
+        Returns:
+            int: 0 user does not exist
+            int: 1 values are not valid
+            list[Tag]: Success
+        """
+
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
@@ -163,7 +278,18 @@ class TagController:
         
         return list_to_tags(self.tags, self.user)
     
-    def delete_by_user(self, user_id):
+    def delete_by_user(self, user_id: int) -> int | bool:
+        """Delete all tags from a user
+
+        Args:
+            user_id (int): User id
+        
+        Returns:
+            int: 0 user does not exist
+            int: 1 values are not valid
+            bool: True Success
+        """
+        
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
