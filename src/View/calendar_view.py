@@ -9,18 +9,25 @@ from Controller.task_controller import *
 class Agenda(Calendar):
 
     def __init__(self, master=None,  **kw):
+        self.master = master
+        self.kw = kw
+        Calendar.__init__(self, self.master, **self.kw)
+
+
+        self.carrega_interface()
+       
+    
+    def carrega_interface(self):
+
+        self.WINDOW_WIDTH = int(self.master.winfo_screenwidth()*80/100)
+        self.WINDOW_HEIGHT = int(self.master.winfo_screenheight()*60/100)
+        self.WINDOW_MARGIN_X = int((self.master.winfo_screenwidth()-self.WINDOW_WIDTH)/2)
+        self.WINDOW_MARGIN_Y = int((self.master.winfo_screenheight()-self.WINDOW_HEIGHT-60)/2)
         
-        self.WINDOW_WIDTH = int(master.winfo_screenwidth()*80/100)
-        self.WINDOW_HEIGHT = int(master.winfo_screenheight()*60/100)
-        self.WINDOW_MARGIN_X = int((master.winfo_screenwidth()-self.WINDOW_WIDTH)/2)
-        self.WINDOW_MARGIN_Y = int((master.winfo_screenheight()-self.WINDOW_HEIGHT-60)/2)
+        self.master.geometry(str(self.WINDOW_WIDTH)+'x'+str(self.WINDOW_HEIGHT)+"+"+str(self.WINDOW_MARGIN_X)+"+"+str(self.WINDOW_MARGIN_Y)+"")
         
-        master.geometry(str(self.WINDOW_WIDTH)+'x'+str(self.WINDOW_HEIGHT)+"+"+str(self.WINDOW_MARGIN_X)+"+"+str(self.WINDOW_MARGIN_Y)+"")
         
-        print(self.WINDOW_HEIGHT)
-        print(self.WINDOW_WIDTH)
-        
-        Calendar.__init__(self, master, **kw)
+       
         self.normal_Font = tkFont.Font(family="Segoe", size=10, slant='roman', overstrike = 0)
         self.completed_Font = tkFont.Font(family="Segoe", size=10, slant='italic', overstrike = 1)
         self.icon_Font = tkFont.Font(family="Console", size=10)
@@ -29,32 +36,14 @@ class Agenda(Calendar):
 
         self.Controller_TAG = TagController()
         self.Controller_TASK = TaskController()
-
         self.tag_config('mix',background='grey',foreground='black')
-        self._CONTROLLER_getTags()
-        self._CONTROLLER_getTasks()
-              
-        #self._sel_date=self.datetime.today()
-        #self._show_event(self._sel_date)
 
-        
-        
-        
-        """ self.left_frame = Frame(master, background="red",
-        borderwidth=5,  relief=RIDGE,
-        height=500, 
-        width=50, 
-        )
-        self.left_frame.pack(side=LEFT,
-        fill=BOTH, 
-        expand=True,
-        )"""
-        
-        
-        self.message_label = Label(master, font=self.alert_Font, fg='red')
+        self.OPEN_CHANGE_WINDOW=0
+                    
+        self.message_label = Label(self.master, font=self.alert_Font, fg='red')
         self.message_label.pack(side=BOTTOM)
 
-        self.right_frame = Frame(master, background="AliceBlue",
+        self.right_frame = Frame(self.master, background="AliceBlue",
             borderwidth=15,  relief=RIDGE,
             width=self.WINDOW_WIDTH*0.2,
         )
@@ -65,21 +54,10 @@ class Agenda(Calendar):
             pady=30
         ) 
         
-        #self.top= Toplevel(self.right_frame)
-        #self.top.geometry("200x100+"+str(int(self.WINDOW_WIDTH+self.WINDOW_MARGIN_X/2)-200)+"+"+str(int(self.WINDOW_HEIGHT+self.WINDOW_MARGIN_Y/2)-400)+"")
-        
         self.list_buttons = []
         self.list_buttons_open_desc = {}
 
         self.list_desc = []
-
-        """self.sb = Scrollbar(master, command=self.right_frame.yview)
-        self.sb.pack(side="right")
-        self.right_frame.configure(yscrollcommand=self.sb.set)"""
-        
-        
-
-        
 
         # change a bit the options of the labels to improve display
         for i, row in enumerate(self._calendar):
@@ -88,11 +66,21 @@ class Agenda(Calendar):
                 self._cal_frame.columnconfigure(j + 1, uniform=1)
                 label.configure(justify="center", anchor="n", padding=(1, 4))
                 
+        self._CONTROLLER_getTags()
+        self._CONTROLLER_getTasks()
+        
+        
+        #self._sel_date=self.datetime.today()
+        self._show_event(self.datetime.today())
+
+        
+        
         self._prev_month()
         self._next_month()
+        self._on_click("<<CalendarSelected>>",1)
     
     
-  
+
     def _CONTROLLER_complete_task(self,ev_id,event):
         if(self.calevents[ev_id]['completed'] == 0):
             self.calevents[ev_id]['completed'] = 1
@@ -123,7 +111,7 @@ class Agenda(Calendar):
 
             #self.top.title(self.calevents[ev_id]['text'])
             T = Text(self.right_frame, height = 5, width = 52)
-            T.grid(row=selected_day_num*2+1,column=0, columnspan=4,sticky='ew')
+            T.grid(row=selected_day_num*4+1,column=0, columnspan=4,sticky='ew')
             T.insert(END, self.calevents[ev_id]['descripcion'])
             self.list_desc.append(T)
             self.list_buttons_open_desc[selected_day_num]=1
@@ -134,8 +122,14 @@ class Agenda(Calendar):
         self.update()"""
         
     def _CONTROLLER_edit_task(self,event_id,event):
-        self.message_label.configure(text='NOT IMPLEMENTED!')
-        self.update()
+        print(self.OPEN_CHANGE_WINDOW)
+        
+        if(self.OPEN_CHANGE_WINDOW):
+            self.OPEN_CHANGE_WINDOW=0
+        else:
+            self.OPEN_CHANGE_WINDOW=1
+        """ self.message_label.configure(text='NOT IMPLEMENTED!')
+        self.update()"""
         
         
     def _CONTROLLER_delete_task(self,event_id,event):

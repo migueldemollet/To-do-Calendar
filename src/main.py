@@ -6,21 +6,21 @@ import sys
 
 
 if __name__ == '__main__':
-    
-    def exec_root():
+    root = tk.Tk()
+    root.title("TODO-Calendar")
+    root.resizable(0,0)
+    root.tk.call('wm', 'iconphoto', root._w, tk.PhotoImage(file='public\img\logo_sm.ico'))
+            
+    #cursor="hand1"
+    agenda = Agenda(root, selectmode='day',id_user='1')
+    agenda.pack(fill="both",expand=True)
+
+
+
+    root.mainloop()
+    """ def exec_root():
         log_tk.destroy()
-        root = tk.Tk()
-        root.title("TODO-Calendar")
-        root.resizable(0,0)
-        root.tk.call('wm', 'iconphoto', root._w, tk.PhotoImage(file='public\img\logo_sm.ico'))
-                
-        #cursor="hand1"
-        agenda = Agenda(root, selectmode='day',id_user='1')
-        agenda.pack(fill="both", expand=True)
-
-
-
-        root.mainloop()
+        
         
     def check_login():
         if(username.get()=='miguel' and password.get()=='putoamo'):
@@ -38,8 +38,6 @@ if __name__ == '__main__':
     log_tk.title('Login')
     log_tk.resizable(0,0)
 
-    exec_root()
-    exit()
     
     notebook = ttk.Notebook(log_tk)
     notebook.pack()
@@ -98,4 +96,4 @@ if __name__ == '__main__':
     alert_Font = tkFont.Font(family="Console", size=12)
     message_label = Label(log_tk, font=alert_Font, fg='red').pack()
     
-    log_tk.mainloop()
+    log_tk.mainloop()"""
