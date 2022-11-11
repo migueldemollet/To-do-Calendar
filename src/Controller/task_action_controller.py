@@ -13,7 +13,18 @@ class TaskActionController():
         self.users = []
         self.tasks = []
 
-    def add(self, task):
+    def add(self, task: Task) -> int | bool:
+        """Add a task to the database
+
+        Args:
+            task (Task): Task to be added
+        
+        Returns:
+            int: 0 task already exists
+            int: 1 values are not valid
+            bool: True Success
+        """
+
         if (not check_is_int(task.id)):
             print("Invalid task id")
             return 1
@@ -26,7 +37,19 @@ class TaskActionController():
             
         return self.model_task_user.add(task.user, task, 0)
     
-    def share(self, task, user):
+    def share(self, task: Task, user: User) -> int | bool:
+        """Share a task with a user
+
+        Args:
+            task (Task): Task to be shared
+            user (User): User to share the task with
+        
+        Returns:
+            int: 0 task already shared
+            int: 1 values are not valid
+            bool: True Success
+        """
+
         if (not check_is_int(task.id)):
             print("Invalid task id")
             return 1
@@ -38,7 +61,19 @@ class TaskActionController():
             return 0
         return self.model_task_user.add(user, task, 1)
     
-    def unshare(self, task, user):
+    def unshare(self, task: Task, user: User) -> int | bool:
+        """Unshare a task with a user
+
+        Args:
+            task (Task): Task to be unshared
+            user (User): User to unshare the task with
+
+        Returns:
+            int: 0 task not shared
+            int: 1 values are not valid
+            bool: True Success
+        """
+
         if (not check_is_int(task.id)):
             print("Invalid task id")
             return 1
@@ -50,7 +85,18 @@ class TaskActionController():
             return 0
         return self.model_task_user.delete_by_user_task_role(user.id, task.id)
 
-    def get_users_by_task(self, task_id):
+    def get_users_by_task(self, task_id: int) -> int | list[User]:
+        """Get the users that have access to a task
+
+        Args:
+            task_id (int): Task id
+
+        Returns:
+            int: 0 task not found
+            int: 1 values are not valid
+            list[User]: Success
+        """
+
         if (not check_is_int(task_id)):
             print("Invalid task id")
             return 1
@@ -60,7 +106,18 @@ class TaskActionController():
             return 0
         return [self.user_controller.get_by_id(task['user_id']) for task in self.tasks]
     
-    def get_tasks_by_user(self, user_id):
+    def get_tasks_by_user(self, user_id: int) -> int | list[Task]:
+        """Get the tasks that a user has access to
+
+        Args:
+            user_id (int): User id
+        
+        Returns:
+            int: 0 user not found
+            int: 1 values are not valid
+            list[Task]: Success
+        """
+
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
@@ -71,5 +128,3 @@ class TaskActionController():
 
         from task_controller import TaskController
         return [TaskController().get_by_id(task['task_id']) for task in self.tasks]
-        
-        

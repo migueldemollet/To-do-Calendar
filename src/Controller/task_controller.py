@@ -19,7 +19,18 @@ class TaskController:
         self.users = []
         self.users_shared = []
 
-    def add(self, task):
+    def add(self, task: Task) -> int | bool:
+        """Add a task to the database
+
+        Args:
+            task (Task): Task to add
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the task values
+            bool: True Success
+        """
+
         if (task.name == ""):
             print("Task name cannot be empty")
             return 1
@@ -49,7 +60,19 @@ class TaskController:
         self.task_model.add(task)
         return self.task_action_controller.add(task)
     
-    def share(self, task, user):
+    def share(self, task: Task, user: User) -> int | bool:
+        """Share a task with a user
+
+        Args:
+            task (Task): Task to share
+            user (User): User to share with
+
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the task values
+            bool: True Success
+        """
+
         if (not check_is_int(task.id)):
             print("Invalid user id")
             return 1
@@ -66,7 +89,19 @@ class TaskController:
 
         return self.task_action_controller.share(task, user)
     
-    def unshare(self, task, user):
+    def unshare(self, task: Task, user: User) -> int | bool:
+        """Unshare a task with a user
+
+        Args:
+            task (Task): Task to unshare
+            user (User): User to unshare with
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the task values
+            bool: True Success
+        """
+
         if (not check_is_int(task.id)):
             print("Invalid user id")
             return 1
@@ -85,7 +120,17 @@ class TaskController:
         
     #-------------------------Id---------------------------------
 
-    def get_by_id(self, id):
+    def get_by_id(self, id: int) -> int | Task:
+        """Get a task by id
+
+        Args:
+            id (int): Task id
+
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the id
+            Task: Task
+        """
         if (not check_is_int(id)):
             print("Invalid user id")
             return 1
@@ -101,7 +146,18 @@ class TaskController:
         
         return list_to_tasks(self.tasks, [self.tags], self.user, [self.users_shared])[0]
 
-    def delete_by_id(self, id):
+    def delete_by_id(self, id: int) -> int | bool:
+        """Delete a task by id
+
+        Args:
+            id (int): Task id
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the id
+            bool: True Success
+        """
+
         if (not check_is_int(id)):
             print("Invalid user id")
             return 1
@@ -113,7 +169,19 @@ class TaskController:
 
     #-------------------------Name-------------------------------
 
-    def get_by_name(self, name, user_id):
+    def get_by_name(self, name: str, user_id: int) -> int | Task:
+        """Get a task by name
+
+        Args:
+            name (str): Task name
+            user_id (int): User id that owns the task
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the name
+            Task: Task
+        """
+
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
@@ -133,7 +201,19 @@ class TaskController:
 
         return list_to_tasks(self.tasks, [self.tags], self.user, [self.users_shared])[0]
 
-    def change_name(self, task, new_name):
+    def change_name(self, task: Task, new_name: str) -> int | bool:
+        """Change the name of a task
+        
+        Args:
+            task (Task): Task to change the name
+            new_name (str): New name
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the task values
+            bool: True Success
+        """
+
         if(task.name == new_name):
             print("Task already has this name")
             return 1
@@ -146,7 +226,19 @@ class TaskController:
             print("Task "+task.name+" does not exist")
             return 0
 
-    def delete_by_name(self, name, user_id):
+    def delete_by_name(self, name: str, user_id: int) -> int | bool:
+        """Delete a task by name
+
+        Args:
+            name (str): Task name
+            user_id (int): User id that owns the task
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the name
+            bool: True Success
+        """
+
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
@@ -161,7 +253,19 @@ class TaskController:
 
     #-------------------------Description--------------------------
 
-    def change_description(self, task, new_description):
+    def change_description(self, task: Task, new_description: str) -> int | bool:
+        """Change the description of a task
+
+        Args:
+            task (Task): Task to change the description
+            new_description (str): New description
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the task values
+            bool: True Success
+        """
+
         if (not check_is_int(task.user.id)):
             print("Invalid user id")
             return 1
@@ -177,7 +281,19 @@ class TaskController:
 
     #-------------------------State-------------------------------
     
-    def get_by_state(self, status, user_id):
+    def get_by_state(self, status: int, user_id: int) -> int | list[Task]:
+        """Get all task by state from a user
+
+        Args:
+            status (int): Task state must be 0 or 1
+            user_id (int): User id that owns the task
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the status
+            list[Task]: List of tasks
+        """
+
         if (not check_state(status)):
             print("Invalid status must be 0 or 1")
             return 1
@@ -197,7 +313,19 @@ class TaskController:
         
         return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
-    def change_state(self, task, new_state):
+    def change_state(self, task: Task, new_state: int) -> int | bool:
+        """Change the state of a task
+
+        Args:
+            task (Task): Task to change the state
+            new_state (int): New state must be 0 or 1
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the task values
+            bool: True Success
+        """
+
         if (not check_is_int(task.user.id)):
             print("Invalid user id")
             return 1
@@ -215,7 +343,19 @@ class TaskController:
             print("Task "+task.name+" does not exist")
             return 0
 
-    def delete_by_state(self, state, user_id):
+    def delete_by_state(self, state: int, user_id: int) -> int | bool:
+        """Delete lla task by state from a user
+
+        Args:
+            state (int): Task state must be 0 or 1
+            user_id (int): User id that owns the task
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the state
+            bool: True Success
+        """
+
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
@@ -231,7 +371,19 @@ class TaskController:
 
     #-------------------------Date-------------------------------
 
-    def get_by_date(self, date, user_id):
+    def get_by_date(self, date: str, user_id: int) -> int | list[Task]:
+        """Get all task by date from a user
+
+        Args:
+            date (str): Task date format must be DD/MM/YYYY
+            user_id (int): User id that owns the task
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the date
+            list[Task]: List of tasks
+        """
+
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
@@ -250,7 +402,19 @@ class TaskController:
         
         return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
-    def change_date(self, task, new_date):
+    def change_date(self, task: Task, new_date: str) -> int | bool:
+        """Change the date of a task
+
+        Args:
+            task (Task): Task to change the date
+            new_date (str): New date format must be DD/MM/YYYY
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the task values
+            bool: True Success
+        """
+
         if (not check_date(new_date)):
             print("Invalid date format (dd/mm/yyyy)")
             return 1
@@ -280,7 +444,19 @@ class TaskController:
 
     #-------------------------Priority-------------------------------
 
-    def get_by_priority(self, priority, user_id):
+    def get_by_priority(self, priority: int, user_id: int) -> int | list[Task]:
+        """Get all task by priority from a user
+
+        Args:
+            priority (int): Task priority must be 0, 1 or 2
+            user_id (int): User id that owns the task
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the priority
+            list[Task]: List of tasks
+        """
+
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
@@ -300,7 +476,19 @@ class TaskController:
         return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
 
-    def change_priority(self, task, new_priority):
+    def change_priority(self, task: Task, new_priority: int) -> int | bool:
+        """Change the priority of a task
+
+        Args:
+            task (Task): Task to change the priority
+            new_priority (int): New priority must be 0, 1 or 2
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the task values
+            bool: True Success
+        """
+
         if (not check_is_int(task.user.id)):
             print("Invalid user id")
             return 1
@@ -318,7 +506,19 @@ class TaskController:
             print("Task "+task.name+" does not exist")
             return 0
 
-    def delete_by_priority(self, priority, user_id):
+    def delete_by_priority(self, priority: int, user_id: int) -> int | bool:
+        """Delete all task by priority from a user
+        
+        Args:
+            priority (int): Task priority must be 0, 1 or 2
+            user_id (int): User id that owns the task
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the priority
+            bool: True Success
+        """
+
         if (not check_priority(priority)):
             print("Invalid priority must be 0, 1 or 2")
             return 1
@@ -333,7 +533,19 @@ class TaskController:
 
     #-------------------------Color-------------------------------
 
-    def get_by_color(self, color, user_id):
+    def get_by_color(self, color: str, user_id: int) -> int | list[Task]:
+        """Get all task by color from a user
+
+        Args:
+            color (str): Task color
+            user_id (int): User id that owns the task
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the color
+            list[Task]: List of tasks
+        """
+
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
@@ -353,7 +565,19 @@ class TaskController:
         
         return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
-    def change_color(self, task, new_color):
+    def change_color(self, task: Task, new_color: str) -> int | bool:
+        """Change the color of a task
+
+        Args:
+            task (Task): Task to change the color
+            new_color (str): New color
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the task values
+            bool: True Success
+        """
+
         if (not check_is_int(task.user.id)):
             print("Invalid user id")
             return 1
@@ -371,7 +595,19 @@ class TaskController:
             print("Task "+task.name+" does not exist")
             return 0
 
-    def delete_by_color(self, color, user_id):
+    def delete_by_color(self, color: str, user_id: int) -> int | bool:
+        """Delete all task by color from a user
+
+        Args:
+            color (str): Task color
+            user_id (int): User id that owns the task
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the color
+            bool: True Success
+        """
+
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
@@ -386,7 +622,19 @@ class TaskController:
 
     #-------------------------Tag-------------------------------
     
-    def get_by_tag(self, tag_id, user_id):
+    def get_by_tag(self, tag_id: int, user_id: int) -> int | list[Task]:
+        """Get all task by tag from a user
+
+        Args:
+            tag_id (int): Task tag id
+            user_id (int): User id that owns the task
+
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the tag id
+            list[Task]: List of tasks
+        """
+
         if (not check_is_int(tag_id)):
             print("Invalid tag id")
             return 1
@@ -408,7 +656,19 @@ class TaskController:
 
         return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared)
 
-    def change_tag(self, task, new_tag):
+    def change_tag(self, task: Task, new_tag: int) -> int | bool:
+        """Change the tag of a task
+
+        Args:
+            task (Task): Task to change the tag
+            new_tag (int): New tag id
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the task values
+            bool: True Success
+        """
+
         if (not check_is_int(task.user.id)):
             print("Invalid user id")
             return 1
@@ -428,7 +688,19 @@ class TaskController:
             print("Task "+task.name+" does not exist")
             return 0
 
-    def delete_by_tag(self, tag_id, user_id):
+    def delete_by_tag(self, tag_id: int, user_id: int) -> int | bool:
+        """Delete all task by tag from a user
+
+        Args:
+            tag_id (int): Task tag id
+            user_id (int): User id that owns the task
+
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the tag id
+            bool: True Success
+        """
+
         if (not check_is_int(tag_id)):
             print("Invalid tag must be a number")
             return 1
@@ -453,7 +725,18 @@ class TaskController:
 
     #-------------------------User-------------------------------
 
-    def get_by_user(self, user_id):
+    def get_by_user(self, user_id: int) -> int | list[Task]:
+        """Get all task by user
+
+        Args:
+            user_id (int): User id that owns the task
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the user id
+            list[Task]: List of tasks
+        """
+
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
@@ -470,10 +753,20 @@ class TaskController:
         if (type(task_shared) == int):
             task_shared = []
 
-
         return list_to_tasks(self.tasks, self.tags, self.user, self.users_shared) + task_shared
 
-    def delete_by_user(self, user_id):
+    def delete_by_user(self, user_id: int) -> int | bool:
+        """Delete all task by user
+
+        Args:
+            user_id (int): User id that owns the task
+        
+        Returns:
+            int: 0 error in the db
+            int: 1 error in the user id
+            bool: True Success
+        """
+        
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
