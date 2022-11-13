@@ -1,34 +1,73 @@
-import tkinter as tk
-from tkinter import ttk
-from tkinter.messagebox import showinfo
+from tkinter import *
 
-def popup_bonus():
-    win = tk.Toplevel()
-    win.wm_title("Window")
+class Widget(Frame):
+    def __init__(self, master=None):
+        Frame.__init__(self, master)
 
-    l = tk.Label(win, text="Input")
-    l.grid(row=0, column=0)
+        self._str    = StringVar()
+        self._widget = Entry(self)
 
-    b = ttk.Button(win, text="Okay", command=win.destroy)
-    b.grid(row=1, column=0)
+        self._widget.config(textvariable=self._str, borderwidth=1, width=0)
+        self._widget.pack(expand=True, fill=X)
 
-def popup_showinfo():
-    showinfo("Window", "Hello World!")
+    def settext(self, str_):
+        self._str.set(str_)
 
-class Application(ttk.Frame):
+    def gettext(self):
+        return self._str.get()
 
-    def __init__(self, master):
-        ttk.Frame.__init__(self, master)
-        self.pack()
 
-        self.button_bonus = ttk.Button(self, text="Bonuses", command=popup_bonus)
-        self.button_bonus.pack()
+class Application(Frame):
+    def __init__(self, rows, cols, master=None):
+        Frame.__init__(self, master)
 
-        self.button_showinfo = ttk.Button(self, text="Show Info", command=popup_showinfo)
-        self.button_showinfo.pack()
+        yScroll = Scrollbar(self)
+        xScroll = Scrollbar(self, orient=HORIZONTAL)
 
-root = tk.Tk()
+        self._canvas = Canvas(self,
+                yscrollcommand=yScroll.set, xscrollcommand=xScroll.set)
+        yScroll.config(command=self._canvas.yview)
+        xScroll.config(command=self._canvas.xview)
 
-app = Application(root)
+        self._table      = [[0 for x in range(rows)] for x in range(cols)]
+        self._tableFrame = Frame(self._canvas)
 
-root.mainloop()
+        for col in range(cols):
+            self._tableFrame.grid_columnconfigure(col, weight=1)
+            for row in range(rows):
+                self._table[row][col] = Widget(master=self._tableFrame)
+                self._table[row][col].settext("(%d, %d)" % (row, col))
+                self._table[row][col].grid(row=row, column=col, sticky=E+W)
+
+        # For debugging
+        self._canvas.config(background="blue")
+        self._tableFrame.config(background="red")
+
+        yScroll.pack(side=RIGHT, fill=Y)
+        xScroll.pack(side=BOTTOM, fill=X)
+
+        self._canvas.create_window(0, 0, window=self._tableFrame, anchor=N+W)
+        self._canvas.pack(side=LEFT, fill=BOTH, expand=True)
+
+        self._frame_id = self._canvas.create_window(0, 0, window=self._tableFrame, anchor=N+W)
+        self._canvas.pack(side=LEFT, fill=BOTH, expand=True)
+        self._canvas.bind("<Configure>", self.resize_frame)
+
+    def resize_frame(self, e):
+        self._canvas.itemconfig(self._frame_id, height=e.height, width=e.width)
+
+tkRoot  = Tk()
+
+# Application Size and Center the Application
+appSize = (800, 600)
+w       = tkRoot.winfo_screenwidth()
+h       = tkRoot.winfo_screenheight()
+
+x = w / 2 - appSize[0] / 2
+y = h / 2 - appSize[1] / 2
+tkRoot.geometry("%dx%d+%d+%d" % (appSize + (x, y)))
+tkRoot.update_idletasks() # Force geometry update
+
+app = Application(5, 5, master=tkRoot)
+app.pack(side=TOP, fill=BOTH, expand=True)
+tkRoot.mainloop()

@@ -86,8 +86,9 @@ CREATE TABLE `user_task` (
 c.execute(
   '''
   INSERT INTO `user` (`id`, `username`, `email`, `password`) VALUES
-  (1, 'user1', 'user1@tdcalendar.com', 'password1'),
-  (2, 'user2', 'user2@tdcalendar.com', 'password1')
+  (1, 'user1', 'user1@tdcalendar.com', '5e06b84ac4f276aa03afc04fd1e82856'),
+  (2, 'user2', 'user2@tdcalendar.com', 'd6f85014ab40ab641c6b801818c4b681'),
+  (3, 'user3', 'user3@tdcalendar.com', 'cc0e14efb403fc5d6a07fbe1dc278e84')
   '''
 )
 
@@ -100,7 +101,6 @@ c.execute(
   (3, 'tag3', 'LightPink2', 2)
   '''
 )
-
 c.execute(
   '''
     INSERT INTO `task` (`id`, `name`, `description`, `state`, `date`, `priority`, `color`, `id_tag`, `id_user`) VALUES
@@ -110,7 +110,36 @@ c.execute(
     (4, 'task4', 'ESTO', 0, '06/11/2022', 1, 'blue', 2, 1),
     (5, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
     (6, 'task6', 'UN', 0, '06/11/2022', 1, 'blue', 2, 1),
-    (7, 'task7', 'PROGRAMON', 0, '06/11/2022', 1, 'blue', 2, 1)
+    (7, 'task4', 'ESTO', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (8, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (9, 'task6', 'UN', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (10, 'task4', 'ESTO', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (11, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+
+    (111, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 1, 1),
+    (112, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 1, 1),
+    (113, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (114, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 3, 1),
+    (115, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (116, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (117, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (118, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (119, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (120, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    
+    (1110, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (1120, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (1130, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (1140, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (1150, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (1160, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (1170, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (1180, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (1190, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (1200, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+
+    (12, 'task6', 'UN', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (13, 'task7', 'PROGRAMON', 0, '06/11/2022', 1, 'blue', 2, 1)
     '''
 )
 

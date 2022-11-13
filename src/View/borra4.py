@@ -1,18 +1,28 @@
-#Import the required Libraries
 from tkinter import *
-from tkinter import ttk
-#Create an instance of Tkinter frame
-win = Tk()
-#Set the geometry of Tkinter frame
-win.geometry("750x270")
-
-def open_popup():
-   top= Toplevel(win)
-   top.geometry("750x250")
-   top.title("Child Window")
-   Label(top, text= "Hello World!", font=('Mistral 18 bold')).place(x=150,y=80)
-
-Label(win, text=" Click the Below Button to Open the Popup Window", font=('Helvetica 14 bold')).pack(pady=20)
-#Create a button in the main Window to open the popup
-ttk.Button(win, text= "Open", command= open_popup).pack()
-win.mainloop()
+root = Tk()
+root.geometry("250x100")
+root.title("Root Window")
+ 
+ 
+def open_popup(num):
+   popup = Toplevel()
+   popup.title("PopUp")
+   popup.geometry("250x100")
+   
+   value = Entry(popup)
+   value.place(height=25, width=25, x=100, y=10)
+   value.insert(0, str(num))
+   
+   btn_ok = Button(popup, text="Return", command=popup.destroy)
+   btn_ok.place(height=30, width=60, x=90, y=45)
+   
+   
+   main_entry = Entry(root)
+   main_entry.place(height=25, width=30, x=110, y=10)
+   main_entry.insert(0, "111")
+ 
+   button_ok = Button(
+   root, text="OK", command=lambda: open_popup(main_entry.get()))
+   button_ok.place(height=30, width=30, x=110, y=45)
+ 
+root.mainloop()
