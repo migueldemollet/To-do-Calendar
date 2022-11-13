@@ -771,10 +771,11 @@ class TaskController:
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
-        if (type(self.user_controller.get_by_id(user_id)) != int):
-            return self.task_model.delete_by_user(user_id)
         else:
-            print("User with id "+str(user_id)+" does not exist")
-            return 0
+            if (type(self.user_controller.get_by_id(user_id)) != int):
+                return self.task_model.delete_by_user(user_id)
+            else:
+                print("User with id "+str(user_id)+" does not exist")
+                return 0
 
     
