@@ -58,6 +58,7 @@ class TaskController:
             return 0
 
         self.task_model.add(task)
+        task.id = self.get_by_name(task.name, task.user.id).id
         return self.task_action_controller.add(task)
     
     def share(self, task: Task, user: User) -> int | bool:
