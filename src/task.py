@@ -2,7 +2,7 @@ from user import User
 from tag import Tag
 
 class Task():
-    def __init__(self, id:int, name: str, description: str, state: str, date: str, priority: int, color: str, tag: Tag, user: User, user_shared = []):
+    def __init__(self, id:int, name: str, description: str, state: int, date: str, priority: int, color: str, tag: Tag, user: User, user_shared = []):
         self.id = id
         self.name = name
         self.description = description

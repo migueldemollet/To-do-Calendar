@@ -1,6 +1,7 @@
 from tkcalendar import Calendar
 from tkinter import *
 import tkinter.font as tkFont
+from tkinter.colorchooser import askcolor
 
 import sys
 sys.path.insert(1, 'Src/Controller/')
@@ -52,13 +53,15 @@ class Agenda(Calendar):
        
         self.normal_Font = tkFont.Font(family="Segoe", size=10, slant='roman', overstrike = 0)
         self.completed_Font = tkFont.Font(family="Segoe", size=10, slant='italic', overstrike = 1)
+        self.italic_Font = tkFont.Font(family="Segoe", size=16, slant='italic')
         self.icon_Font = tkFont.Font(family="Console", size=10)
         self.alert_Font = tkFont.Font(family="Console", size=12)
         
 
         self.Controller_TAG = TagController()
+        self.Controller_USER = UserController()
         self.Controller_TASK = TaskController()
-        self.tag_config('mix',background='grey',foreground='black')
+        self.tag_config('mix',background='gainsboro',foreground='black')
 
         self.OPEN_CHANGE_WINDOW=0
                     
@@ -126,54 +129,128 @@ class Agenda(Calendar):
     
     def add_task(self):
         self.top_create_task = Toplevel() 
-        self.top_create_task.geometry("400x200+500+200") 
+        #self.top_create_task.geometry("800x400+500+200") 
+        self.top_create_task.geometry("+500+200")
         self.top_create_task.title("Crea una tasca") 
 
         self.top_create_task.transient(self.master)
         self.top_create_task.grab_set()
 
         left_frame = Frame(self.top_create_task)
-        left_frame.pack(side=LEFT,padx=10,pady=10)
+        left_frame.pack(side=LEFT,padx=20,pady=20)
 
         rightt_frame = Frame(self.top_create_task)
-        rightt_frame.pack(side=RIGHT,padx=10,pady=10)
+        rightt_frame.pack(side=RIGHT,padx=20,pady=20, expand=True, fill=BOTH)
 
         variable = IntVar(self.top_create_task)   
         tags = self.Controller_TAG.get_by_user(self.id_user)
-        for tag in tags:
+        
+        for num,tag in enumerate(tags):
             checkbutton = Checkbutton(
                 left_frame,
-                onvalue=tag.name,
+                onvalue=tag.id,
                 variable=variable,
                 text=tag.name,
                 bg=tag.color,
-                font=self.normal_Font 
+                font=self.normal_Font
             )
-            checkbutton.pack()
+            checkbutton.pack(expand=True,fill=BOTH)
+
+        
+        new_tag_but = Button(left_frame,text="[+] Nou tag", command=lambda : [self._create_tag()])
+        new_tag_but.pack(expand=True,fill=BOTH)
 
 
         
 
+        self.info_message_tl = Label(rightt_frame,text="",fg='red')
+        self.info_message_tl.grid(row=0)
+
         l1 = Label(rightt_frame,  text='Nova tasca', width=10 ) 
         l1.grid(row=1,column=1) 
+        self.entry_task_name_tl = Entry(rightt_frame, width=100) 
+        self.entry_task_name_tl.grid(row=1,column=2)
 
-        e1 = Entry(rightt_frame, width=20) 
-        e1.grid(row=1,column=2)
-        b2 = Button(rightt_frame, text='Submit',
-                command=lambda:rightt_frame.set(e1.get()))
-        b2.grid(row=2,column=2) 
-        b3 = Button(rightt_frame, text=' Close Child',
-                    command=self.top_create_task.destroy)
-        b3.grid(row=3,column=2)
+
+        l2 = Label(rightt_frame,  text='Descripció', width=10 ) 
+        l2.grid(row=2,column=1) 
+        self.text_task_description_tl = Text(rightt_frame, height=4) 
+        self.text_task_description_tl.grid(row=2,column=2,pady=10)
+
+
+        b2 = Button(rightt_frame, text='Crea la tasca',
+                command=lambda: self._CONTROLLER_create_task(self.entry_task_name_tl.get(),self.text_task_description_tl.get("1.0",'end'),variable.get()) )
+        b2.grid(row=3,column=2) 
+        b3 = Button(rightt_frame, text='Cancel·la',command=self.top_create_task.destroy)
+        b3.grid(row=4,column=2)
 
         # A Label widget to show in toplevel 
-        """Label(self.racerWindow, text ="Enter new racer window").grid(row=0,column=0)
-        Label(self.racerWindow, text="First Name").grid(row=0,column=1)
-        Label(self.racerWindow, text="Last Name").grid(row=0,column=2)
+        #print(self.get_date())
 
-        entry_1 = Entry(self.racerWindow)
-        entry_1.grid(row=1,column=0,columnspan=3,sticky=E+W)"""
-        print(self.get_date())
+    def _CONTROLLER_create_task(self,name,description,id_tag):
+        
+
+        mes,dia,any = self.get_date().split('/')
+        any = '20' + any
+        data = dia+'/'+mes+'/'+any
+
+
+        return_value = self.Controller_TASK.add(Task(999,name,description,0,data,1,'red',self.Controller_TAG.get_by_id(id_tag),self.Controller_USER.get_by_id(self.id_user)))
+        """        Task(id: int, name: str, description: str, state: str, date: str, priority: int, color: str, tag: Tag, user: User, user_shared: Any = []) -> None)"""
+
+        """dia,mes,any = self.get_date().split('/')
+        date_task=datetime.date(year=int(any), month=int(mes), day=int(dia))"""
+        
+        if(return_value == True):
+            task_id_c = self.Controller_TASK.get_by_name(name,self.id_user).id
+            date_task=datetime.date(year=int(any), month=int(mes), day=int(dia))
+
+            self.calevent_create(date_task, name, description,0,1,task_id_c,self.Controller_TAG.get_by_id(id_tag).name)
+            self.top_create_task.destroy()
+            self._on_click("<<CalendarSelected>>",1)
+            self._prev_month()
+            self._next_month()
+            
+
+    def _create_tag(self):
+        def canvia_fons():
+            self.color12 = askcolor(title="Tria color fons")[1]
+            entry_tag_name_tl2.configure({"background": self.color12})
+
+        self.color12 = '#a0a0a0'
+        self.top_create_tag = Toplevel() 
+        #self.top_create_task.geometry("800x400+500+200") 
+        self.top_create_tag.geometry("+500+200")
+        self.top_create_tag.title("Crea una tag") 
+
+        self.top_create_tag.transient(self.master)
+        self.top_create_tag.grab_set()
+
+        top_frame = Frame(self.top_create_tag)
+        top_frame.pack(side=LEFT,padx=20,pady=20)
+
+        entry_tag_name_tl2 = Entry(top_frame, width=20,font=self.italic_Font, justify='center') 
+        entry_tag_name_tl2.grid(row=0,column=1)
+
+
+        b2 = Button(top_frame, text='Fons',
+                command=lambda: canvia_fons())
+        b2.grid(row=0,column=0, sticky='nswe',pady=5) 
+
+        #colors = askcolor(title="Tkinter Color Chooser")
+        b2 = Button(top_frame, text='Crea el tag',
+                command=lambda: self._CONTROLLER_create_tag(entry_tag_name_tl2.get(),self.color12))
+        b2.grid(row=3,column=1,pady=5) 
+        b3 = Button(top_frame, text='Cancel·la',command=self.top_create_tag.destroy)
+        b3.grid(row=4,column=1,pady=5)
+
+    def _CONTROLLER_create_tag(self,name,color):
+        print(color)
+        self.Controller_TAG.add(Tag(999,name,color,self.Controller_USER.get_by_id(self.id_user)))
+        self.tag_config(name, background=color, foreground='black')
+        self.top_create_tag.destroy()
+        self.top_create_task.destroy()
+        self.add_task()
 
     def _CONTROLLER_complete_task(self,ev_id,event):
         if(self.calevents[ev_id]['completed'] == 0):
@@ -241,7 +318,6 @@ class Agenda(Calendar):
     def _CONTROLLER_getTags(self):
         for tag in self.Controller_TAG.get_by_user(self.id_user):
             self.tag_config(tag.name, background=tag.color, foreground='black')
-
         """self.tag_config('UNIVERSITAT', background='DarkOliveGreen1', foreground='black')
         self.tag_config('TRABAJO', background='bisque', foreground='black')
         self.tag_config('mix',background='grey',foreground='black')"""
@@ -513,7 +589,7 @@ class Agenda(Calendar):
             tags_ = [tags]
         else:
             tags_ = list(tags)
-        self.calevents[ev_id] = {'date': date, 'text': text, 'tags': tags_, 'descripcion':description, 'completed':state, 'priority':priority, 'taskid':taskid}
+        self.calevents[ev_id] = {'date': date, 'text': text, 'tags': tags_, 'descripcion':description.replace('\n',''), 'completed':state, 'priority':priority, 'taskid':taskid}
         for tag in tags_:
             if tag not in self._tags:
                 self._tag_initialize(tag)
@@ -616,17 +692,11 @@ class Agenda(Calendar):
                 self.right_frame.columnconfigure(0, weight=1000)
 
                 
-                if(len(ev['text']) > 55):
-                    spaces = ' '*(79-len(ev['text']))
-                    spaced_name = ev['text'][0:55]+'...'+spaces
-                else:
-                    spaces = ' '*(115-len(ev['text']))
-                    spaced_name = ev['text']+spaces
                     
                 button_ch = Button(self.right_frame, highlightthickness=4, 
                        activebackground="#ffffff", activeforeground="#000000", relief="raised",  bd=4, command=lambda event_id=event_id: \
                     [self._CONTROLLER_complete_task(event_id,event)], \
-                    text=ev['tags'][0]+": "+spaced_name  , font=task_font ,  \
+                    text=ev['tags'][0]+": "+ev['text']  , font=task_font ,  \
                     bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1,pady=0,padx=0)
                 button_ch.grid(row=selected_day_tasks*2,column=0, sticky='ew')
                 

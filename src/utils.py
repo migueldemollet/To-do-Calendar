@@ -37,11 +37,11 @@ def check_priority(priority: int) -> bool:
 
     return priority >= 0 and priority <= 2
 
-def check_state(state: str) -> bool:
+def check_state(state: int) -> bool:
     """Check if state is valid
 
     Args:
-        status (str): state must be 0 or 1
+        status (int): state must be 0 or 1
 
     Returns:
         bool: True status is valid
@@ -60,8 +60,10 @@ def check_color(color: str) -> bool:
         bool: True color is valid
         bool: False color is not valid
     """
-
-    return color in color_list
+    if '#' in color:
+        return True
+    else:
+        return color in color_list
 
 def check_is_int(num: int) -> bool:
     """Check if num is int valid

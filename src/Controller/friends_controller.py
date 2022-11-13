@@ -51,7 +51,7 @@ class FriendController:
             print("Invalid id")
             return 1
         if (self.friends_model.get_by_id(id) == []):
-            print("Friend does not exist")
+            #print("Friend does not exist")
             return 0
         return self.friends_model.delete_by_id(id)
 
@@ -74,7 +74,7 @@ class FriendController:
             return 1
         self.friends = self.friends_model.get_by_id(id)
         if (self.friends == []):
-            print("Friend does not exist")
+            #print("Friend does not exist")
             return 0
         self.users = get_user(self.friends[0]['id_user_2'])
         return list_to_friends(self.friends, [self.users])[0]
@@ -98,7 +98,7 @@ class FriendController:
             return 1
         self.friends = self.friends_model.get_by_user(user_id)
         if (self.friends == []):
-            print("Friend does not exist")
+            #print("Friend does not exist")
             return 0
         self.users = [get_user(friend['id_user_2']) for friend in self.friends]
         return list_to_friends(self.friends, self.users)
@@ -119,7 +119,7 @@ class FriendController:
             print("Invalid user")
             return 1
         if (self.friends_model.get_by_user(user_id) == []):
-            print("Friend does not exist")
+            #print("Friend does not exist")
             return 0
         return self.friends_model.delete_by_user(user_id)
 
@@ -146,7 +146,7 @@ class FriendController:
             return 1
         self.friends = self.friends_model.get_by_state(user_id,state)
         if (self.friends == []):
-            print("Friend does not exist")
+            #print("Friend does not exist")
             return 0
         self.users = [get_user(friend['id_user_2']) for friend in self.friends]
         return list_to_friends(self.friends, self.users)
@@ -172,7 +172,7 @@ class FriendController:
             print("Invalid state")
             return 1
         if (self.friends_model.get_by_id(id) == []):
-            print("Friend does not exist")
+            #print("Friend does not exist")
             return 0
         return self.friends_model.change_state(id, new_state)
         
@@ -196,7 +196,7 @@ class FriendController:
             print("Invalid user")
             return 1
         if (self.friends_model.get_by_state(user_id,state) == []):
-            print("Friend does not exist")
+            #print("Friend does not exist")
             return 0
         return self.friends_model.delete_by_state(user_id,state)
     
@@ -226,7 +226,7 @@ class FriendController:
             return 1
         self.friends = self.friends_model.check_relationship(user_id, user_friend_id)
         if (self.friends == []):
-            print("Friend does not exist")
+            #print("Friend does not exist")
             return 0
         self.users = [get_user(friend['id_user_2']) for friend in self.friends]
         return list_to_friends(self.friends, self.users)[0]
