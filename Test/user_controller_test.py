@@ -54,6 +54,32 @@ class TestUserController(unittest.TestCase):
         self.assertEqual(self.controller.add(user), 0)
     
 
+    #-------------------------id:get-------------------------------
+
+    def test_get_by_id_correct(self):
+        self.assertEqual(self.controller.get_by_id(1), self.user1)
+    
+    def test_get_by_id_incorrect_value(self):
+        self.assertEqual(self.controller.get_by_id(''), 1)
+        self.assertEqual(self.controller.get_by_id(0), 1)
+        self.assertEqual(self.controller.get_by_id(-1), 1)
+    
+    def test_get_by_id_incorrect_db(self):
+        self.assertEqual(self.controller.get_by_id(789), 0)
+    
+    #-------------------------id:delete-------------------------------
+    def test_delete_by_id_correct(self):
+        self.assertEqual(self.controller.delete_by_id(1), True)
+    
+    def test_delete_by_id_incorrect_value(self):
+        self.assertEqual(self.controller.delete_by_id(''), 1)
+        self.assertEqual(self.controller.delete_by_id(0), 1)
+        self.assertEqual(self.controller.delete_by_id(-1), 1)
+    
+    def test_delete_by_id_incorrect_db(self):
+        self.assertEqual(self.controller.delete_by_id(54), 0)
+
+
     #-------------------------Username:get-------------------------------
     
     def test_get_by_username_correct(self):
