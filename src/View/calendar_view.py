@@ -2,6 +2,7 @@ from tkcalendar import Calendar
 from tkinter import *
 import tkinter.font as tkFont
 from tkinter.colorchooser import askcolor
+from tkinter import ttk
 
 import sys
 sys.path.insert(1, 'Src/Controller/')
@@ -42,7 +43,7 @@ class Agenda(Calendar):
     
     def carrega_interface(self):
 
-        self.WINDOW_WIDTH = int(self.master.winfo_screenwidth()*80/100)
+        self.WINDOW_WIDTH = int(self.master.winfo_screenwidth()*90/100)
         self.WINDOW_HEIGHT = int(self.master.winfo_screenheight()*60/100)
         self.WINDOW_MARGIN_X = int((self.master.winfo_screenwidth()-self.WINDOW_WIDTH)/2)
         self.WINDOW_MARGIN_Y = int((self.master.winfo_screenheight()-self.WINDOW_HEIGHT-60)/2)
@@ -63,7 +64,6 @@ class Agenda(Calendar):
         self.Controller_TASK = TaskController()
         self.tag_config('mix',background='gainsboro',foreground='black')
 
-        self.OPEN_CHANGE_WINDOW=0
                     
         self.message_label = Label(self.master, font=self.alert_Font, fg='red')
         self.message_label.pack(side=BOTTOM)
@@ -282,8 +282,8 @@ class Agenda(Calendar):
                 self.list_buttons_open_desc[id] = 0
 
             #self.top.title(self.calevents[ev_id]['text'])
-            T = Text(self.right_frame, height = 5, width = 52)
-            T.grid(row=selected_day_num*2+1,column=0, columnspan=4,sticky='ew')
+            T = Text(self.right_frame, height = 5, width = 44)
+            T.grid(row=selected_day_num*2+1,column=0, columnspan=4)
             T.insert(END, self.calevents[ev_id]['descripcion'])
             self.list_desc.append(T)
             self.list_buttons_open_desc[selected_day_num]=1
@@ -291,13 +291,96 @@ class Agenda(Calendar):
         self.message_label.configure(text='')
 
         
-    def _CONTROLLER_edit_task(self,event_id,event):
-        print(self.OPEN_CHANGE_WINDOW)
+    def _CONTROLLER_edit_task(self,event_id):
+        self.top_edit_task = Toplevel() 
+        #self.top_edit_task.geometry("800x400+500+200") 
+        self.top_edit_task.geometry("+500+200")
+        self.top_edit_task.title("Edita la tasca") 
+
+        self.top_edit_task.transient(self.master)
+        self.top_edit_task.grab_set()
+
+        left_frame_edit = Frame(self.top_edit_task)
+        left_frame_edit.pack(side=LEFT,padx=20,pady=20)
+
+        right_frame_edit = Frame(self.top_edit_task)
+        right_frame_edit.pack(side=RIGHT,padx=20,pady=20, expand=True, fill=BOTH)
+
+        self.variable2 = IntVar(self.top_edit_task)   
+        tags = self.Controller_TAG.get_by_user(self.id_user)
+        list_checks = {}
+        list_checks = []
         
-        if(self.OPEN_CHANGE_WINDOW):
-            self.OPEN_CHANGE_WINDOW=0
-        else:
-            self.OPEN_CHANGE_WINDOW=1
+
+        for tag in tags:
+            checkbutton_ed = Checkbutton(
+                left_frame_edit,
+                onvalue=tag.id,
+                offvalue=False,
+                variable=self.variable2,
+                text=tag.name,
+                background=tag.color,
+                font=self.normal_Font,
+                command=lambda:print(self.variable2.get())
+            )
+            #list_checks[tag.id]=[checkbutton_ed,tag.name]
+            list_checks.append(checkbutton_ed)
+            checkbutton_ed.pack(expand=True,fill=BOTH)
+              
+        #self.variable2.set(1)
+        #list_checks[1].select()
+
+
+        
+
+
+        for chk_but in list_checks:
+            tag_chk = chk_but.cget("text")
+            elonvalue = chk_but.cget("onvalue")
+
+
+          
+            tag_id = self.Controller_TAG.get_by_name(self.calevents[event_id]['tags'][0],self.id_user)[0].id
+            tag_text = self.Controller_TAG.get_by_name(self.calevents[event_id]['tags'][0],self.id_user)[0].name
+
+            if(chk_but.cget("text")==tag_text):
+                
+                chk_but.toggle()
+                print("entro aqui!")
+
+        #list_checks[1].configure(variable=1)
+        
+        
+
+        
+        new_tag_but_edit = Button(left_frame_edit,text="[+] Nou tag", command=lambda : [self._create_tag()])
+        new_tag_but_edit.pack(expand=True,fill=BOTH)
+
+
+        
+
+        self.info_edit = Label(right_frame_edit,text="",fg='red')
+        self.info_edit.grid(row=0)
+
+        l1 = Label(right_frame_edit,  text='Nova tasca', width=10 ) 
+        l1.grid(row=1,column=1) 
+        self.entry_task_name_edit = Entry(right_frame_edit, width=100) 
+        self.entry_task_name_edit.grid(row=1,column=2)
+
+
+        l2 = Label(right_frame_edit,  text='Descripció', width=10 ) 
+        l2.grid(row=2,column=1) 
+        self.text_task_description_edit = Text(right_frame_edit, height=4) 
+        self.text_task_description_edit.grid(row=2,column=2,pady=10)
+
+
+        b2 = Button(right_frame_edit, text='Crea la tasca',
+                command=lambda: print("hi") )
+        b2.grid(row=3,column=2) 
+        b3 = Button(right_frame_edit, text='Cancel·la',command=self.top_edit_task.destroy)
+        b3.grid(row=4,column=2)
+
+
         
         
     def _CONTROLLER_delete_task(self,event_id,event):
@@ -343,7 +426,7 @@ class Agenda(Calendar):
         w, d = self._get_day_coords(date)
         if w is not None:
             label = self._calendar[w][d]
-            label.configure(width=15)
+            label.configure(width=25)
             if not label.cget('text'):
                 # this is an other month's day and showothermonth is False
                 return
@@ -446,14 +529,8 @@ class Agenda(Calendar):
 
                         if len(taglist_show) > 1:
                             label.configure(style='tag_%s.%s.TLabel' % ('mix', self._style_prefixe))
-                        # modified lines:
-                        #text = '%s\n' % day_number + '\n'.join([self.calevents[ev]['text'][0:17] for ev in ev_ids])
+                            
                         text = str(date.day)+'\n'
-                        """for ev in ev_ids[0:3]:
-                            text = text + self.calevents[ev]['text'][0:17] + '\n'
-                    
-                        if(len(ev_ids)>3):
-                            text = text+'...'"""
 
 
                         events_uncompleted = 0
@@ -534,14 +611,7 @@ class Agenda(Calendar):
                     if len(taglist_show) > 1:
                         label.configure(style='tag_%s.%s.TLabel' % ('mix', self._style_prefixe))
 
-                    # modified lines:
-                    #text = '%s\n' % date.day + '\n'.join([self.calevents[ev]['text'][0:17] for ev in ev_ids])
                     text = str(date.day)+'\n'
-                    """for ev in ev_ids[0:3]:
-                        text = text + self.calevents[ev]['text'][0:17] + '\n'
-                    
-                    if(len(ev_ids)>3):
-                        text = text+'...'"""
 
                     events_uncompleted = 0
                     for ev in ev_ids:
@@ -691,12 +761,13 @@ class Agenda(Calendar):
                     
                 self.right_frame.columnconfigure(0, weight=1000)
 
+                n_pos = 90 - len(self.calevents[event_id]['text'])-len(self.calevents[event_id]['tags'][0])
                 
                     
                 button_ch = Button(self.right_frame, highlightthickness=4, 
                        activebackground="#ffffff", activeforeground="#000000", relief="raised",  bd=4, command=lambda event_id=event_id: \
                     [self._CONTROLLER_complete_task(event_id,event)], \
-                    text=ev['tags'][0]+": "+ev['text']  , font=task_font ,  \
+                    text=ev['tags'][0]+": "+ev['text'][0:n_pos]  , font=task_font ,  \
                     bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1,pady=0,padx=0)
                 button_ch.grid(row=selected_day_tasks*2,column=0, sticky='ew')
                 
@@ -708,8 +779,8 @@ class Agenda(Calendar):
                 self.list_buttons_open_desc[selected_day_tasks]=0
                 
                 b2=Button(self.right_frame, highlightthickness=4, 
-                       activebackground="#ffffff", activeforeground="#000000", relief="raised",  bd=4,  command=lambda selected_day_tasks=selected_day_tasks: \
-                    [self._CONTROLLER_edit_task(event_id,event)], \
+                       activebackground="#ffffff", activeforeground="#000000", relief="raised",  bd=4,  command=lambda event_id=event_id: \
+                    [self._CONTROLLER_edit_task(event_id)], \
                     text="✎"  , font=self.icon_Font, \
                     bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks*2,column=2, sticky="ew",pady=0,padx=0)#pack(side=LEFT)
                 
