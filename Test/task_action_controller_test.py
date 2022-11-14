@@ -42,10 +42,10 @@ class TestTaskActionController(unittest.TestCase):
             id += 1 
     
     def test_create_task_incorrect_value(self):
-        self.task2.id = "fer"
+        self.task2.set_id("fer")
         self.assertEqual(self.controller.add(self.task2), 1)
         self.task2.id = 2
-        self.task3.user.id = "fer"
+        self.task3.get_user().set_id("fer")
         self.assertEqual(self.controller.add(self.task3), 1)
 
     def test_create_task_incorrect_db(self):
@@ -57,12 +57,12 @@ class TestTaskActionController(unittest.TestCase):
         self.assertEqual(self.controller.share(self.task2, self.user1), True)
 
     def test_share_task_incorrect_value(self):
-        self.task2.id = "fer"
+        self.task2.set_id("fer")
         self.assertEqual(self.controller.share(self.task2, self.user2), 1)
-        self.task2.id = 2
-        self.task2.user.id = "fer"
+        self.task2.set_id(2)
+        self.task2.get_user().set_id("fer")
         self.assertEqual(self.controller.share(self.task3, self.user2), 1)
-        self.task3.user.id = 3
+        self.task3.get_user().set_id(3)
         self.assertEqual(self.controller.share(self.task3, self.user2), 1)
 
     def test_share_task_incorrect_db(self):
@@ -75,10 +75,10 @@ class TestTaskActionController(unittest.TestCase):
         self.assertEqual(self.controller.unshare(self.task2, self.user1), 0)
     
     def test_unshare_task_incorrect_value(self):
-        self.task1.id = "fer"
+        self.task1.set_id("fer")
         self.assertEqual(self.controller.unshare(self.task1, self.user2), 1)
-        self.task1.id = 1
-        self.user2.id = "fer"
+        self.task1.set_id(1)
+        self.user2.set_id("fer")
         self.assertEqual(self.controller.unshare(self.task1, self.user2), 1)
 
     def test_unshare_task_incorrect_db(self):

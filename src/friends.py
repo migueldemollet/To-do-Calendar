@@ -12,5 +12,23 @@ class Friend():
     def __eq__(self, other):
         return self.id == other.id
 
+    def get_id(self) -> int:
+        return self.id
+    
+    def set_id(self, id: int) -> None:
+        self.id = id
+    
+    def get_user(self) -> User:
+        return self.user
+    
+    def set_user(self, user: User) -> None:
+        self.user = user
+    
+    def get_state(self) -> int:
+        return self.state
+    
+    def set_state(self, state: int) -> None:
+        self.state = state
+
 
 

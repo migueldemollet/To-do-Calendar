@@ -35,16 +35,16 @@ class TestUserController(unittest.TestCase):
     
     def test_add_user_incorrect_values(self):
         user = User(3, 'user3', 'user3@tdcalendar.com', 'password3@')
-        user.id = "dd"
+        user.set_id("dd")
         self.assertEqual(self.controller.add(user), 1)
-        user.id = 3
-        user.username = ""
+        user.set_id(3)
+        user.set_username("")
         self.assertEqual(self.controller.add(user), 1)
-        user.username = "user3"
-        user.email = "oefjwfij"
+        user.set_username("user3")
+        user.set_email("oefjwfij")
         self.assertEqual(self.controller.add(user), 1)
-        user.email = "user3@tdcalendar.com"
-        user.password = "a2345678"
+        user.set_email("user3@tdcalendar.com")
+        user.set_password("a2345678")
         self.assertEqual(self.controller.add(user), 1)
 
     def test_add_user_incorrect_db(self):
@@ -53,6 +53,32 @@ class TestUserController(unittest.TestCase):
         user = User(3, 'user3', 'user3@tdcalendar.com', 'password3@')
         self.assertEqual(self.controller.add(user), 0)
     
+
+    #-------------------------id:get-------------------------------
+
+    def test_get_by_id_correct(self):
+        self.assertEqual(self.controller.get_by_id(1), self.user1)
+    
+    def test_get_by_id_incorrect_value(self):
+        self.assertEqual(self.controller.get_by_id(''), 1)
+        self.assertEqual(self.controller.get_by_id(0), 1)
+        self.assertEqual(self.controller.get_by_id(-1), 1)
+    
+    def test_get_by_id_incorrect_db(self):
+        self.assertEqual(self.controller.get_by_id(789), 0)
+    
+    #-------------------------id:delete-------------------------------
+    def test_delete_by_id_correct(self):
+        self.assertEqual(self.controller.delete_by_id(1), True)
+    
+    def test_delete_by_id_incorrect_value(self):
+        self.assertEqual(self.controller.delete_by_id(''), 1)
+        self.assertEqual(self.controller.delete_by_id(0), 1)
+        self.assertEqual(self.controller.delete_by_id(-1), 1)
+    
+    def test_delete_by_id_incorrect_db(self):
+        self.assertEqual(self.controller.delete_by_id(54), 0)
+
 
     #-------------------------Username:get-------------------------------
     
@@ -73,11 +99,11 @@ class TestUserController(unittest.TestCase):
 
     def test_change_username_incorrect_value(self):
         self.assertEqual(self.controller.change_username(self.user1, 'user4'), 1)
-        self.user1.username = "usesdfsdfsfsfsfsdfr1"
+        self.user1.set_username("usesdfsdfsfsfsfsdfr1")
         self.assertEqual(self.controller.change_username(self.user1, 'user7'), 1)
-        self.user1.username = "user4"
+        self.user1.set_username("user4")
         self.assertEqual(self.controller.change_username(self.user1, 'fghfghfhfhhtrthdfdfd'), 1)
-        self.user1.username = ""
+        self.user1.set_username("")
         self.assertEqual(self.controller.change_username(self.user1, ''), 1)
 
     def test_change_username_incorrect_db(self):
@@ -118,9 +144,9 @@ class TestUserController(unittest.TestCase):
     
     def test_change_email_incorrect_value(self):
         self.assertEqual(self.controller.change_email(self.user1, 'user0@tdcalendar.com'), 1)
-        self.user1.username = "user1"
+        self.user1.set_username("user1")
         self.assertEqual(self.controller.change_email(self.user1, 'usertdcalendar.com'), 1)
-        self.user1.email = "user1@tdcalendar.com"
+        self.user1.set_email("user1@tdcalendar.com")
 
     def test_change_email_incorrect_db(self):
         self.user1.username = "sdsd"
@@ -154,7 +180,7 @@ class TestUserController(unittest.TestCase):
         self.assertEqual(self.controller.change_password(self.user1, 'adsdadsdds.'), 1)
     
     def test_change_password_incorrect_db(self):
-        self.user1.username = "sdsd"
+        self.user1.set_username("sdsd")
         self.assertEqual(self.controller.change_password(self.user1, 'password1@'), 0)
 
     #-------------------------login-------------------------------
@@ -265,10 +291,6 @@ def restore():
         (2, 1, 3, 0)
         '''
     )
-
-
-
-    
 
     conn.commit()
     conn.close()

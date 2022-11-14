@@ -51,27 +51,26 @@ class TestTaskController(unittest.TestCase):
     def test_add_incorrect_values(self):
         task = Task(5, "task5", "description5", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.add(task), 1)
-        task.name = "task5"
-        task.date = "dfko/ds/2022"
+        task.set_name("task5")
+        task.set_date("dfko/ds/2022")
         self.assertEqual(self.controller.add(task), 1)
-        task.date = "01/01/2022"
-        task.priority = -1
+        task.set_date("01/01/2022")
+        task.set_priority(-1)
         self.assertEqual(self.controller.add(task), 1)
-        task.priority = 3
+        task.set_priority(3)
         self.assertEqual(self.controller.add(task), 1)
-        task.priority = 0
-        task.color = "sdff"
+        task.set_priority(0)
+        task.set_color("sdff")
         self.assertEqual(self.controller.add(task), 1)
-        task.color = "red"
     
     def test_add_incorrect_db(self):
         task = Task(4, "task4", "description4", 0, "01/01/2022", 1, "red", self.tag1, self.user1)
         self.controller.add(task), True
         self.assertEqual(self.controller.add(task), 0)
-        task.tag.id = 0
+        task.get_tag().set_id(0)
         self.assertEqual(self.controller.add(task), 0)
-        task.tag.id = 1
-        task.user.id = 0
+        task.get_tag().set_id(1)
+        task.get_user().set_id(0)
         self.assertEqual(self.controller.add(task), 0)
     
 
@@ -81,10 +80,10 @@ class TestTaskController(unittest.TestCase):
         self.assertEqual(self.controller.share(self.task2, self.user1), True)
     
     def test_share_incorrect_values(self):
-        self.task2.id = 0
+        self.task2.set_id(0)
         self.assertEqual(self.controller.share(self.task2, self.user2), 1)
-        self.task2.id = 2
-        self.user2.id = 0
+        self.task2.set_id(2)
+        self.user2.set_id(0)
         self.assertEqual(self.controller.share(self.task2, self.user2), 1)
     
     def test_share_incorrect_db(self):
@@ -98,10 +97,10 @@ class TestTaskController(unittest.TestCase):
         self.assertEqual(self.controller.unshare(self.task1, self.user2), True)
     
     def test_unshare_incorrect_values(self):
-        self.task1.id = 0
+        self.task1.set_id(0)
         self.assertEqual(self.controller.unshare(self.task1, self.user2), 1)
-        self.task1.id = 1
-        self.user2.id = 0
+        self.task1.set_id(1)
+        self.user2.set_id(0)
         self.assertEqual(self.controller.unshare(self.task1, self.user2), 1)
     
     def test_unshare_incorrect_db(self):
@@ -162,13 +161,13 @@ class TestTaskController(unittest.TestCase):
     def test_change_name_correct(self):
         task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.change_name(task, 'task4'), True)
-        task.name = "task4"
+        task.set_name("task4")
     
     def test_change_name_incorrect_values(self):
         task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
         self.assertEqual(self.controller.change_name(task, 'task4'), 1)
         self.assertEqual(self.controller.change_name(task, ''), 1)
-        task.user.id = 0
+        task.get_user().set_id(0)
         self.assertEqual(self.controller.change_name(task, 'task4'), 1)
     
     def test_change_name_incorrect_db(self):
@@ -198,9 +197,9 @@ class TestTaskController(unittest.TestCase):
     
     def test_change_description_incorrect_values(self):
         task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
-        task.description = "description4"
+        task.set_description("description4")
         self.assertEqual(self.controller.change_description(task, 'description4'), 1)
-        task.user.id = 0
+        task.get_user().set_id(0)
         self.assertEqual(self.controller.change_description(task, 'description4'), 1)
     
     def test_change_description_incorrect_db(self):
@@ -229,7 +228,7 @@ class TestTaskController(unittest.TestCase):
 
     def test_change_state_incorrect_values(self):
         task = Task(1, "task1", "description1", 0, "01/01/2022", 0, "red", self.tag1, self.user1)
-        task.state = 1
+        task.set_state(1)
         self.assertEqual(self.controller.change_state(task, 1), 1)
         self.assertEqual(self.controller.change_state(task, 2), 1)
         self.assertEqual(self.controller.change_state(task, -1), 1)
@@ -316,9 +315,9 @@ class TestTaskController(unittest.TestCase):
 
     def test_change_priority_correct(self):
         self.assertEqual(self.controller.change_priority(self.task1, 1), True)
-        self.task1.priority = 1
+        self.task1.set_priority(1)
         self.assertEqual(self.controller.change_priority(self.task1, 2), True)
-        self.task1.priority = 2
+        self.task1.set_priority(2)
 
     def test_change_priority_incorrect(self):
         self.assertEqual(self.controller.change_priority(self.task1, 2), 1)

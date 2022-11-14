@@ -30,10 +30,10 @@ class TestTagController(unittest.TestCase):
     
     def test_add_incorrect_value(self):
         new_tag = Tag(4, 'tag4', 'orange', self.user)
-        new_tag.name = ''
+        new_tag.set_name('')
         self.assertEqual(self.controller.add(new_tag), 1)
-        new_tag.name = 'tag4'
-        new_tag.color = 'sd'
+        new_tag.set_name('tag4')
+        new_tag.set_color('sd')
         self.assertEqual(self.controller.add(new_tag), 1)
         new_tag.user = User(67, "user1", "user1@tdcalendar.com", "password1")
         self.assertEqual(self.controller.add(new_tag), 1)
@@ -137,10 +137,10 @@ class TestTagController(unittest.TestCase):
     def test_change_color_incorrect_values(self):
         self.controller.change_color(self.tag1, 'blue')
         self.assertEqual(self.controller.change_color(self.tag1, 'blue'), 1)
-        self.tag1.color = 'green'
+        self.tag1.set_color('green')
         self.assertEqual(self.controller.change_color(self.tag1, 'yellow'), 1)
         self.assertEqual(self.controller.change_color(self.tag1, ''), 1)
-        self.tag1.user.id = "fdf"
+        self.tag1.get_user().set_id("fdf")
         self.assertEqual(self.controller.change_color(self.tag1, 'blue'), 1)
 
     def test_change_color_incorrect_db(self):

@@ -176,12 +176,14 @@ class UserController:
         if (not check_email(email)):
             print("Invalid email")
             return 1
-        self.user = self.user_model.get_by_email(email)
-        if (self.user == []):
-            print("User does not exist")
-            return 0
-        self.friends = self.friend_controller.get_by_user(self.user[0]['id'])
-        return list_to_users(self.user, self.friends)[0]
+        else:
+            self.user = self.user_model.get_by_email(email)
+            if (self.user == []):
+                print("User does not exist")
+                return 0
+            else:
+                self.friends = self.friend_controller.get_by_user(self.user[0]['id'])
+                return list_to_users(self.user, self.friends)[0]
 
     def change_email(self, user: User, new_email: str) -> int | bool:
         """Change a user email

@@ -59,6 +59,7 @@ class TaskController:
 
         self.task_model.add(task)
         task.id = self.get_by_name(task.name,task.user.id).id
+        task.id = self.get_by_name(task.name, task.user.id).id
         return self.task_action_controller.add(task)
     
     def share(self, task: Task, user: User) -> int | bool:
@@ -771,10 +772,11 @@ class TaskController:
         if (not check_is_int(user_id)):
             print("Invalid user id")
             return 1
-        if (type(self.user_controller.get_by_id(user_id)) != int):
-            return self.task_model.delete_by_user(user_id)
         else:
-            print("User with id "+str(user_id)+" does not exist")
-            return 0
+            if (type(self.user_controller.get_by_id(user_id)) != int):
+                return self.task_model.delete_by_user(user_id)
+            else:
+                print("User with id "+str(user_id)+" does not exist")
+                return 0
 
     
