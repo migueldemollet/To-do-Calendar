@@ -12,3 +12,27 @@ class Tag():
 
     def __eq__(self, other):
         return self.id == other.id
+    
+    def get_id(self) -> int:
+        return self.id
+    
+    def set_id(self, id: int) -> None:
+        self.id = id
+    
+    def get_name(self) -> str:
+        return self.name
+    
+    def set_name(self, name: str) -> None:
+        self.name = name
+    
+    def get_color(self) -> str:
+        return self.color
+    
+    def set_color(self, color: str) -> None:
+        self.color = color
+    
+    def get_user(self) -> User:
+        return self.user
+    
+    def set_user(self, user: User) -> None:
+        self.user = user
