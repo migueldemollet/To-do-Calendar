@@ -9,24 +9,6 @@ sys.path.insert(1, 'Src/Controller/')
 from tag_controller import *
 from task_controller import *
 
-class Popup(Toplevel):
-    """modal window requires a master"""
-    def __init__(self, master, **kwargs):
-        Toplevel.__init__(self, master, **kwargs)
-
-        lbl = Label(self, text="this is the popup")
-        lbl.pack()
-
-        btn = Button(self, text="OK", command=self.destroy)
-        btn.pack()
-
-        # The following commands keep the popup on top.
-        # Remove these if you want a program with 2 responding windows.
-        # These commands must be at the end of __init__
-        self.transient(master) # set to be on top of the main window
-        self.grab_set() # hijack all commands from the master (clicks on the main window are ignored)
-        master.wait_window(self) # pause anything on the main window until this one closes
-
 
 class Agenda(Calendar):
     def resize_frame(self, e):
@@ -108,7 +90,6 @@ class Agenda(Calendar):
         self.list_buttons_open_desc = {}
         self.list_desc = []
 
-        # change a bit the options of the labels to improve display
         for i, row in enumerate(self._calendar):
             for j, label in enumerate(row):
                 self._cal_frame.rowconfigure(i + 1, uniform=1)
@@ -129,7 +110,6 @@ class Agenda(Calendar):
     
     def add_task(self):
         self.top_create_task = Toplevel() 
-        #self.top_create_task.geometry("800x400+500+200") 
         self.top_create_task.geometry("+500+200")
         self.top_create_task.title("Crea una tasca") 
 
@@ -184,8 +164,6 @@ class Agenda(Calendar):
         b3 = Button(rightt_frame, text='Cancel·la',command=self.top_create_task.destroy)
         b3.grid(row=4,column=2)
 
-        # A Label widget to show in toplevel 
-        #print(self.get_date())
 
     def _CONTROLLER_create_task(self,name,description,id_tag):
         
@@ -196,12 +174,8 @@ class Agenda(Calendar):
 
 
         return_value = self.Controller_TASK.add(Task(999,name,description,0,data,1,'red',self.Controller_TAG.get_by_id(id_tag),self.Controller_USER.get_by_id(self.id_user)))
-        """        Task(id: int, name: str, description: str, state: str, date: str, priority: int, color: str, tag: Tag, user: User, user_shared: Any = []) -> None)"""
-
-        """dia,mes,any = self.get_date().split('/')
-        date_task=datetime.date(year=int(any), month=int(mes), day=int(dia))"""
-        
-        if(return_value == True):
+       
+        if(type(return_value) != int):
             task_id_c = self.Controller_TASK.get_by_name(name,self.id_user).id
             date_task=datetime.date(year=int(any), month=int(mes), day=int(dia))
 
@@ -219,7 +193,6 @@ class Agenda(Calendar):
 
         self.color12 = '#a0a0a0'
         self.top_create_tag = Toplevel() 
-        #self.top_create_task.geometry("800x400+500+200") 
         self.top_create_tag.geometry("+500+200")
         self.top_create_tag.title("Crea una tag") 
 
@@ -237,7 +210,6 @@ class Agenda(Calendar):
                 command=lambda: canvia_fons())
         b2.grid(row=0,column=0, sticky='nswe',pady=5) 
 
-        #colors = askcolor(title="Tkinter Color Chooser")
         if var1 == -1:
             b2 = Button(top_frame, text='Crea el tag',
                 command=lambda: self._CONTROLLER_create_tag(entry_tag_name_tl2.get(),self.color12))
@@ -274,7 +246,6 @@ class Agenda(Calendar):
         
 
     def _CONTROLLER_show_description(self,ev_id,selected_day_num,event):
-        #calc_position = int(selected_day_num / 2)
         for i in self.list_desc:
             i.destroy()
 
@@ -290,7 +261,6 @@ class Agenda(Calendar):
             for id in self.list_buttons_open_desc.keys():
                 self.list_buttons_open_desc[id] = 0
 
-            #self.top.title(self.calevents[ev_id]['text'])
             T = Text(self.right_frame, height = 5, width = 44)
             T.grid(row=selected_day_num*2+1,column=0, columnspan=4)
             T.insert(END, self.calevents[ev_id]['descripcion'])
@@ -299,10 +269,16 @@ class Agenda(Calendar):
 
         self.message_label.configure(text='')
 
-        
+    def set_valors(self, id, name):
+        for chbt in self.list_checks:
+            if(chbt[0] == id):
+                self.text_tk = chbt[1].cget("text")
+                self.onvalue_tk = chbt[1].cget("onvalue")
+                print(self.text_tk)
+                print(self.onvalue_tk)
+
     def _edit_task(self,event_id):
         self.top_edit_task = Toplevel() 
-        #self.top_edit_task.geometry("800x400+500+200") 
         self.top_edit_task.geometry("+500+200")
         self.top_edit_task.title("Edita la tasca") 
 
@@ -317,8 +293,7 @@ class Agenda(Calendar):
 
         self.variable2 = IntVar(self.top_edit_task)   
         tags = self.Controller_TAG.get_by_user(self.id_user)
-        list_checks = {}
-        list_checks = []
+        self.list_checks = []
         
 
         for tag in tags:
@@ -329,10 +304,12 @@ class Agenda(Calendar):
                 variable=self.variable2,
                 text=tag.name,
                 background=tag.color,
-                font=self.normal_Font
+                font=self.normal_Font,
+                command=lambda tel = tag.id:[ self.set_valors(tel,tag.name) ]
+                
+                
             )
-            #list_checks[tag.id]=[checkbutton_ed,tag.name]
-            list_checks.append(checkbutton_ed)
+            self.list_checks.append([tag.id,checkbutton_ed])
             checkbutton_ed.pack(expand=True,fill=BOTH)
               
 
@@ -343,20 +320,15 @@ class Agenda(Calendar):
         tag_text = self.Controller_TAG.get_by_name(self.calevents[event_id]['tags'][0],self.id_user)[0].name
 
 
-        for chk_but in list_checks:
-            tag_chk = chk_but.cget("text")
-            elonvalue = chk_but.cget("onvalue")
+        for chk_but in self.list_checks:
+            tag_chk = chk_but[1].cget("text")
+            elonvalue = chk_but[1].cget("onvalue")
 
-            if(chk_but.cget("text")==tag_text):
-                chk_but.select()
-                tag_name_mod = chk_but.cget("text")
-                tag_id_mod = chk_but.cget("onvalue")
+            if(chk_but[1].cget("text")==tag_text):
+                chk_but[1].select()
+                self.onvalue_tk=chk_but[1].cget("onvalue")
+                self.text_tk=chk_but[1].cget("text")
                 break
-
-        #list_checks[1].configure(variable=1)
-        
-        
-
         
         new_tag_but_edit = Button(left_frame_edit,text="[+] Nou tag", command=lambda : [self._create_tag(event_id)])
         new_tag_but_edit.pack(expand=True,fill=BOTH)
@@ -367,45 +339,86 @@ class Agenda(Calendar):
         self.info_edit = Label(right_frame_edit,text="",fg='red')
         self.info_edit.grid(row=0)
 
+        l3 = Label(right_frame_edit,text='Canvia la data')
+        l3.grid(row=1,column=1)
+        self.entry_task_date_edit = Entry(right_frame_edit,width=70)
+        self.entry_task_date_edit.grid(row=1,column=2,pady=10,padx=0)
+        self.entry_task_date_edit.insert(0, self.calevents[event_id]['date'])
+        but_date = Button(right_frame_edit,text="✎" , font=self.icon_Font,width=4,\
+                    command=lambda:[self._modify_change_date()])
+        but_date.grid(row=1,column=3,padx=0,sticky='we')
+        
+
+
         l1 = Label(right_frame_edit,  text='Nom tasca', width=10 ) 
-        l1.grid(row=1,column=1) 
-        self.entry_task_name_edit = Entry(right_frame_edit, width=100) 
-        self.entry_task_name_edit.grid(row=1,column=2)
+        l1.grid(row=2,column=1) 
+        self.entry_task_name_edit = Entry(right_frame_edit, width=70) 
+        self.entry_task_name_edit.grid(row=2,column=2,pady=10)
         self.entry_task_name_edit.insert(0, self.calevents[event_id]['text'])
 
 
         l2 = Label(right_frame_edit,  text='Descripció', width=10 ) 
-        l2.grid(row=2,column=1) 
-        self.text_task_description_edit = Text(right_frame_edit, height=4) 
-        self.text_task_description_edit.grid(row=2,column=2,pady=10)
+        l2.grid(row=3,column=1) 
+        self.text_task_description_edit = Text(right_frame_edit, height=5,width=50) 
+        self.text_task_description_edit.grid(row=3,column=2,pady=10)
         self.text_task_description_edit.insert(INSERT, self.calevents[event_id]['descripcion'])
 
 
         b2 = Button(right_frame_edit, text='Guardar canvis',
-                command=lambda: self._CONTROLLER_modify_changes(event_id,self.entry_task_name_edit.get(),self.text_task_description_edit.get("1.0",'end'),list_checks[self.variable2.get()-1].cget("onvalue"),list_checks[self.variable2.get()-1].cget("text"),task_name) )
-        b2.grid(row=3,column=2) 
+                command=lambda: [self._CONTROLLER_modify_changes(self.entry_task_date_edit.get(),event_id,self.entry_task_name_edit.get(),self.text_task_description_edit.get("1.0",'end'),self.onvalue_tk,self.text_tk,task_name)] )
+        b2.grid(row=4,column=2) 
         b3 = Button(right_frame_edit, text='Cancel·la',command=self.top_edit_task.destroy)
-        b3.grid(row=4,column=2)
+        b3.grid(row=5,column=2)
 
-    def _CONTROLLER_modify_changes(self,event_id,event_name,event_description,tag_id,tag_text,task_name):
-        
-        """th_task = self.Controller_TASK.get_by_id(event_id)
-        th_task = Task(event_id,event_name,event_description,0,'01/11/2022',1,'#121212',Tag())"""
+    def _modify_change_date(self):
+        def pass_sel():
+            self.top_date.destroy()
+            self.entry_task_date_edit.delete(0, END)
+            self.entry_task_date_edit.insert(0, self.cal_new_date.selection_get())
 
+        self.top_date = Toplevel()
+
+        self.top_date.geometry("+500+200")
+        self.top_date.title("Edita la data") 
+
+        self.top_date.transient(self.master)
+        self.top_date.grab_set()
+
+        year, month, day = self._sel_date.year, self._sel_date.month, self._sel_date.day
+
+        self.cal_new_date = Calendar(self.top_date, font="Arial 14", selectmode='day', locale='es_ES',
+                    cursor="hand1", year=year, month=month, day=day)
+        self.cal_new_date.pack(fill="both", expand=True)
+
+        but_se = Button(self.top_date, text="Selecciona", command=pass_sel)
+        but_se.pack()
+
+
+
+    def _CONTROLLER_modify_changes(self,date2,event_id,event_name,event_description,tag_id,tag_text,task_name):
         th_task = self.Controller_TASK.get_by_name(task_name,self.id_user)
 
-        
+
+        any,mes,dia = date2.split('-')
+        data = dia+'/'+mes+'/'+any
+        date_cal=datetime.date(year=int(any), month=int(mes), day=int(dia))
+
 
         self.Controller_TASK.change_description(th_task,event_description)
         self.Controller_TASK.change_name(th_task,event_name)
         self.Controller_TASK.change_tag(th_task,tag_id)
+        self.Controller_TASK.change_date(th_task,data)
 
         self.calevents[event_id]['tags'][0] = tag_text
         self.calevents[event_id]['descripcion'] = event_description
         self.calevents[event_id]['text'] = event_name
 
-        self.top_edit_task.destroy()
+        self.calevent_configure(event_id,date=date_cal)
+        
+        self._prev_month()
+        self._next_month()
         self._on_click('<<CalendarSelected>>',1)
+        self.top_edit_task.destroy()
         
         
     def _CONTROLLER_delete_task(self,event_id,event):
@@ -426,14 +439,11 @@ class Agenda(Calendar):
     def _CONTROLLER_getTags(self):
         for tag in self.Controller_TAG.get_by_user(self.id_user):
             self.tag_config(tag.name, background=tag.color, foreground='black')
-        """self.tag_config('UNIVERSITAT', background='DarkOliveGreen1', foreground='black')
-        self.tag_config('TRABAJO', background='bisque', foreground='black')
-        self.tag_config('mix',background='grey',foreground='black')"""
         
        
         
     def _CONTROLLER_getTasks(self):
-        date = self.datetime.today()# + self.timedelta(days=2)
+        date = self.datetime.today()
 
         for task in self.Controller_TASK.get_by_user(self.id_user):
             dia,mes,any = task.date.split('/')
@@ -453,7 +463,6 @@ class Agenda(Calendar):
             label = self._calendar[w][d]
             label.configure(width=25)
             if not label.cget('text'):
-                # this is an other month's day and showothermonth is False
                 return
             ev_ids = {}
 
@@ -509,7 +518,7 @@ class Agenda(Calendar):
         while len(cal) < 6:
             cal.append([(0, i) for i in range(7)])
 
-        week_days = {i: 'normal.%s.TLabel' % self._style_prefixe for i in range(7)}  # style names depending on the type of day
+        week_days = {i: 'normal.%s.TLabel' % self._style_prefixe for i in range(7)}
         week_days[self['weekenddays'][0] - 1] = 'we.%s.TLabel' % self._style_prefixe
         week_days[self['weekenddays'][1] - 1] = 'we.%s.TLabel' % self._style_prefixe
         _, week_nb, d = self._date.isocalendar()
@@ -538,14 +547,6 @@ class Agenda(Calendar):
                                 tag = self.calevents[ev_ids[x]]['tags'][-1]
                                 label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))
                                 break
-
-                        """i = len(ev_ids) - 1
-                        while i >= 0 and not (self.calevents[ev_ids[i]]['tags']):
-                            i -= 1
-                        if i >= 0:
-                            tag = self.calevents[ev_ids[i]]['tags'][-1]
-                            if (self.calevents[ev_ids[i]]['completed']==0):
-                                label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))"""
 
                         taglist_show=[]
                         for item in ev_ids:
@@ -592,7 +593,7 @@ class Agenda(Calendar):
             if len(cal) < 6:
                 cal.append(self._cal.monthdatescalendar(y, next_m)[i + 1])
 
-        week_days = {i: 'normal' for i in range(7)}  # style names depending on the type of day
+        week_days = {i: 'normal' for i in range(7)} 
         week_days[self['weekenddays'][0] - 1] = 'we'
         week_days[self['weekenddays'][1] - 1] = 'we'
         prev_m = (month - 2) % 12 + 1
@@ -613,15 +614,7 @@ class Agenda(Calendar):
                 if cal[i_week][i_day] in self._calevent_dates:
                     date = cal[i_week][i_day]
                     ev_ids = self._calevent_dates[date]
-                    """i = len(ev_ids) - 1
-                    while i >= 0 and not self.calevents[ev_ids[i]]['tags']:
-                        i -= 1
-                    if i >= 0:
-                        tag = self.calevents[ev_ids[i]]['tags'][-1]
-                        if (self.calevents[ev_ids[i]]['completed']==0):
-                            label.configure(style='tag_%s.%s.TLabel' % (tag, self._style_prefixe))
-                    """
-
+                    
                     for x in range(len(ev_ids)):
                         if self.calevents[ev_ids[x]]['completed']==0 and self.calevents[ev_ids[x]]['tags']:
                             tag = self.calevents[ev_ids[x]]['tags'][-1]
@@ -654,24 +647,6 @@ class Agenda(Calendar):
                     label.configure(text=text)
 
     def calevent_create(self, date, text, description, state, priority, taskid, tags=[]):
-        
-        """
-        Add new event in calendar and return event id.
-
-        Options:
-
-            date : datetime.date or datetime.datetime
-                event date
-
-            text : str
-                text to put in the tooltip associated to date.
-
-            tags : list
-                list of tags to apply to the event. The last tag determines
-                the way the event is displayed. If there are several events on
-                the same day, the lowest one (on the tooltip list) which has
-                tags determines the colors of the day.
-        """
         if isinstance(date, Calendar.datetime):
             date = date.date()
         if not isinstance(date, Calendar.date):
@@ -705,12 +680,9 @@ class Agenda(Calendar):
                 if ev['date']==self._sel_date and ev['completed']==0:
                     buit = 0
                     break
-            #if self._sel_date in self._calevent_dates and buit ==0:
             if self._sel_date in self._calevent_dates:
                 self._show_event(self._sel_date)
             else:
-                """w1, d1 = self._get_day_coords(self._date)
-                self._calendar[w1][d1].configure(text=str(d1))"""
                 w, d = self._get_day_coords(self._sel_date)
                 if w is not None:
                     week_end = [0, 6] if self['firstweekday'] == 'sunday' else [5, 6]
@@ -731,7 +703,6 @@ class Agenda(Calendar):
 
     def _on_click(self, event,option=0):
         """Select the day on which the user clicked."""
-        #To clear Message bottom label:
         self.message_label.configure(text='')
         
         if self._properties['state'] == 'normal':
@@ -772,10 +743,8 @@ class Agenda(Calendar):
 
         self.list_buttons_open_desc.clear()
         
-        #Mostramos las tareas del dia seleccionado
         selected_day_tasks = 0
 
-        #self.canvas.yview_moveto(1)
 
         for event_id,ev in self.calevents.items():
             if (self._sel_date == ev['date']):
@@ -815,19 +784,11 @@ class Agenda(Calendar):
                     text="❌"  ,  font=self.icon_Font,\
                     bg = (self._tags[ev['tags'][0]]['background']), foreground='black', height=1).grid(row=selected_day_tasks*2,column=3, sticky="ew",pady=0,padx=0)#.pack(side=LEFT)
                 
-                """Button(self.right_frame, command=lambda selected_day_tasks=selected_day_tasks: \
-                    [self._CONTROLLER_complete_task(selected_day_tasks)], \
-                    text="edit"  ,  \
-                    bg = (self._tags[ev['tags'][0]]['background']), foreground='black').grid(row=selected_day_tasks,column=3, sticky="nsew")#.pack(side=LEFT)
-                """
                 selected_day_tasks += 1
                 
                 
-        #button_ch.config(text="hello")
             
     
-"""averaaa=self.left_frame.cget('borderwidth')
-        self.left_frame.configure(borderwidth=self.left_frame.cget('borderwidth')+1)"""
 
 
 

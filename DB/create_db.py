@@ -96,16 +96,16 @@ c.execute(
 c.execute(
   '''
   INSERT INTO `tag` (`id`, `name`, `color`, `id_user`) VALUES
-  (1, 'tag1', 'bisque', 1),
-  (2, 'tag2', 'DarkOliveGreen1', 1),
-  (3, 'tag3', 'White', 1)
+  (1, 'Treball', 'bisque', 1),
+  (2, 'Uni', 'DarkOliveGreen1', 1),
+  (3, 'Casa', 'White', 1)
   
   '''
 )
 c.execute(
   '''
     INSERT INTO `task` (`id`, `name`, `description`, `state`, `date`, `priority`, `color`, `id_tag`, `id_user`) VALUES
-    (1, 'task1', 'description1description1description1description1description1description1description1des cription1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1description1', 0, '05/11/2022', 0, 'red', 1, 1),
+    (1, 'task1', 'f', 0, '05/11/2022', 0, 'red', 1, 1),
     (2, 'task2', 'description2', 1, '06/11/2022', 1, 'blue', 2, 1),
     (3, 'task3', 'description3', 1, '05/12/2022', 2, 'green', 3, 1),
     (4, 'task4', 'ESTO', 0, '06/11/2022', 1, 'blue', 2, 1),
