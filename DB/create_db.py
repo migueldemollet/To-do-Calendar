@@ -82,5 +82,41 @@ CREATE TABLE `user_task` (
 '''
 )
 
+#insert data into table user
+c.execute(
+  '''
+  INSERT INTO `user` (`id`, `username`, `email`, `password`) VALUES
+  (1, 'user1', 'user1@tdcalendar.com', '5e06b84ac4f276aa03afc04fd1e82856'),
+  (2, 'user2', 'user2@tdcalendar.com', 'd6f85014ab40ab641c6b801818c4b681'),
+  (3, 'user3', 'user3@tdcalendar.com', 'cc0e14efb403fc5d6a07fbe1dc278e84')
+  '''
+)
+
+#insert data into table tags
+c.execute(
+  '''
+  INSERT INTO `tag` (`id`, `name`, `color`, `id_user`) VALUES
+  (1, 'Treball', 'bisque', 1),
+  (2, 'Uni', 'DarkOliveGreen1', 1),
+  (3, 'Casa', 'White', 1)
+  
+  '''
+)
+c.execute(
+  '''
+    INSERT INTO `task` (`id`, `name`, `description`, `state`, `date`, `priority`, `color`, `id_tag`, `id_user`) VALUES
+    (1, 'task1', 'f', 0, '05/11/2022', 0, 'red', 1, 1),
+    (2, 'task2', 'description2', 1, '06/11/2022', 1, 'blue', 2, 1),
+    (3, 'task3', 'description3', 1, '05/12/2022', 2, 'green', 3, 1),
+    (4, 'task4', 'ESTO', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (5, 'task5', 'ES', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (6, 'task6', 'UN', 0, '06/11/2022', 1, 'blue', 2, 1),
+    (7, 'task7', 'PROGRAMON', 0, '06/11/2022', 1, 'blue', 2, 1)
+    '''
+)
+
+#insert data into table friend
+#c.execute("INSERT INTO friend VALUES (1, 1, 2, 0)")
+
 conn.commit()
 conn.close()
