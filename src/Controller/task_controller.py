@@ -46,6 +46,9 @@ class TaskController:
         if (not check_color(task.color)):
             print("Invalid color must be"+str(color_list))
             return 1
+        if (type(task.tag) != Tag):
+            print("Invalid tag")
+            return 1
         if ([self.tag_controller.get_by_id(task.tag.id)] == []):
             print("Tag with name "+str(task.tag.name)+" does not exist")
             return 0
@@ -53,14 +56,13 @@ class TaskController:
         if (type(self.users) == int):
             print("User with username "+str(task.user.username)+" does not exist")
             return 0
-        if(self.task_model.get_by_id(task.id) != []):
+        if(self.task_model.get_by_name(task.name, task.user.id) != []):
             print("Task already exists")
             return 0
-
-        self.task_model.add(task)
-        task.id = self.get_by_name(task.name,task.user.id).id
-        task.id = self.get_by_name(task.name, task.user.id).id
-        return self.task_action_controller.add(task)
+        else:
+            self.task_model.add(task)
+            task.id = self.get_by_name(task.name,task.user.id).id
+            return self.task_action_controller.add(task)
     
     def share(self, task: Task, user: User) -> int | bool:
         """Share a task with a user

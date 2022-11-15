@@ -169,8 +169,7 @@ class Agenda(Calendar):
         
 
         mes,dia,any = self.get_date().split('/')
-        any = '20' + any
-        data = dia+'/'+mes+'/'+any
+        data = mes+'/'+dia+'/'+any
 
 
         return_value = self.Controller_TASK.add(Task(999,name,description,0,data,1,'red',self.Controller_TAG.get_by_id(id_tag),self.Controller_USER.get_by_id(self.id_user)))
