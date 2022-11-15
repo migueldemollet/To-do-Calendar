@@ -168,8 +168,8 @@ class Agenda(Calendar):
     def _CONTROLLER_create_task(self,name,description,id_tag):
         
 
-        mes,dia,any = self.get_date().split('/')
-        data = mes+'/'+dia+'/'+any
+        dia,mes,any = self.get_date().split('/')
+        data = dia+'/'+mes+'/'+any
 
 
         return_value = self.Controller_TASK.add(Task(999,name,description,0,data,1,'red',self.Controller_TAG.get_by_id(id_tag),self.Controller_USER.get_by_id(self.id_user)))
