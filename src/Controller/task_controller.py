@@ -8,11 +8,11 @@ sys.path.insert(2, 'Src/Model/')
 from task_model import TaskModel
 
 class TaskController:
-    def __init__(self):
-        self.task_model = TaskModel("./DB/to_do_calendar_test.db")
-        self.task_action_controller = TaskActionController()
-        self.tag_controller = TagController()
-        self.user_controller = UserController()
+    def __init__(self, db_name: str = "./DB/to_do_calendar.db"):
+        self.task_model = TaskModel(db_name)
+        self.task_action_controller = TaskActionController(db_name)
+        self.tag_controller = TagController(db_name)
+        self.user_controller = UserController(db_name)
 
         self.tasks = []
         self.tags = []

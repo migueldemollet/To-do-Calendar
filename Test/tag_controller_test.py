@@ -10,7 +10,7 @@ from tag_controller import TagController
 class TestTagController(unittest.TestCase):
     def __init__(self, methodName: str = ...) -> None:
         super().__init__(methodName)
-        self.controller = TagController()
+        self.controller = TagController("./DB/to_do_calendar_test.db")
         self.user = User(1, "user1", "user1@tdcalendar.com", "password1")
         self.tag1 = Tag(1, 'tag1', 'red', self.user)
         self.tag2 = Tag(2, 'tag2', 'blue', self.user)

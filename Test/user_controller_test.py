@@ -11,7 +11,7 @@ from mock_object import MochDb
 class TestUserController(unittest.TestCase):
     def __init__(self, methodName: str = ...) -> None:
         super().__init__(methodName)
-        self.controller = UserController()
+        self.controller = UserController("./DB/to_do_calendar_test.db")
         self.user1 = User(1, "user1", "user1@tdcalendar.com", "5e06b84ac4f276aa03afc04fd1e82856", [])
         self.user2 = User(2, "user2", "user2@tdcalendar.com", "d6f85014ab40ab641c6b801818c4b681", [])
         self.user3 = User(3, "user3", "user3@tdcalendar.com", "cc0e14efb403fc5d6a07fbe1dc278e84", [])

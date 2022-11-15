@@ -10,7 +10,7 @@ from friends_controller import FriendController
 class TestFriendsController(unittest.TestCase):
     def __init__(self, methodName: str = ...) -> None:
         super().__init__(methodName)
-        self.controller = FriendController()
+        self.controller = FriendController("./DB/to_do_calendar_test.db")
         self.user1 = User(1, "user1","user1@tdcalendar.com", "password1")
         self.user2 = User(2, "user2","user2@tdcalendar.com", "password1")
         self.user3 = User(3, "user3","user3@tdcalendar.com", "password1")

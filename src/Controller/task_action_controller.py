@@ -7,9 +7,10 @@ from user_task_model import UserTaskModel
 
 
 class TaskActionController():
-    def __init__(self):
-        self.model_task_user = UserTaskModel("./DB/to_do_calendar_test.db")
-        self.user_controller = UserController()
+    def __init__(self, db_name: str = "./DB/to_do_calendar.db") -> None:
+        self.db_name = db_name
+        self.model_task_user = UserTaskModel(db_name)
+        self.user_controller = UserController(db_name)
         self.users = []
         self.tasks = []
 
@@ -127,4 +128,4 @@ class TaskActionController():
             return 0
 
         from task_controller import TaskController
-        return [TaskController().get_by_id(task['task_id']) for task in self.tasks]
+        return [TaskController(self.db_name).get_by_id(task['task_id']) for task in self.tasks]

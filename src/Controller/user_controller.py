@@ -7,9 +7,9 @@ from user_model import UserModel
 
 
 class UserController:
-    def __init__(self):
-        self.user_model = UserModel("./DB/to_do_calendar_test.db")
-        self.friend_controller = FriendController()
+    def __init__(self, db_name: str = "./DB/to_do_calendar.db") -> None:
+        self.user_model = UserModel(db_name)
+        self.friend_controller = FriendController(db_name)
         self.user = []
         self.friends = []
 

@@ -6,8 +6,9 @@ from friends_model import FriendsModel
 
 
 class FriendController:
-    def __init__(self) -> None:
-        self.friends_model = FriendsModel("./DB/to_do_calendar_test.db")
+    def __init__(self, db_name: str = "./DB/to_do_calendar.db") -> None:
+        self.db_name = db_name
+        self.friends_model = FriendsModel(self.db_name)
         self.friends = []
         self.users= []
       
@@ -76,7 +77,7 @@ class FriendController:
         if (self.friends == []):
             #print("Friend does not exist")
             return 0
-        self.users = get_user(self.friends[0]['id_user_2'])
+        self.users = get_user(self.db_name, self.friends[0]['id_user_2'])
         return list_to_friends(self.friends, [self.users])[0]
 
     #-------------------------Username-------------------------------
@@ -100,7 +101,7 @@ class FriendController:
         if (self.friends == []):
             #print("Friend does not exist")
             return 0
-        self.users = [get_user(friend['id_user_2']) for friend in self.friends]
+        self.users = [get_user(self.db_name, friend['id_user_2']) for friend in self.friends]
         return list_to_friends(self.friends, self.users)
 
     def delete_by_user(self, user_id: int) -> int | bool:
@@ -148,7 +149,7 @@ class FriendController:
         if (self.friends == []):
             #print("Friend does not exist")
             return 0
-        self.users = [get_user(friend['id_user_2']) for friend in self.friends]
+        self.users = [get_user(self.db_name, friend['id_user_2']) for friend in self.friends]
         return list_to_friends(self.friends, self.users)
        
     
@@ -228,10 +229,10 @@ class FriendController:
         if (self.friends == []):
             #print("Friend does not exist")
             return 0
-        self.users = [get_user(friend['id_user_2']) for friend in self.friends]
+        self.users = [get_user(self.db_name, friend['id_user_2']) for friend in self.friends]
         return list_to_friends(self.friends, self.users)[0]
 
-def get_user(user_id: int) -> int | User:
+def get_user(db_name, user_id: int) -> int | User:
     """Get a user by id
 
     Args:
@@ -244,4 +245,4 @@ def get_user(user_id: int) -> int | User:
     """
 
     from user_controller import UserController
-    return UserController().get_by_id(user_id)
+    return UserController(db_name).get_by_id(user_id)

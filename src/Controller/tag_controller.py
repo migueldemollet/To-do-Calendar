@@ -6,9 +6,9 @@ sys.path.insert(2, 'Src/Model/')
 from tag_model import TagModel
 
 class TagController:
-    def __init__(self):
-        self.tag_model = TagModel("./DB/to_do_calendar_test.db")
-        self.user_controller = UserController()
+    def __init__(self, db_name: str = "./DB/to_do_calendar.db") -> None:
+        self.tag_model = TagModel(db_name)
+        self.user_controller = UserController(db_name)
         self.tags = []
         self.user = []
 
