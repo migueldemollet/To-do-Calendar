@@ -1,16 +1,6 @@
 # To-do-Calendar
 To do list with a calendar
 
-# IMPORTANT
-- To test the application, you may use:
-    - Username: user1
-    - Password: password1@
-    or
-    - Username: user111
-    - Password: user111@
-    or
-    - Create your own user with register!
-
 # FILE TREE:
 - /src : Code directory
     - /View: Contain views:
