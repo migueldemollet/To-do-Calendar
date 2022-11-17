@@ -402,17 +402,21 @@ class Agenda(Calendar):
         data = dia+'/'+mes+'/'+any
         date_cal=datetime.date(year=int(any), month=int(mes), day=int(dia))
 
+        description_ = self.Controller_TASK.change_description(th_task,event_description)
+        if (type(description_) != int):
+            self.calevents[event_id]['descripcion'] = event_description
+            
+        name_ = self.Controller_TASK.change_name(th_task,event_name)
+        if (type(name_) != int):
+            self.calevents[event_id]['text'] = event_name
+            
+        tag_ = self.Controller_TASK.change_tag(th_task,tag_id)
+        if (type(tag_) != int):
+            self.calevents[event_id]['tags'][0] = tag_text
 
-        self.Controller_TASK.change_description(th_task,event_description)
-        self.Controller_TASK.change_name(th_task,event_name)
-        self.Controller_TASK.change_tag(th_task,tag_id)
-        self.Controller_TASK.change_date(th_task,data)
-
-        self.calevents[event_id]['tags'][0] = tag_text
-        self.calevents[event_id]['descripcion'] = event_description
-        self.calevents[event_id]['text'] = event_name
-
-        self.calevent_configure(event_id,date=date_cal)
+        date_ = self.Controller_TASK.change_date(th_task,data)
+        if (type(date_) != int):
+            self.calevent_configure(event_id,date=date_cal)
         
         self._prev_month()
         self._next_month()
